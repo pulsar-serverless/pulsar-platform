@@ -1,10 +1,16 @@
 package primary
 
-import "pulsar/internal/adapters/primary/projects"
+import (
+	"pulsar/internal/adapters/primary/auth"
+	"pulsar/internal/adapters/primary/projects"
+)
 
 func (server *Server) DefineRoutes() {
+	apiController := server.echo.Group("/api")
 
-	projectController := server.echo.Group("/projects")
+	apiController.Use(auth.IsAuthenticated)
+
+	projectController := apiController.Group("/projects")
 	{
 		projectController.POST("", projects.CreateProject(server.projectService))
 		projectController.DELETE("/:id", projects.DeleteProject(server.projectService))

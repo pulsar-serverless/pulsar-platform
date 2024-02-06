@@ -20,7 +20,9 @@ type UpdateProjectRequest struct {
 // @Success	200		{object}	project.GenericProjectResp
 // @Param		request	body		UpdateProjectRequest	true	"create project DTO"
 // @Param		id		path		string					true	"project id"
-// @Router		/projects/{id} [put]
+// @Router		/api/projects/{id} [put]
+// @Security	Bearer
+// @Tags		Project
 func UpdateProjects(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UpdateProjectRequest

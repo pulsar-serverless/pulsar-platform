@@ -15,13 +15,21 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/projects": {
+        "/api/projects": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Project"
                 ],
                 "summary": "Get projects",
                 "operationId": "get-projects",
@@ -51,11 +59,19 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Project"
                 ],
                 "summary": "Create project",
                 "operationId": "create-project",
@@ -80,13 +96,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/projects/{id}": {
+        "/api/projects/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Project"
                 ],
                 "summary": "Get project",
                 "operationId": "get-project",
@@ -109,11 +133,19 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Project"
                 ],
                 "summary": "Update project",
                 "operationId": "update-project",
@@ -145,11 +177,19 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Project"
                 ],
                 "summary": "Delete project",
                 "operationId": "delete-project",
@@ -219,10 +259,20 @@ const docTemplate = `{
         "projects.UpdateProjectRequest": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
@@ -233,8 +283,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:1323",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
-	Description:      "This is a sample server Petstore server.",
+	Title:            "Pulsar API",
+	Description:      "This is a server for  pulsar (serverless web platform) server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

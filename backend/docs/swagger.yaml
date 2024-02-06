@@ -34,17 +34,19 @@ definitions:
     type: object
   projects.UpdateProjectRequest:
     properties:
+      id:
+        type: string
       name:
         type: string
     type: object
 host: localhost:1323
 info:
   contact: {}
-  description: This is a sample server Petstore server.
-  title: Swagger Example API
+  description: This is a server for  pulsar (serverless web platform) server.
+  title: Pulsar API
   version: "1.0"
 paths:
-  /projects:
+  /api/projects:
     get:
       consumes:
       - application/json
@@ -67,7 +69,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/project.GenericProjectResp'
+      security:
+      - Bearer: []
       summary: Get projects
+      tags:
+      - Project
     post:
       consumes:
       - application/json
@@ -86,8 +92,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/project.GenericProjectResp'
+      security:
+      - Bearer: []
       summary: Create project
-  /projects/{id}:
+      tags:
+      - Project
+  /api/projects/{id}:
     delete:
       consumes:
       - application/json
@@ -103,7 +113,11 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - Bearer: []
       summary: Delete project
+      tags:
+      - Project
     get:
       consumes:
       - application/json
@@ -121,7 +135,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/project.GenericProjectResp'
+      security:
+      - Bearer: []
       summary: Get project
+      tags:
+      - Project
     put:
       consumes:
       - application/json
@@ -145,5 +163,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/project.GenericProjectResp'
+      security:
+      - Bearer: []
       summary: Update project
+      tags:
+      - Project
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
