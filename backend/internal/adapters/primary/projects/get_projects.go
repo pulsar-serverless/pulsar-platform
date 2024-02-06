@@ -16,7 +16,9 @@ import (
 // @Success	200			{object}	project.GenericProjectResp
 // @Param		pageNumber	query		int	true	"Page number"
 // @Param		pageSize	query		int	true	"Page size"
-// @Router		/projects [get]
+// @Router		/api/projects [get]
+// @Security	Bearer
+// @Tags		Project
 func GetProjects(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input struct {

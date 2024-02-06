@@ -1,6 +1,7 @@
 package primary
 
 import (
+	"os"
 	"pulsar/internal/core/services/project"
 	"pulsar/internal/ports"
 
@@ -20,15 +21,14 @@ func StartServer(pr ports.IProjectRepo) {
 
 	server := &Server{
 		echo:           echo.New(),
-		projectService: projectService, // inject project service
+		projectService: projectService, // inject project service inject authentication service
 	}
 
 	server.echo.Use(middleware.CORS())
-
 	server.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// setup API routes
 	server.DefineRoutes()
 	// start server
-	server.echo.Logger.Fatal(server.echo.Start(":1323"))
+	server.echo.Logger.Fatal(server.echo.Start(":" + os.Getenv("PORT")))
 }

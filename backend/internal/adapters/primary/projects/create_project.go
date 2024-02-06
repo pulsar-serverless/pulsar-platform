@@ -20,7 +20,9 @@ type CreateProjectRequest struct {
 // @Produce	json
 // @Param		request	body		CreateProjectRequest	true	"create project DTO"
 // @Success	200		{object}	project.GenericProjectResp
-// @Router		/projects [post]
+// @Router		/api/projects [post]
+// @Security	Bearer
+// @Tags		Project
 func CreateProject(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input CreateProjectRequest

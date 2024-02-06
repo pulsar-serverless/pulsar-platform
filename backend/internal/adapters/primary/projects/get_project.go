@@ -14,7 +14,9 @@ import (
 // @Produce	json
 // @Success	200	{object}	project.GenericProjectResp
 // @Param		id	path		string	true	"project id"
-// @Router		/projects/{id} [get]
+// @Router		/api/projects/{id} [get]
+// @Security	Bearer
+// @Tags		Project
 func GetProject(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
