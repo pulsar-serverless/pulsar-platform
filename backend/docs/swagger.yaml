@@ -1,0 +1,149 @@
+basePath: /
+definitions:
+  project.DeploymentStatus:
+    enum:
+    - ready
+    - failed
+    - building
+    - done
+    - none
+    type: string
+    x-enum-varnames:
+    - Ready
+    - Failed
+    - Building
+    - Done
+    - None
+  project.GenericProjectResp:
+    properties:
+      createdAt:
+        type: string
+      deploymentStatus:
+        $ref: '#/definitions/project.DeploymentStatus'
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  projects.CreateProjectRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  projects.UpdateProjectRequest:
+    properties:
+      name:
+        type: string
+    type: object
+host: localhost:1323
+info:
+  contact: {}
+  description: This is a sample server Petstore server.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /projects:
+    get:
+      consumes:
+      - application/json
+      operationId: get-projects
+      parameters:
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/project.GenericProjectResp'
+      summary: Get projects
+    post:
+      consumes:
+      - application/json
+      operationId: create-project
+      parameters:
+      - description: create project DTO
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/projects.CreateProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/project.GenericProjectResp'
+      summary: Create project
+  /projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-project
+      parameters:
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete project
+    get:
+      consumes:
+      - application/json
+      operationId: get-project
+      parameters:
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/project.GenericProjectResp'
+      summary: Get project
+    put:
+      consumes:
+      - application/json
+      operationId: update-project
+      parameters:
+      - description: create project DTO
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/projects.UpdateProjectRequest'
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/project.GenericProjectResp'
+      summary: Update project
+swagger: "2.0"
