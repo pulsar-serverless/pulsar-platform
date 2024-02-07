@@ -5,6 +5,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CustomThemeProvider } from "@/components/providers/ThemeProvider";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { Header } from "@/components/layout/Header";
+import { Stack } from "@mui/material";
 
 export const metadata = {
   title: "Pulsar",
@@ -22,8 +24,23 @@ export default function RootLayout({
         <AuthProvider>
           <StoreProvider>
             <CustomThemeProvider>
-              <QueryProvider>{children}</QueryProvider>
               <CssBaseline />
+              <QueryProvider>
+                <Header />
+                <Stack
+                  direction={"row"}
+                  sx={{
+                    position: "fixed",
+                    top: 64,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    overflowY: 'scroll'
+                  }}
+                >
+                  {children}
+                </Stack>
+              </QueryProvider>
             </CustomThemeProvider>
           </StoreProvider>
         </AuthProvider>
