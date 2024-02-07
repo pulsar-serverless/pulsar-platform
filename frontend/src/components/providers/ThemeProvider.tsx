@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 
 const theme = createTheme({
   palette: {
+    mode: "dark",
     primary: {
       main: "#2563eb",
     },
@@ -14,9 +15,21 @@ const theme = createTheme({
     text: {
       primary: "#fff",
     },
+    divider: "#ffffff24",
     background: {
       default: "#110f0f",
       paper: "#121212",
+    },
+  },
+  typography: {
+    fontFamily: "'Inter', sans-serif",
+    fontSize: 13,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: { textTransform: "none" },
+      },
     },
   },
 });
