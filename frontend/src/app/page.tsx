@@ -1,32 +1,49 @@
 "use client";
 
-import { Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import {
+  Typography,
+  Container,
+  Button,
+} from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { loginWithRedirect, isAuthenticated, logout, getAccessTokenSilently } =
-    useAuth0();
+  const { user, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push(`/${user?.name}`);
+    }
+  }, [isAuthenticated]);
 
   return (
-    <Stack spacing={2} direction="column" width={100}>
-      <Typography variant="h4">Welcome to pulsar</Typography>
-      {isAuthenticated ? (
+    <Container>
+      <Stack
+        spacing={3}
+        alignItems="center"
+        justifyContent="center"
+        sx={{ height: "100%" }}
+      >
+        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+          Login to Pulsar
+        </Typography>
         <Button
-          variant="outlined"
-          onClick={() =>
-            logout({ logoutParams: { returnTo: window.location.origin } })
-          }
+          variant="contained"
+          size="large"
+          color="primary"
+          startIcon={<GitHubIcon />}
+          onClick={() => loginWithRedirect()}
         >
-          Sign Out
+          Continue with Github
         </Button>
-      ) : (
-        <Button variant="outlined" onClick={() => loginWithRedirect()}>
-          Sign In
-        </Button>
-      )}
-    </Stack>
+      </Stack>
+    </Container>
   );
 }
