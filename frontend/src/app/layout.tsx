@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Header } from "@/components/layout/Header";
 import { Stack } from "@mui/material";
 import { HttpInterceptor } from "@/components/interceptors/HttpInterceptor";
+import { SnackbarProvider } from "@/components/providers/SnackbarProvider";
 
 export const metadata = {
   title: "Pulsar",
@@ -41,6 +42,7 @@ export default function RootLayout({
                     {children}
                   </Stack>
                 </QueryProvider>
+                <SnackbarProvider/>
               </CustomThemeProvider>
             </StoreProvider>
           </HttpInterceptor>

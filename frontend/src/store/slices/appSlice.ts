@@ -1,19 +1,26 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface AppMessage {
+  content: string;
+  type: "error" | "success";
+}
 export interface CounterState {
-  value: number
+  snackbarMessage?: AppMessage;
 }
 
-const initialState: CounterState = {
-  value: 0
-}
+const initialState: CounterState = {};
 
-export const counterSlice = createSlice({
-    name: 'counter',
-    initialState,
-    reducers: {
-      incrementByAmount: (state, action: PayloadAction<number>) => {
-        state.value += action.payload
-      }
-    }
-  })
+export const appSlice = createSlice({
+  name: "app",
+  initialState,
+  reducers: {
+    setSnackbarMessage: (
+      state,
+      action: PayloadAction<AppMessage | undefined>
+    ) => {
+      state.snackbarMessage = action.payload;
+    },
+  },
+});
+
+export const { setSnackbarMessage } = appSlice.actions;
