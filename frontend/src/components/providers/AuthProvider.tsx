@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID!}
       authorizationParams={{
         audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
-        redirect_uri: process.env.NEXT_PUBLIC_redirectUri,
+        redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
       }}
     >
       {children}
