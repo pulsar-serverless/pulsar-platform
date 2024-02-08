@@ -26,8 +26,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export const Header = () => {
   const theme = useTheme();
-  const { isAuthenticated, logout } =
-    useAuth0();
+  const { isAuthenticated, logout } = useAuth0();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -64,7 +63,7 @@ export const Header = () => {
           <Button LinkComponent={Link} href="/docs" color="secondary">
             Docs
           </Button>
-          <Button LinkComponent={Link} href="/docs" color="secondary">
+          <Button LinkComponent={Link} href="/pricing" color="secondary">
             Pricing
           </Button>
           {isAuthenticated && (
