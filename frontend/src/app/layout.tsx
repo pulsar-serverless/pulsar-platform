@@ -1,12 +1,12 @@
 import { QueryProvider } from "@/components/providers/QueryProvider";
-import { store } from "@/store/store";
-import { Provider } from "react-redux";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CustomThemeProvider } from "@/components/providers/ThemeProvider";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Header } from "@/components/layout/Header";
 import { Stack } from "@mui/material";
+import { HttpInterceptor } from "@/components/interceptors/HttpInterceptor";
+import { SnackbarProvider } from "@/components/providers/SnackbarProvider";
 
 export const metadata = {
   title: "Pulsar",
@@ -22,27 +22,30 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <StoreProvider>
-            <CustomThemeProvider>
-              <CssBaseline />
-              <QueryProvider>
-                <Header />
-                <Stack
-                  direction={"row"}
-                  sx={{
-                    position: "fixed",
-                    top: 64,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    overflowY: 'scroll'
-                  }}
-                >
-                  {children}
-                </Stack>
-              </QueryProvider>
-            </CustomThemeProvider>
-          </StoreProvider>
+          <HttpInterceptor>
+            <StoreProvider>
+              <CustomThemeProvider>
+                <CssBaseline />
+                <QueryProvider>
+                  <Header />
+                  <Stack
+                    direction={"row"}
+                    sx={{
+                      position: "fixed",
+                      top: 64,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      overflowY: "scroll",
+                    }}
+                  >
+                    {children}
+                  </Stack>
+                </QueryProvider>
+                <SnackbarProvider/>
+              </CustomThemeProvider>
+            </StoreProvider>
+          </HttpInterceptor>
         </AuthProvider>
       </body>
     </html>

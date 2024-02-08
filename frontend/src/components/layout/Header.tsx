@@ -75,9 +75,11 @@ export const Header = () => {
               >
                 Projects
               </Button>
-              <Button variant="contained" startIcon={<AddRoundedIcon />}>
-                Create Project
-              </Button>
+              <Link shallow href="?action=create-project">
+                <Button variant="contained" startIcon={<AddRoundedIcon />}>
+                  Create Project
+                </Button>
+              </Link>
               <IconButton
                 id="profile-button"
                 aria-controls={open ? "profile-menu" : undefined}

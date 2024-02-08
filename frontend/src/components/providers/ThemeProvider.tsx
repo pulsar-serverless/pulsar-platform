@@ -31,6 +31,12 @@ const theme = createTheme({
         root: { textTransform: "none" },
       },
     },
+    MuiPaper: {
+      defaultProps: {
+        elevation: 0,
+        variant: 'outlined'
+      }
+    }
   },
 });
 
