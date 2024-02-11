@@ -2,6 +2,7 @@ package primary
 
 import (
 	"os"
+	"pulsar/internal/core/services/container"
 	"pulsar/internal/core/services/project"
 	"pulsar/internal/ports"
 
@@ -16,8 +17,9 @@ type Server struct {
 	projectService project.IProjectService
 }
 
-func StartServer(pr ports.IProjectRepo) {
-	projectService := project.NewProjectService(pr)
+func StartServer(pr ports.IProjectRepo, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
+	containerService := container.NewContainerService(containerMan, fileRepo)
+	projectService := project.NewProjectService(pr, containerService)
 
 	server := &Server{
 		echo:           echo.New(),

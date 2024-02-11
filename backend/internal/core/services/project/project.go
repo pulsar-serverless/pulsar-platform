@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"pulsar/internal/core/domain/common"
+	"pulsar/internal/core/services/container"
 	"pulsar/internal/ports"
 )
 
@@ -15,11 +16,13 @@ type IProjectService interface {
 }
 
 type ProjectService struct {
-	projectRepo ports.IProjectRepo
+	projectRepo      ports.IProjectRepo
+	containerService container.IContainerService
 }
 
-func NewProjectService(pr ports.IProjectRepo) *ProjectService {
+func NewProjectService(pr ports.IProjectRepo, containerService container.IContainerService) *ProjectService {
 	return &ProjectService{
-		projectRepo: pr,
+		projectRepo:      pr,
+		containerService: containerService,
 	}
 }
