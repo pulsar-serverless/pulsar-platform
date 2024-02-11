@@ -1,4 +1,4 @@
-package primary
+package web
 
 import (
 	"os"

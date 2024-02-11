@@ -1,8 +1,8 @@
-package primary
+package web
 
 import (
-	"pulsar/internal/adapters/primary/auth"
-	"pulsar/internal/adapters/primary/projects"
+	"pulsar/internal/adapters/primary/web/auth"
+	"pulsar/internal/adapters/primary/web/projects"
 )
 
 func (server *Server) DefineRoutes() {
