@@ -41,5 +41,9 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 		return nil, services.NewAppError(services.ErrBadRequest, err)
 	}
 
+	go func(project *project.Project) {
+		projectService.containerService.DeployContainerWithStarterCode(project)
+	}(&newProject)
+
 	return GenericProjectRespFromProject(&newProject), nil
 }
