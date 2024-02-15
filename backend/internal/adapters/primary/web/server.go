@@ -13,17 +13,19 @@ import (
 )
 
 type Server struct {
-	echo           *echo.Echo
-	projectService project.IProjectService
+	echo             *echo.Echo
+	projectService   project.IProjectService
+	containerService container.IContainerService
 }
 
 func StartServer(pr ports.IProjectRepo, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
-	containerService := container.NewContainerService(containerMan, fileRepo)
+	containerService := container.NewContainerService(containerMan, fileRepo, pr)
 	projectService := project.NewProjectService(pr, containerService)
 
 	server := &Server{
-		echo:           echo.New(),
-		projectService: projectService, // inject project service inject authentication service
+		echo:             echo.New(),
+		projectService:   projectService, // inject project service inject authentication service
+		containerService: containerService,
 	}
 
 	server.echo.Use(middleware.CORS())

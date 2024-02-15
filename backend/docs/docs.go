@@ -15,6 +15,16 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "App"
+                ],
+                "summary": "test serverless function",
+                "operationId": "exec-app",
+                "responses": {}
+            }
+        },
         "/api/projects": {
             "get": {
                 "security": [
@@ -207,6 +217,36 @@ const docTemplate = `{
                         "description": "OK"
                     }
                 }
+            }
+        },
+        "/app/status": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "App"
+                ],
+                "summary": "update serverless app status",
+                "operationId": "app-status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "App subdomain",
+                        "name": "subdomain",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
             }
         }
     },
