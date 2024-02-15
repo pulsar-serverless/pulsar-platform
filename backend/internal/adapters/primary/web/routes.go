@@ -1,8 +1,11 @@
-package primary
+package web
 
 import (
-	"pulsar/internal/adapters/primary/auth"
-	"pulsar/internal/adapters/primary/projects"
+	"pulsar/internal/adapters/primary/web/apps"
+	"pulsar/internal/adapters/primary/web/auth"
+	"pulsar/internal/adapters/primary/web/projects"
+
+	"github.com/labstack/echo/v4"
 )
 
 func (server *Server) DefineRoutes() {
@@ -18,4 +21,9 @@ func (server *Server) DefineRoutes() {
 		projectController.GET("/:id", projects.GetProject(server.projectService))
 		projectController.PUT("/:id", projects.UpdateProjects(server.projectService))
 	}
+
+	server.echo.POST("/app/status", apps.Status(server.containerService))
+	server.echo.Any("*",
+		echo.WrapHandler(apps.NewProxy()),
+		apps.ExecuteFunction(server.containerService, server.projectService))
 }

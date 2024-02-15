@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 	_ "pulsar/docs"
-	"pulsar/internal/adapters/primary/apierrors"
+	"pulsar/internal/adapters/primary/web/apierrors"
 	"pulsar/internal/core/services/project"
 
 	"github.com/labstack/echo/v4"

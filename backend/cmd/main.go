@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	_ "pulsar/docs"
-	"pulsar/internal/adapters/primary"
+	"pulsar/internal/adapters/primary/web"
 	"pulsar/internal/adapters/secondary/docker"
 	"pulsar/internal/adapters/secondary/fs"
 	"pulsar/internal/adapters/secondary/postgres"
@@ -44,7 +44,7 @@ func main() {
 		panic("Unable to setup authentication")
 	}
 
-	primary.StartServer(&projectRepo, containerManager, fileRepository)
+	web.StartServer(&projectRepo, containerManager, fileRepository)
 }
 
 // swag init -g cmd/main.go -o docs/

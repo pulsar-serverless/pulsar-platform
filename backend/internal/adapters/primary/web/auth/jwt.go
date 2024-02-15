@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"pulsar/internal/adapters/primary/apierrors"
+	"pulsar/internal/adapters/primary/web/apierrors"
 	"time"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
