@@ -2,6 +2,9 @@ package project
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
@@ -33,8 +36,9 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 
 func (projectService *ProjectService) CreateProject(ctx context.Context, req CreateProjectReq) (*GenericProjectResp, error) {
 	var newProject = project.Project{
-		ID:   uuid.New(),
-		Name: req.ProjectName,
+		ID:        uuid.New(),
+		Name:      req.ProjectName,
+		Subdomain: fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {
@@ -42,8 +46,18 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 	}
 
 	go func(project *project.Project) {
-		projectService.containerService.DeployContainerWithStarterCode(project)
+		projectService.containerService.DeployContainerWithStarterCode(ctx, project)
 	}(&newProject)
 
 	return GenericProjectRespFromProject(&newProject), nil
+}
+
+func generateAppId() string {
+	// TODO: change this
+	bytes := make([]byte, 12)
+	if _, err := rand.Read(bytes); err != nil {
+		panic(err)
+	}
+
+	return hex.EncodeToString(bytes)[:6]
 }

@@ -46,6 +46,13 @@ info:
   title: Pulsar API
   version: "1.0"
 paths:
+  /:
+    get:
+      operationId: exec-app
+      responses: {}
+      summary: test serverless function
+      tags:
+      - App
   /api/projects:
     get:
       consumes:
@@ -168,6 +175,25 @@ paths:
       summary: Update project
       tags:
       - Project
+  /app/status:
+    post:
+      consumes:
+      - application/json
+      operationId: app-status
+      parameters:
+      - description: App subdomain
+        in: query
+        name: subdomain
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: update serverless app status
+      tags:
+      - App
 securityDefinitions:
   Bearer:
     in: header

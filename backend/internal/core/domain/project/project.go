@@ -19,10 +19,11 @@ const (
 type Project struct {
 	ID               uuid.UUID        `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	Name             string           `gorm:"unique;not null"`
+	ContainerId      string           `gorm:"unique;default:null"`
 	Port             uint             `gorm:"unique;default:null"`
 	ApiKey           string           ``
 	DeploymentStatus DeploymentStatus `gorm:"default:'none'"`
-	Domain           string           `gorm:"unique;default:null"`
+	Subdomain        string           `gorm:"unique;default:null"`
 	CreatedAt        time.Time        `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time        `gorm:"autoUpdateTime"`
 }
