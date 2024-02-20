@@ -22,7 +22,7 @@ func ExecuteFunction(containerService container.IContainerService, projectServic
 			errorChan := make(chan error, 1)
 
 			subdomain := getSubdomain(ctx.Request().Host)
-			project, err := projectService.GetProjectBySubdomain(context.Background(), subdomain)
+			project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
 
 			if err != nil {
 				resp := apierrors.FromError(err)
