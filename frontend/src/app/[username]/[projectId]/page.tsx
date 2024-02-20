@@ -56,8 +56,6 @@ export default function Page() {
     router.push("/username");
   }
 
-  console.log(project);
-
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
