@@ -27,7 +27,7 @@ export const CreateProjectModal = () => {
     onSuccess: (data) => {
       snackbar.setSuccessMsg("Project created successfully!");
       removeState();
-      router.push("/username/" + data.name);
+      router.push("/username/" + data.id);
     },
     onError: () => snackbar.setErrorMsg("Unable to create a project"),
   });
