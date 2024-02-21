@@ -32,6 +32,19 @@ definitions:
       name:
         type: string
     type: object
+  projects.ProjectApiResponse:
+    properties:
+      createdAt:
+        type: string
+      deploymentStatus:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   projects.UpdateProjectRequest:
     properties:
       id:
@@ -141,7 +154,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/project.GenericProjectResp'
+            $ref: '#/definitions/projects.ProjectApiResponse'
       security:
       - Bearer: []
       summary: Get project
@@ -173,6 +186,27 @@ paths:
       security:
       - Bearer: []
       summary: Update project
+      tags:
+      - Project
+  /api/projects/code/{projectId}:
+    get:
+      consumes:
+      - application/json
+      operationId: download-project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Download project
       tags:
       - Project
   /app/status:

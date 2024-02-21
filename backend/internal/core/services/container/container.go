@@ -5,6 +5,8 @@ import (
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/ports"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type IContainerService interface {
@@ -57,6 +59,13 @@ func NewContainerService(containerMan ports.IContainerManager, fileRepo ports.IF
 func (cs *containerService) DeployContainerWithStarterCode(ctx context.Context, newProject *project.Project) {
 
 	sourceDir, err := cs.fileRepo.InstallDefaultProject(newProject)
+	if err != nil {
+		return
+	}
+
+	_, err = cs.projectRepo.UpdateProject(ctx, newProject.ID, &project.Project{
+		SourceCode: &project.SourceCode{URI: sourceDir, ID: uuid.New()},
+	})
 	if err != nil {
 		return
 	}

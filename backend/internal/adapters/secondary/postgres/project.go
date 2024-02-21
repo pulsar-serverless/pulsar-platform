@@ -42,8 +42,8 @@ func (repo *ProjectRepo) UpdateProject(ctx context.Context, projectId string, up
 }
 
 func (repo *ProjectRepo) GetProject(ctx context.Context, projectId string) (*project.Project, error) {
-	project := project.Project{}
-	result := repo.db.Where("id = ?", projectId).First(&project)
+	project := project.Project{ID: projectId}
+	result := repo.db.Joins("SourceCode").First(&project)
 
 	return &project, result.Error
 }
