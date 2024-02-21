@@ -31,12 +31,17 @@ const theme = createTheme({
         root: { textTransform: "none" },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: { textTransform: "none" },
+      },
+    },
     MuiPaper: {
       defaultProps: {
         elevation: 0,
-        variant: 'outlined'
-      }
-    }
+        variant: "outlined",
+      },
+    },
   },
 });
 

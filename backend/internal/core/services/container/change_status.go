@@ -44,8 +44,8 @@ func (cs *containerService) changeAppStatus(containerId string) error {
 	}
 }
 
-func (cs *containerService) ChangeAppStatus(ctx context.Context, subdomain string) error {
-	project, err := cs.projectRepo.GetProjectBySubdomain(ctx, subdomain)
+func (cs *containerService) ChangeAppStatus(ctx context.Context, appId string) error {
+	project, err := cs.projectRepo.GetProject(ctx, appId)
 	if err != nil {
 		return services.NewAppError(services.ErrNotFound, err)
 	}

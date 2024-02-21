@@ -77,7 +77,7 @@ func (cs *containerService) DeployContainerWithStarterCode(ctx context.Context, 
 	}
 
 	cs.projectRepo.UpdateProject(ctx,
-		newProject.ID.String(),
+		newProject.ID,
 		&project.Project{
 			ContainerId: containerId,
 		},

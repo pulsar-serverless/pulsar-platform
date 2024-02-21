@@ -48,13 +48,6 @@ func (repo *ProjectRepo) GetProject(ctx context.Context, projectId string) (*pro
 	return &project, result.Error
 }
 
-func (repo *ProjectRepo) GetProjectBySubdomain(ctx context.Context, subdomain string) (*project.Project, error) {
-	project := project.Project{}
-	result := repo.db.Where("subdomain = ?", subdomain).First(&project)
-
-	return &project, result.Error
-}
-
 func (repo *ProjectRepo) GetProjects(ctx context.Context, pageNumber int, pageSize int) (*common.Pagination[project.Project], error) {
 	var projects []*project.Project
 

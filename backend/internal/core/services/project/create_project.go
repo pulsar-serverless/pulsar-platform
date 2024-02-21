@@ -2,14 +2,12 @@ package project
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/rs/xid"
 )
 
 type CreateProjectReq struct {
@@ -17,7 +15,7 @@ type CreateProjectReq struct {
 }
 
 type GenericProjectResp struct {
-	ID               uuid.UUID                `json:"id"`
+	ID               string                   `json:"id"`
 	Name             string                   `json:"name"`
 	DeploymentStatus project.DeploymentStatus `json:"deploymentStatus"`
 	CreatedAt        time.Time                `json:"createdAt"`
@@ -36,9 +34,8 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 
 func (projectService *ProjectService) CreateProject(ctx context.Context, req CreateProjectReq) (*GenericProjectResp, error) {
 	var newProject = project.Project{
-		ID:        uuid.New(),
-		Name:      req.ProjectName,
-		Subdomain: fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
+		ID:   fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
+		Name: req.ProjectName,
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {
@@ -53,11 +50,5 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 }
 
 func generateAppId() string {
-	// TODO: change this
-	bytes := make([]byte, 12)
-	if _, err := rand.Read(bytes); err != nil {
-		panic(err)
-	}
-
-	return hex.EncodeToString(bytes)[:6]
+	return xid.New().String()
 }
