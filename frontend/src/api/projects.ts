@@ -18,11 +18,19 @@ export const ProjectApi = {
     const { data } = await axiosInstance.post<Project>("/projects", body);
     return data;
   },
-  
+
   async getProject(projectName: string) {
     const { data } = await axiosInstance.get<Project>(
       `/projects/${encodeURIComponent(projectName)}`
     );
     return data;
+  },
+
+  async downloadProjectCode(projectId: string) {
+    const { data } = await axiosInstance.get(`/projects/code/${projectId}`, {
+      responseType: "blob",
+    });
+    const blobUrl = URL.createObjectURL(data);
+    window.open(blobUrl);
   },
 };
