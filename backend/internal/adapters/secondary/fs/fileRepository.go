@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/archive"
+	"github.com/mholt/archiver/v4"
 	"github.com/otiai10/copy"
 )
 
@@ -93,4 +95,27 @@ func (fileRepo *ProjectFileRepository) InstallDefaultProject(project *project.Pr
 
 func (fileRepo *ProjectFileRepository) CreateBuildContext(projectDir string) (io.Reader, error) {
 	return archive.TarWithOptions(projectDir, &archive.TarOptions{})
+}
+
+func (fileRepo *ProjectFileRepository) ZipSourceCode(sourceDir string) (*os.File, error) {
+	files, err := archiver.FilesFromDisk(nil, map[string]string{
+		sourceDir: "",
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	out, err := os.CreateTemp("", "*.zip")
+	if err != nil {
+		return nil, err
+	}
+	defer out.Close()
+
+	format := archiver.CompressedArchive{
+		Archival: archiver.Zip{},
+	}
+
+	err = format.Archive(context.Background(), out, files)
+	return out, err
 }

@@ -18,9 +18,9 @@ type Server struct {
 	containerService container.IContainerService
 }
 
-func StartServer(pr ports.IProjectRepo, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
-	containerService := container.NewContainerService(containerMan, fileRepo, pr)
-	projectService := project.NewProjectService(pr, containerService)
+func StartServer(projectRepo ports.IProjectRepo, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
+	containerService := container.NewContainerService(containerMan, fileRepo, projectRepo)
+	projectService := project.NewProjectService(projectRepo, containerService, fileRepo)
 
 	server := &Server{
 		echo:             echo.New(),

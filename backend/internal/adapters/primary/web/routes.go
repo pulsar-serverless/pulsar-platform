@@ -20,6 +20,10 @@ func (server *Server) DefineRoutes() {
 		projectController.GET("", projects.GetProjects(server.projectService))
 		projectController.GET("/:id", projects.GetProject(server.projectService))
 		projectController.PUT("/:id", projects.UpdateProjects(server.projectService))
+
+		{
+			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
+		}
 	}
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
