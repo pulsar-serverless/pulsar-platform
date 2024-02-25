@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Container,
   IconButton,
   List,
   ListItem,
@@ -39,7 +40,11 @@ export default function Page() {
   const snackbar = useSnackbar();
   const router = useRouter();
 
-  const { data: project, isError, isLoading } = useQuery({
+  const {
+    data: project,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: [ProjectApi.getProject.name, projectName],
     queryFn: () => ProjectApi.getProject(projectName),
   });
@@ -59,22 +64,24 @@ export default function Page() {
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="Project" {...a11yProps(0)} />
-          <Tab label="Logs" {...a11yProps(1)} />
-          <Tab label="Analytics" {...a11yProps(2)} />
-          <Tab label="Environmental variables" {...a11yProps(3)} />
-        </Tabs>
+        <Container maxWidth="md" sx={{}}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="Project" {...a11yProps(0)} />
+            <Tab label="Logs" {...a11yProps(1)} />
+            <Tab label="Analytics" {...a11yProps(2)} />
+            <Tab label="Environmental variables" {...a11yProps(3)} />
+          </Tabs>
+        </Container>
       </Box>
-      <Box mt={3}>
+      <Container maxWidth="md" sx={{ mt: 3 }}>
         <CustomTabPanel value={value} index={0}>
           <ProjectDetailsCard isLoading={isLoading} project={project} />
         </CustomTabPanel>
-      </Box>
+      </Container>
     </>
   );
 }

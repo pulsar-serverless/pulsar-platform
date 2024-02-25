@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"context"
 	"io"
 	"mime/multipart"
 	"os"
@@ -8,8 +9,9 @@ import (
 )
 
 type IFileRepository interface {
-	InstallProject(project *project.Project, sourceFile *multipart.FileHeader) error
-	InstallDefaultProject(project *project.Project) (string, error)
-	CreateBuildContext(projectDir string) (io.Reader, error)
+	SetupDefaultProject(project *project.Project) (string, error)
+	SetupCustomProjectCode(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error)
+	CreateBuildContext(project *project.Project) (io.Reader, error)
 	ZipSourceCode(sourceDir string) (*os.File, error)
+	RemoveSourceCode(sourceDir string) error
 }

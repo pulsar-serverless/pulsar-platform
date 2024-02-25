@@ -5,6 +5,7 @@ import (
 	"pulsar/internal/core/domain/common"
 	"pulsar/internal/core/domain/project"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -29,14 +30,7 @@ func (repo *ProjectRepo) CreateProject(ctx context.Context, project *project.Pro
 
 func (repo *ProjectRepo) UpdateProject(ctx context.Context, projectId string, updatedProject *project.Project) (*project.Project, error) {
 	var project project.Project
-	result := repo.db.Where("id = ?", projectId).First(&project)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	project.Name = updatedProject.Name
-	result = repo.db.Where("id = ?", projectId).Updates(updatedProject)
+	result := repo.db.Where("id = ?", projectId).Updates(updatedProject)
 
 	return &project, result.Error
 }
@@ -67,5 +61,10 @@ func (repo *ProjectRepo) GetProjects(ctx context.Context, pageNumber int, pageSi
 
 func (repo *ProjectRepo) DeleteProject(ctx context.Context, projectId string) error {
 	result := repo.db.Where("id = ?", projectId).Delete(&project.Project{})
+	return result.Error
+}
+
+func (repo *ProjectRepo) UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error {
+	result := repo.db.Where("id = ?", id).Updates(code)
 	return result.Error
 }

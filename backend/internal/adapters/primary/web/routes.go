@@ -23,6 +23,7 @@ func (server *Server) DefineRoutes() {
 
 		{
 			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
+			projectController.PUT("/code/:projectId", projects.UploadProjectCode(server.projectService))
 		}
 	}
 
