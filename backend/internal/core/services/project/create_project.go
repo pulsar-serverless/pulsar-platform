@@ -7,6 +7,7 @@ import (
 	"pulsar/internal/core/services"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/rs/xid"
 )
 
@@ -42,8 +43,25 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 		return nil, services.NewAppError(services.ErrBadRequest, err)
 	}
 
-	go func(project *project.Project) {
-		projectService.containerService.DeployContainerWithStarterCode(ctx, project)
+	go func(newProject *project.Project) {
+		sourceDir, err := projectService.fileRepo.SetupDefaultProject(newProject)
+		if err != nil {
+			return
+		}
+
+		newProject.SourceCode = &project.SourceCode{URI: sourceDir, ID: uuid.New()}
+
+		_, err = projectService.projectRepo.UpdateProject(ctx, newProject.ID, newProject)
+		if err != nil {
+			return
+		}
+
+		buildContext, err := projectService.fileRepo.CreateBuildContext(newProject)
+		if err != nil {
+			return
+		}
+
+		projectService.containerService.DeployContainer(ctx, newProject, buildContext)
 	}(&newProject)
 
 	return GenericProjectRespFromProject(&newProject), nil

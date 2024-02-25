@@ -14,6 +14,7 @@ type IProjectService interface {
 	GetProject(ctx context.Context, req GetProjectReq) (*project.Project, error)
 	GetProjects(ctx context.Context, req GetProjectsReq) (*common.Pagination[GenericProjectResp], error)
 	UpdateProject(ctx context.Context, req UpdateProjectReq) (*GenericProjectResp, error)
+	UploadProjectCode(ctx context.Context, req UploadProjectCodeReq) (*project.Project, error)
 	DownloadProjectCode(ctx context.Context, req GetProjectReq) (string, error)
 }
 

@@ -1,43 +1,37 @@
 package fs
 
 import (
-	"archive/zip"
+	"context"
 	"io"
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
+
+	"github.com/mholt/archiver/v4"
 )
 
-func extractZippedProject(sourcePath string, targetPath string) error {
-	zipReader, err := zip.OpenReader(sourcePath)
-	if err != nil {
-		return err
-	}
+func unzipSourceCode(ctx context.Context, base string, src multipart.File) error {
+	format := archiver.Zip{}
+	handler := func(ctx context.Context, f archiver.File) error {
+		targetPath := filepath.Join(base, f.NameInArchive)
 
-	for _, file := range zipReader.Reader.File {
-
-		zippedFile, err := file.Open()
-		if err != nil {
-			return err
-		}
-		defer zippedFile.Close()
-
-		path, filePath := filepath.Split(file.Name)
-		if hasHiddenFolder(path) || strings.HasPrefix(filePath, ".") {
-			continue
+		if strings.HasPrefix(f.NameInArchive, "__MACOSX/") {
+			return nil
 		}
 
-		extractedFilePath := filepath.Join(targetPath, file.Name)
-
-		if file.FileInfo().IsDir() {
-			os.MkdirAll(extractedFilePath, file.Mode())
+		if f.FileInfo.IsDir() {
+			os.MkdirAll(targetPath, f.Mode())
 		} else {
+			inputFile, err := f.Open()
+			if err != nil {
+				return err
+			}
+
 			outputFile, err := os.OpenFile(
-				extractedFilePath,
+				targetPath,
 				os.O_WRONLY|os.O_CREATE|os.O_TRUNC,
-				file.Mode(),
+				f.Mode(),
 			)
 
 			if err != nil {
@@ -46,41 +40,14 @@ func extractZippedProject(sourcePath string, targetPath string) error {
 
 			defer outputFile.Close()
 
-			_, err = io.Copy(outputFile, zippedFile)
+			_, err = io.Copy(outputFile, inputFile)
 			if err != nil {
 				return err
 			}
 		}
-	}
-	return nil
-}
 
-func copyProject(sourceFile *multipart.FileHeader) (string, error) {
-	tmpDir, err := os.MkdirTemp("", "project")
-	if err != nil {
-		return "", err
+		return nil
 	}
 
-	src, err := sourceFile.Open()
-	if err != nil {
-		return "", err
-	}
-	defer src.Close()
-
-	destination, err := os.Create(filepath.Join(tmpDir, sourceFile.Filename))
-	if err != nil {
-		return "", err
-	}
-
-	defer destination.Close()
-	if io.Copy(destination, src); err != nil {
-		return "", err
-	}
-
-	return destination.Name(), nil
-}
-
-func hasHiddenFolder(path string) bool {
-	hiddenFolderRegex := regexp.MustCompile(`/\..*`)
-	return hiddenFolderRegex.MatchString(path)
+	return format.Extract(ctx, src, nil, handler)
 }

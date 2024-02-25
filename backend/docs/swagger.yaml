@@ -209,6 +209,31 @@ paths:
       summary: Download project
       tags:
       - Project
+    put:
+      consumes:
+      - application/json
+      operationId: upload-project-code
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: zipped code
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Upload project
+      tags:
+      - Project
   /app/status:
     post:
       consumes:

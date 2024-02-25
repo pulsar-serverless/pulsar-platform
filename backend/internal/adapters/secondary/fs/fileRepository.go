@@ -58,43 +58,36 @@ func (fileRepo *ProjectFileRepository) createDockerConfig(projectPath string, pr
 	return fileRepo.dockerfileTemplate.Execute(file, project)
 }
 
-func (fileRepo *ProjectFileRepository) InstallProject(project *project.Project, sourceFile *multipart.FileHeader) error {
-	projectDir, err := fileRepo.setupSourceFolder(project)
-	if err != nil {
-		return err
-	}
-
-	localProjectFile, err := copyProject(sourceFile)
-	if err != nil {
-		return err
-	}
-
-	err = extractZippedProject(localProjectFile, projectDir)
-	if err != nil {
-		return err
-	}
-
-	return fileRepo.createDockerConfig(projectDir, project)
-}
-
-func (fileRepo *ProjectFileRepository) InstallDefaultProject(project *project.Project) (string, error) {
+func (fileRepo *ProjectFileRepository) SetupDefaultProject(project *project.Project) (string, error) {
 	projectDir, err := fileRepo.setupSourceFolder(project)
 	if err != nil {
 		return "", err
 	}
 
 	// TODO: exclude dot files
-	err = copy.Copy(fileRepo.starterCodePath, projectDir)
+	return projectDir, copy.Copy(fileRepo.starterCodePath, projectDir)
+}
 
+func (fileRepo *ProjectFileRepository) SetupCustomProjectCode(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error) {
+	projectDir, err := fileRepo.setupSourceFolder(project)
 	if err != nil {
 		return "", err
 	}
 
-	return projectDir, fileRepo.createDockerConfig(projectDir, project)
+	src, err := zipFile.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
+	return projectDir, unzipSourceCode(ctx, projectDir, src)
 }
 
-func (fileRepo *ProjectFileRepository) CreateBuildContext(projectDir string) (io.Reader, error) {
-	return archive.TarWithOptions(projectDir, &archive.TarOptions{})
+func (fileRepo *ProjectFileRepository) CreateBuildContext(project *project.Project) (io.Reader, error) {
+	if err := fileRepo.createDockerConfig(project.SourceCode.URI, project); err != nil {
+		return nil, err
+	}
+	return archive.TarWithOptions(project.SourceCode.URI, &archive.TarOptions{})
 }
 
 func (fileRepo *ProjectFileRepository) ZipSourceCode(sourceDir string) (*os.File, error) {
@@ -118,4 +111,8 @@ func (fileRepo *ProjectFileRepository) ZipSourceCode(sourceDir string) (*os.File
 
 	err = format.Archive(context.Background(), out, files)
 	return out, err
+}
+
+func (fileRepo *ProjectFileRepository) RemoveSourceCode(sourceDir string) error {
+	return os.RemoveAll(sourceDir)
 }

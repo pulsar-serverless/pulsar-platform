@@ -2,15 +2,17 @@ package container
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/ports"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type IContainerService interface {
-	DeployContainerWithStarterCode(ctx context.Context, project *project.Project)
+	DeployContainer(ctx context.Context, project *project.Project, buildContext io.Reader)
 	StartApp(containerId string, successChan chan bool, errChan chan error)
 	ChangeAppStatus(ctx context.Context, containerId string) error
 }
@@ -56,32 +58,17 @@ func NewContainerService(containerMan ports.IContainerManager, fileRepo ports.IF
 	return service
 }
 
-func (cs *containerService) DeployContainerWithStarterCode(ctx context.Context, newProject *project.Project) {
+func (cs *containerService) DeployContainer(ctx context.Context, newProject *project.Project, buildContext io.Reader) {
 
-	sourceDir, err := cs.fileRepo.InstallDefaultProject(newProject)
+	err := cs.containerMan.BuildImage(ctx, buildContext, newProject)
 	if err != nil {
-		return
-	}
-
-	_, err = cs.projectRepo.UpdateProject(ctx, newProject.ID, &project.Project{
-		SourceCode: &project.SourceCode{URI: sourceDir, ID: uuid.New()},
-	})
-	if err != nil {
-		return
-	}
-
-	buildContext, err := cs.fileRepo.CreateBuildContext(sourceDir)
-	if err != nil {
-		return
-	}
-
-	err = cs.containerMan.BuildImage(ctx, buildContext, newProject)
-	if err != nil {
+		log.Error().Str("appId", newProject.ID).Msg(fmt.Sprintf("Unable to build app Image: %v", err))
 		return
 	}
 
 	containerId, err := cs.containerMan.CreateContainer(ctx, newProject.Name)
 	if err != nil {
+		log.Error().Str("appId", newProject.ID).Msg(fmt.Sprintf("Unable to build app Container: %v", err))
 		return
 	}
 
