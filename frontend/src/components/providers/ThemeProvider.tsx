@@ -1,5 +1,6 @@
 "use client";
 
+import { yellow } from "@mui/material/colors";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ReactNode } from "react";
 
@@ -11,6 +12,9 @@ const theme = createTheme({
     },
     secondary: {
       main: "#ffffff",
+    },
+    warning: {
+      main: yellow[500]
     },
     text: {
       primary: "#fff",

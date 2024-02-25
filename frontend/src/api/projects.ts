@@ -33,4 +33,9 @@ export const ProjectApi = {
     const blobUrl = URL.createObjectURL(data);
     window.open(blobUrl);
   },
+
+  async uploadProjectCode(body: FormData) {
+    const { data } = await axiosInstance.put(`/projects/code/${body.get('projectId')}`, body);
+    return data;
+  },
 };

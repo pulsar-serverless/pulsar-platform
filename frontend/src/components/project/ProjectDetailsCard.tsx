@@ -37,8 +37,8 @@ export const ProjectDetailsCard = ({
     >
       <CardMedia
         sx={{
-          minWidth: 300,
-          aspectRatio: 1,
+          minWidth: 350,
+          aspectRatio: 1.6,
         }}
       >
         <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
