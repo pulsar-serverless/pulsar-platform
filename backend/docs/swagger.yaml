@@ -1,5 +1,21 @@
 basePath: /
 definitions:
+  envs.EnvVariables:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  envs.OverwriteEnvVariablesReq:
+    properties:
+      projectID:
+        type: string
+      variables:
+        items:
+          $ref: '#/definitions/envs.EnvVariables'
+        type: array
+    type: object
   project.DeploymentStatus:
     enum:
     - ready
@@ -234,6 +250,35 @@ paths:
       summary: Upload project
       tags:
       - Project
+  /api/projects/envs/{projectId}:
+    post:
+      consumes:
+      - application/json
+      operationId: create-env-variables
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Create env variables
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/envs.OverwriteEnvVariablesReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/project.GenericProjectResp'
+      security:
+      - Bearer: []
+      summary: Create Environmental Variables
+      tags:
+      - Env
   /app/status:
     post:
       consumes:

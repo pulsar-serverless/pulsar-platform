@@ -14,7 +14,7 @@ func SetupDB(dsn string) *gorm.DB {
 		panic("Unable to connect to the database")
 	}
 
-	err = db.AutoMigrate(&project.Project{}, &project.SourceCode{})
+	err = db.AutoMigrate(&project.Project{}, &project.SourceCode{}, &project.EnvVariable{})
 	if err != nil {
 		panic("failed to perform migrations: " + err.Error())
 	}

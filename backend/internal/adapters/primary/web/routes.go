@@ -3,6 +3,7 @@ package web
 import (
 	"pulsar/internal/adapters/primary/web/apps"
 	"pulsar/internal/adapters/primary/web/auth"
+	"pulsar/internal/adapters/primary/web/envs"
 	"pulsar/internal/adapters/primary/web/projects"
 
 	"github.com/labstack/echo/v4"
@@ -24,6 +25,10 @@ func (server *Server) DefineRoutes() {
 		{
 			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
 			projectController.PUT("/code/:projectId", projects.UploadProjectCode(server.projectService))
+		}
+
+		{
+			projectController.POST("/envs/:projectId", envs.OverwriteEnvVariables(server.envService))
 		}
 	}
 

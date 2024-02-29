@@ -16,6 +16,7 @@ type IProjectService interface {
 	UpdateProject(ctx context.Context, req UpdateProjectReq) (*GenericProjectResp, error)
 	UploadProjectCode(ctx context.Context, req UploadProjectCodeReq) (*project.Project, error)
 	DownloadProjectCode(ctx context.Context, req GetProjectReq) (string, error)
+	InstallProject(ctx context.Context, project *project.Project) error
 }
 
 type ProjectService struct {
