@@ -3,20 +3,8 @@
 import { ProjectApi } from "@/api/projects";
 import { CustomTabPanel } from "@/components/layout/CustomTabPanel";
 import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Container,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Skeleton,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
+  Box, Container, Tab,
+  Tabs
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -25,6 +13,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { ProjectDetailsCard } from "@/components/project/ProjectDetailsCard";
 import { useSnackbar } from "@/hooks/useSnackbar";
+import { EnvVariablesForm } from "@/components/project/EnvVariablesForm";
 
 function a11yProps(index: number) {
   return {
@@ -80,6 +69,9 @@ export default function Page() {
       <Container maxWidth="md" sx={{ mt: 3 }}>
         <CustomTabPanel value={value} index={0}>
           <ProjectDetailsCard isLoading={isLoading} project={project} />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={3}>
+          <EnvVariablesForm projectID={projectName} />
         </CustomTabPanel>
       </Container>
     </>
