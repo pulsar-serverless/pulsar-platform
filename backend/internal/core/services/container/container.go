@@ -12,7 +12,7 @@ import (
 )
 
 type IContainerService interface {
-	DeployContainer(ctx context.Context, project *project.Project, buildContext io.Reader)
+	DeployContainer(ctx context.Context, project *project.Project, buildContext io.Reader) (string, error)
 	StartApp(containerId string, successChan chan bool, errChan chan error)
 	ChangeAppStatus(ctx context.Context, containerId string) error
 }
@@ -58,24 +58,18 @@ func NewContainerService(containerMan ports.IContainerManager, fileRepo ports.IF
 	return service
 }
 
-func (cs *containerService) DeployContainer(ctx context.Context, newProject *project.Project, buildContext io.Reader) {
+func (cs *containerService) DeployContainer(ctx context.Context, newProject *project.Project, buildContext io.Reader) (string, error) {
 
 	err := cs.containerMan.BuildImage(ctx, buildContext, newProject)
 	if err != nil {
 		log.Error().Str("appId", newProject.ID).Msg(fmt.Sprintf("Unable to build app Image: %v", err))
-		return
+		return "", err
 	}
 
 	containerId, err := cs.containerMan.CreateContainer(ctx, newProject.Name)
 	if err != nil {
 		log.Error().Str("appId", newProject.ID).Msg(fmt.Sprintf("Unable to build app Container: %v", err))
-		return
 	}
 
-	cs.projectRepo.UpdateProject(ctx,
-		newProject.ID,
-		&project.Project{
-			ContainerId: containerId,
-		},
-	)
+	return containerId, err
 }

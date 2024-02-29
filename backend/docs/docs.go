@@ -179,6 +179,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/projects/envs/{projectId}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Env"
+                ],
+                "summary": "Create Environmental Variables",
+                "operationId": "create-env-variables",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create env variables",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/envs.OverwriteEnvVariablesReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/project.GenericProjectResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/projects/{id}": {
             "get": {
                 "security": [
@@ -324,6 +370,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "envs.EnvVariables": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "envs.OverwriteEnvVariablesReq": {
+            "type": "object",
+            "properties": {
+                "projectID": {
+                    "type": "string"
+                },
+                "variables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/envs.EnvVariables"
+                    }
+                }
+            }
+        },
         "project.DeploymentStatus": {
             "type": "string",
             "enum": [

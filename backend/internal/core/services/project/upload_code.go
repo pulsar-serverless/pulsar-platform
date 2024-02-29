@@ -45,13 +45,7 @@ func (projectService *ProjectService) UploadProjectCode(ctx context.Context, req
 			log.Error().Str("appId", project.ID).Msg(fmt.Sprintf("Unable to remove project code: %v", err))
 		}
 
-		buildContext, err := projectService.fileRepo.CreateBuildContext(project)
-		if err != nil {
-			log.Error().Str("appId", project.ID).Msg(fmt.Sprintf("Unable to compile app Image: %v", err))
-			return
-		}
-
-		projectService.containerService.DeployContainer(ctx, project, buildContext)
+		projectService.InstallProject(context.TODO(), project)
 	}(existingProject, oldProjectPath)
 
 	return existingProject, nil

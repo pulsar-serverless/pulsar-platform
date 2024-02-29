@@ -25,6 +25,7 @@ type Project struct {
 	DeploymentStatus DeploymentStatus `gorm:"default:'none'"`
 	CreatedAt        time.Time        `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time        `gorm:"autoUpdateTime"`
-	SourceCodeId     *uuid.UUID
-	SourceCode       *SourceCode
+	SourceCodeId     *uuid.UUID       ``
+	SourceCode       *SourceCode      ``
+	EnvVariables     []EnvVariable    `gorm:"foreignKey:ProjectID"`
 }
