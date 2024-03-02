@@ -1,23 +1,55 @@
 "use client";
 
-import { Container, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
+import {
+  Box, Container,
+  Grid,
+  Pagination, Typography
+} from "@mui/material";
+import { useState } from "react";
+
+import CreateProjectCard from "@/components/project/CreateProjectCard";
+import ProjectCard from "@/components/project/ProjectCard";
+import { useQuery } from "@tanstack/react-query";
+import { ProjectApi } from "@/api/projects";
 
 export default function Page() {
-  const { isAuthenticated, isLoading } = useAuth0();
-  const router = useRouter()
+  const [page, setPage] = useState(1);
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
-  useEffect(() => {
-    if (!isAuthenticated && !isLoading) {
-      router.push("/")
-    }
+  const { data: projects } = useQuery({
+    queryKey: [ProjectApi.getProjects.name, page],
+    queryFn: () => ProjectApi.getProjects(page , 10),
   });
 
   return (
-    <Container>
-      <Typography>Projects</Typography>
+    <Container maxWidth="md" sx={{ py: 3 }}>
+      <Typography variant="h6" sx={{ textTransform: "capitalize" }}>
+        Recent Projects
+      </Typography>
+
+      <Grid container sx={{ mt: 0.5 }} spacing={4}>
+        <Grid item lg={4} sm={6} xs={12}>
+          <CreateProjectCard />
+        </Grid>
+
+        {projects?.rows.map((project, index) => (
+          <Grid item lg={4} sm={6} xs={12} key={`project-${index}`}>
+            <ProjectCard project={project} />
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box my={6}>
+        <Pagination
+          count={projects?.totalPages || 0}
+          page={page}
+          onChange={handleChange}
+          variant="outlined"
+          color="primary"
+        />
+      </Box>
     </Container>
   );
 }

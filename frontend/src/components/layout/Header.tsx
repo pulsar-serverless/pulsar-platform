@@ -16,7 +16,6 @@ import {
   ListItemText,
   Tooltip,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import PersonIcon from "@mui/icons-material/Person";
 import { Logo } from "./Logo";
@@ -37,7 +36,7 @@ export const Header = () => {
     setAnchorEl(null);
   };
 
-  const username = "dagem";
+  const username = "username";
 
   return (
     <AppBar
@@ -70,16 +69,11 @@ export const Header = () => {
             <>
               <Button
                 LinkComponent={Link}
-                href={`/${username}/projects`}
+                href={`/${username}`}
                 color="secondary"
               >
                 Projects
               </Button>
-              <Link shallow href="?action=create-project">
-                <Button variant="contained" startIcon={<AddRoundedIcon />}>
-                  Create Project
-                </Button>
-              </Link>
               <IconButton
                 id="profile-button"
                 aria-controls={open ? "profile-menu" : undefined}
