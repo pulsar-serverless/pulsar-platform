@@ -14,11 +14,12 @@ type EnvVariables struct {
 
 type OverwriteEnvVariablesReq struct {
 	Variables []EnvVariables `form:"variables"`
-	ProjectID string         `param:"projectId"`
+	ProjectID string         `param:"projectId" json:"-"`
 }
 
 func (envServices *envService) OverwriteEnvVariables(ctx context.Context, request OverwriteEnvVariablesReq) ([]*project.EnvVariable, error) {
-	existingProject, err := envServices.projectService.GetProject(ctx, projectServices.GetProjectReq{ProjectId: request.ProjectID})
+	input := projectServices.GetProjectReq{ProjectId: request.ProjectID}
+	existingProject, err := envServices.projectService.GetProject(ctx, input)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrNotFound, err)
 	}
@@ -33,10 +34,12 @@ func (envServices *envService) OverwriteEnvVariables(ctx context.Context, reques
 		}
 	}
 
-	err = envServices.envRepo.OverwriteEnvVariables(ctx, request.ProjectID, variables)
+	envs, err := envServices.envRepo.OverwriteEnvVariables(ctx, request.ProjectID, variables)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrBadRequest, err)
 	}
+
+	existingProject.EnvVariables = envs
 
 	go func() {
 		envServices.projectService.InstallProject(context.TODO(), existingProject)

@@ -6,5 +6,6 @@ import (
 )
 
 type IEnvRepository interface {
-	OverwriteEnvVariables(ctx context.Context, projectId string, variables []*project.EnvVariable) error
+	OverwriteEnvVariables(ctx context.Context, projectId string, variables []*project.EnvVariable) ([]*project.EnvVariable, error)
+	GetEnvVariables(ctx context.Context, projectId string) ([]*project.EnvVariable, error)
 }

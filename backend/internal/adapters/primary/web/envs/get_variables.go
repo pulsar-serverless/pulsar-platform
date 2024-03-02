@@ -10,24 +10,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Create Environmental Variables
-// @ID			create-env-variables
+// @Summary	Get Environmental Variables
+// @ID			get-env-variables
 // @Accept		json
 // @Produce	json
 // @Success	200		{object}	[]project.EnvVariable
-// @Router		/api/projects/envs/{projectId} [post]
+// @Router		/api/projects/envs/{projectId} [get]
 // @Param		projectId		path		string					true	"project id"
-// @Param		request	body		envs.OverwriteEnvVariablesReq	true	"Create env variables"
 // @Security	Bearer
 // @Tags		Env
-func OverwriteEnvVariables(envApi envs.IEnvService) echo.HandlerFunc {
+func GetEnvVariables(envApi envs.IEnvService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input envs.OverwriteEnvVariablesReq
-		if err := c.Bind(&input); err != nil {
-			return c.NoContent(http.StatusBadRequest)
-		}
+		projectId := c.Param("projectId")
 
-		envs, err := envApi.OverwriteEnvVariables(context.TODO(), input)
+		envs, err := envApi.GetEnvVariables(context.TODO(), projectId)
 		if err != nil {
 			errResp := apierrors.FromError(err)
 			return c.JSON(errResp.Status, errResp)
