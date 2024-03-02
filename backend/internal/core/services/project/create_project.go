@@ -13,6 +13,7 @@ import (
 
 type CreateProjectReq struct {
 	ProjectName string
+	UserId      string
 }
 
 type GenericProjectResp struct {
@@ -35,8 +36,9 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 
 func (projectService *ProjectService) CreateProject(ctx context.Context, req CreateProjectReq) (*GenericProjectResp, error) {
 	var newProject = project.Project{
-		ID:   fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
-		Name: req.ProjectName,
+		ID:     fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
+		Name:   req.ProjectName,
+		UserId: req.UserId,
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {

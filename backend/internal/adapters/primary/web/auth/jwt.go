@@ -69,7 +69,9 @@ func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 			return errorHandler(c, "Invalid authorization token")
 		}
 
-		c.Set("claims", claims)
+		userId := claims.(*validator.ValidatedClaims).RegisteredClaims.Subject
+		c.Set("userId", userId)
+
 		return next(c)
 	}
 }

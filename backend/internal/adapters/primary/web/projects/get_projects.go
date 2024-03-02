@@ -30,7 +30,9 @@ func GetProjects(projectApi project.IProjectService) echo.HandlerFunc {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-		request := project.GetProjectsReq{PageNumber: input.PageNumber, PageSize: input.PageSize}
+		userId := c.Get("userId").(string)
+
+		request := project.GetProjectsReq{PageNumber: input.PageNumber, PageSize: input.PageSize, UserId: userId}
 		projects, err := projectApi.GetProjects(context.TODO(), request)
 
 		if err != nil {

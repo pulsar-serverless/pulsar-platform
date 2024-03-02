@@ -12,7 +12,7 @@ type IProjectRepo interface {
 	CreateProject(ctx context.Context, project *project.Project) error
 	UpdateProject(ctx context.Context, projectId string, updatedProject *project.Project) (*project.Project, error)
 	GetProject(ctx context.Context, projectId string) (*project.Project, error)
-	GetProjects(ctx context.Context, pageNumber int, pageSize int) (*common.Pagination[project.Project], error)
+	GetProjects(ctx context.Context, pageNumber int, pageSize int, userId string) (*common.Pagination[project.Project], error)
 	DeleteProject(ctx context.Context, projectId string) error
 	UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error
 }

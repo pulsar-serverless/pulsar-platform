@@ -19,6 +19,7 @@ const (
 type Project struct {
 	ID               string           `gorm:"primaryKey"`
 	Name             string           `gorm:"unique;not null"`
+	UserId           string           `gorm:"not null"`
 	ContainerId      string           `gorm:"unique;default:null"`
 	Port             uint             `gorm:"unique;default:null"`
 	ApiKey           string           ``
