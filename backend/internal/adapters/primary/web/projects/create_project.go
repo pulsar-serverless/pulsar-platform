@@ -31,9 +31,11 @@ func CreateProject(projectApi project.IProjectService) echo.HandlerFunc {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
+		userId := c.Get("userId").(string)
+
 		result, err := projectApi.CreateProject(
 			context.TODO(),
-			project.CreateProjectReq{ProjectName: input.Name})
+			project.CreateProjectReq{ProjectName: input.Name, UserId: userId})
 
 		if err != nil {
 			errResp := apierrors.FromError(err)

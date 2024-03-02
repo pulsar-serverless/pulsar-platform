@@ -8,10 +8,11 @@ import (
 
 type GetProjectsReq struct {
 	PageNumber, PageSize int
+	UserId               string
 }
 
 func (projectService *ProjectService) GetProjects(ctx context.Context, req GetProjectsReq) (*common.Pagination[GenericProjectResp], error) {
-	projects, err := projectService.projectRepo.GetProjects(ctx, req.PageNumber, req.PageSize)
+	projects, err := projectService.projectRepo.GetProjects(ctx, req.PageNumber, req.PageSize, req.UserId)
 
 	if err != nil {
 		return nil, services.NewAppError(services.ErrInternalServer, err)

@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/components/interceptors/HttpInterceptor";
+import { Paginated } from "@/models/pagination";
 import { Project } from "@/models/project";
 import { object, string, InferType } from "yup";
 
@@ -26,6 +27,13 @@ export const ProjectApi = {
     return data;
   },
 
+  async getProjects(pageNumber: number = 0, pagesize: number = 20) {
+    const { data } = await axiosInstance.get<Paginated<Project>>(`/projects`, {
+      params: { pageNumber, pagesize },
+    });
+    return data;
+  },
+
   async downloadProjectCode(projectId: string) {
     const { data } = await axiosInstance.get(`/projects/code/${projectId}`, {
       responseType: "blob",
@@ -35,7 +43,10 @@ export const ProjectApi = {
   },
 
   async uploadProjectCode(body: FormData) {
-    const { data } = await axiosInstance.put(`/projects/code/${body.get('projectId')}`, body);
+    const { data } = await axiosInstance.put(
+      `/projects/code/${body.get("projectId")}`,
+      body
+    );
     return data;
   },
 };

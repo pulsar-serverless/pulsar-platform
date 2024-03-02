@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"math"
 	"pulsar/internal/core/domain/common"
 	"pulsar/internal/core/domain/project"
 
@@ -19,7 +20,7 @@ func NewProjectRepo(db *gorm.DB) Database {
 
 func Paginate[T any](pg *common.Pagination[T]) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Offset(pg.PageNumber * pg.PageSize).Limit(pg.PageSize)
+		return db.Offset((pg.PageNumber - 1) * pg.PageSize).Limit(pg.PageSize)
 	}
 }
 
@@ -42,7 +43,7 @@ func (repo *Database) GetProject(ctx context.Context, projectId string) (*projec
 	return &project, result.Error
 }
 
-func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize int) (*common.Pagination[project.Project], error) {
+func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize int, userId string) (*common.Pagination[project.Project], error) {
 	var projects []*project.Project
 
 	pagination := &common.Pagination[project.Project]{
@@ -51,10 +52,16 @@ func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize 
 	}
 
 	// get total number of projects
-	repo.conn.Model(&project.Project{}).Count(&pagination.TotalPages)
+	var count int64
+	repo.conn.Model(&project.Project{UserId: userId}).Count(&count)
 
-	result := repo.conn.Scopes(Paginate(pagination)).Find(&projects)
+	result := repo.conn.Scopes(Paginate(pagination)).
+		Where(&project.Project{UserId: userId}).
+		Order("updated_at desc").
+		Find(&projects)
+
 	pagination.Rows = projects
+	pagination.TotalPages = int64(math.Ceil(float64(count) / float64(pageSize)))
 
 	return pagination, result.Error
 }
