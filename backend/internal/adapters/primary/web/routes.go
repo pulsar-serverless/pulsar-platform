@@ -29,6 +29,7 @@ func (server *Server) DefineRoutes() {
 
 		{
 			projectController.POST("/envs/:projectId", envs.OverwriteEnvVariables(server.envService))
+			projectController.GET("/envs/:projectId", envs.GetEnvVariables(server.envService))
 		}
 	}
 

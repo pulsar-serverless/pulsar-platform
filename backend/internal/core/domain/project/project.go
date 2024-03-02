@@ -27,5 +27,5 @@ type Project struct {
 	UpdatedAt        time.Time        `gorm:"autoUpdateTime"`
 	SourceCodeId     *uuid.UUID       ``
 	SourceCode       *SourceCode      ``
-	EnvVariables     []EnvVariable    `gorm:"foreignKey:ProjectID"`
+	EnvVariables     []*EnvVariable   `gorm:"foreignKey:ProjectID"`
 }

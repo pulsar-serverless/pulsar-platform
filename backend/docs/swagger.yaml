@@ -9,8 +9,6 @@ definitions:
     type: object
   envs.OverwriteEnvVariablesReq:
     properties:
-      projectID:
-        type: string
       variables:
         items:
           $ref: '#/definitions/envs.EnvVariables'
@@ -30,6 +28,15 @@ definitions:
     - Building
     - Done
     - None
+  project.EnvVariable:
+    properties:
+      key:
+        type: string
+      projectID:
+        type: string
+      value:
+        type: string
+    type: object
   project.GenericProjectResp:
     properties:
       createdAt:
@@ -251,6 +258,30 @@ paths:
       tags:
       - Project
   /api/projects/envs/{projectId}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-env-variables
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/project.EnvVariable'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Environmental Variables
+      tags:
+      - Env
     post:
       consumes:
       - application/json
@@ -273,7 +304,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/project.GenericProjectResp'
+            items:
+              $ref: '#/definitions/project.EnvVariable'
+            type: array
       security:
       - Bearer: []
       summary: Create Environmental Variables

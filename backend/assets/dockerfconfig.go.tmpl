@@ -1,5 +1,8 @@
 FROM node:18.17.0-alpine
-ENV APP_ID {{ .ID }}
+ENV APP_ID {{.ID}}
+{{range .EnvVariables}}
+ENV {{.Key}} "{{.Value}}"
+{{end}}
 WORKDIR /app
 COPY ./package.json ./yarn.lock  ./
 RUN yarn install

@@ -11,15 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { FieldArray, Formik } from "formik";
 import { EnvVariablesApi, EnvValidationSchema } from "@/api/envs";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "@/hooks/useSnackbar";
 
 export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
-  const initialValues = { variables: [{ key: "", value: "" }] };
-
   const snackbar = useSnackbar();
 
   const { mutate, isPending } = useMutation({
@@ -30,6 +28,21 @@ export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
     onError: () =>
       snackbar.setErrorMsg("Unable to create environment variables"),
   });
+
+  const { data: envs, isError } = useQuery({
+    queryKey: [EnvVariablesApi.getEnvVariables.name, projectID],
+    queryFn: () => EnvVariablesApi.getEnvVariables(projectID),
+  });
+
+  const initialValues = envs
+    ? { variables: envs.map((env) => ({ key: env.key, value: env.value })) }
+    : { variables: [{ key: "", value: "" }] };
+
+  if (isError) {
+    snackbar.setErrorMsg(
+      "Unable to fetch environmental variables for the project."
+    );
+  }
 
   return (
     <>
@@ -44,10 +57,12 @@ export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
         Define key-value pairs for your serverless application&apos;s
         environmental variables.
       </Typography>
+
       <Formik
         onSubmit={(values) => mutate({ ...values, projectID })}
         initialValues={initialValues}
         validationSchema={EnvValidationSchema}
+        enableReinitialize
       >
         {({
           values,
@@ -101,7 +116,7 @@ export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
                                   : null
                               }
                             />
-                            <Stack direction={"row"} sx={{ flex: 4 }} gap={1.5}>
+                            <Stack direction={"row"} sx={{ flex: 4 }} gap={1.5} alignItems={'center'}>
                               <TextField
                                 size="small"
                                 fullWidth
@@ -128,7 +143,7 @@ export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
                         ))}
                       </Stack>
                       <Button
-                        startIcon={<AddCircleOutlineIcon />}
+                        startIcon={<AddRoundedIcon />}
                         variant="outlined"
                         size="small"
                         color="secondary"
@@ -149,7 +164,7 @@ export const EnvVariablesForm = ({ projectID }: { projectID: string }) => {
                   variant="outlined"
                   color="error"
                   onClick={() => {
-                    setValues({ variables: [{ key: "", value: "" }] });
+                    setValues(initialValues);
                     setTouched({ variables: undefined });
                   }}
                 >

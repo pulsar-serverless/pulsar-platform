@@ -180,6 +180,44 @@ const docTemplate = `{
             }
         },
         "/api/projects/envs/{projectId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Env"
+                ],
+                "summary": "Get Environmental Variables",
+                "operationId": "get-env-variables",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/project.EnvVariable"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -219,7 +257,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/project.GenericProjectResp"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/project.EnvVariable"
+                            }
                         }
                     }
                 }
@@ -384,9 +425,6 @@ const docTemplate = `{
         "envs.OverwriteEnvVariablesReq": {
             "type": "object",
             "properties": {
-                "projectID": {
-                    "type": "string"
-                },
                 "variables": {
                     "type": "array",
                     "items": {
@@ -411,6 +449,20 @@ const docTemplate = `{
                 "Done",
                 "None"
             ]
+        },
+        "project.EnvVariable": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "projectID": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
         },
         "project.GenericProjectResp": {
             "type": "object",
