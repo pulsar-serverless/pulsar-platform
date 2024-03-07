@@ -1,6 +1,7 @@
 package project
 
 import (
+	"pulsar/internal/core/domain/log"
 	"time"
 
 	"github.com/google/uuid"
@@ -29,4 +30,5 @@ type Project struct {
 	SourceCodeId     *uuid.UUID       ``
 	SourceCode       *SourceCode      ``
 	EnvVariables     []*EnvVariable   `gorm:"foreignKey:ProjectID"`
+	Logs             []*log.AppLog    `gorm:"foreignKey:ProjectID;references:ID"`
 }

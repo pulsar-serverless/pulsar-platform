@@ -12,5 +12,6 @@ type IContainerManager interface {
 	StopContainer(ctx context.Context, containerId string) error
 	DeleteContainer(ctx context.Context, containerId string) error
 	GetStatus(ctx context.Context, containerId string) (string, error)
-	BuildImage(ctx context.Context, buildContext io.Reader, project *project.Project) error
+	BuildImage(ctx context.Context, buildContext io.Reader, project *project.Project) (io.ReadCloser, error)
+	GetContainerLogs(ctx context.Context, containerId string) (io.ReadCloser, error)
 }

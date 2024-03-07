@@ -2,25 +2,35 @@ package container
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	domain "pulsar/internal/core/domain/log"
+	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
-func (ss *containerService) startServerlessApp(ctx context.Context, containerId string, success chan bool, errorChan chan error) {
-	containerInfo, ok := ss.liveContainers[containerId]
+func (cs *containerService) startServerlessApp(ctx context.Context, project *project.Project, success chan bool, errorChan chan error) {
+	containerInfo, ok := cs.liveContainers[project.ContainerId]
 
 	if !ok {
 		// start the serverless container
-		log.Info().Str("containerId", containerId).Msg("Starting app container: container not started.")
-		err := ss.containerMan.StartContainer(ctx, containerId)
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.INFO,
+			"Container not started; Starting app container.",
+		))
+
+		err := cs.containerMan.StartContainer(ctx, project.ContainerId)
 		if err != nil {
-			log.Error().Str("containerId", containerId).Msg("Unable to start app container.")
+			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+				project.ID,
+				domain.Error,
+				fmt.Sprintf("Unable to start app container: %v", err),
+			))
 			errorChan <- services.NewAppError(services.ErrInternalServer, err)
 		}
+
+		go cs.saveContainerLogs(project)
 
 		containerInfo = &ContainerInfo{
 			lastAccessed:  time.Now(),
@@ -28,31 +38,46 @@ func (ss *containerService) startServerlessApp(ctx context.Context, containerId 
 			isServerAlive: false,
 		}
 
-		ss.liveContainers[containerId] = containerInfo
+		cs.liveContainers[project.ContainerId] = containerInfo
 	} else {
-		log.Info().Str("containerId", containerId).Msg("Starting app container; container already started.")
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.Error,
+			"Starting app container; container already started.",
+		))
 		containerInfo.lastAccessed = time.Now()
 	}
 
 	// schedule app closing
-	go func(containerId string) {
-		log.Info().Str("containerId", containerId).Msg(fmt.Sprintf("Scheduled app to stop after %v.", ss.maxContainerAge))
-		time.Sleep(ss.maxContainerAge)
-		ss.end <- containerId
-	}(containerId)
+	go func() {
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.WARNING,
+			fmt.Sprintf("Scheduled app to stop after %v.", cs.maxContainerAge),
+		))
+		time.Sleep(cs.maxContainerAge)
+		cs.end <- project
+	}()
 
 	// await for the app to announce it's live
 	go func() {
 		if !(containerInfo.isServerAlive) {
-			timeout := time.NewTicker(ss.operationsTimeout)
+			timeout := time.NewTicker(cs.operationsTimeout)
 			select {
 			case isServerAlive := <-containerInfo.server:
 				containerInfo.isServerAlive = isServerAlive
-				log.Info().Str("containerId", containerId).Msg("Serverless app started.")
+				cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+					project.ID,
+					domain.WARNING,
+					"Serverless app started.",
+				))
 				success <- isServerAlive
 			case <-timeout.C:
-				log.Error().Str("containerId", containerId).Msg("unable to start app in time")
-				errorChan <- services.NewAppError(services.ErrInternalServer, errors.New("Unable to start app in time"))
+				cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+					project.ID,
+					domain.Error,
+					"Timeout: Unable to start app in time.",
+				))
 			}
 		} else {
 			success <- true
@@ -60,6 +85,6 @@ func (ss *containerService) startServerlessApp(ctx context.Context, containerId 
 	}()
 }
 
-func (ss *containerService) StartApp(containerId string, successChan chan bool, errChan chan error) {
-	ss.start <- &containerStartArg{containerId, successChan, errChan}
+func (ss *containerService) StartApp(proj *project.Project, successChan chan bool, errChan chan error) {
+	ss.start <- &containerStartArg{proj, successChan, errChan}
 }

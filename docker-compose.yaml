@@ -11,8 +11,16 @@ services:
     ports:
       - "5436:5432"
     networks:
-      - pulsar-network
+      - pulsar-internal-network
+      
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+        - 5672:5672
+        - 15672:15672
+    networks:
+        - pulsar-internal-network
 
 networks:
-  pulsar-network:
+  pulsar-internal-network:
     driver: bridge

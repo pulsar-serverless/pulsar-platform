@@ -3,27 +3,40 @@ package container
 import (
 	"context"
 	"fmt"
+	domain "pulsar/internal/core/domain/log"
+	"pulsar/internal/core/domain/project"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
-func (cs *containerService) stopServerlessApp(ctx context.Context, containerId string) (bool, error) {
-	containerInfo, ok := cs.liveContainers[containerId]
+func (cs *containerService) stopServerlessApp(ctx context.Context, project *project.Project) (bool, error) {
+	containerInfo, ok := cs.liveContainers[project.ContainerId]
 
 	if ok && time.Now().After(containerInfo.lastAccessed.Add(cs.maxContainerAge)) {
 		// stop the serverless container
-		err := cs.containerMan.StopContainer(ctx, containerId)
+		err := cs.containerMan.StopContainer(ctx, project.ContainerId)
 		if err != nil {
-			log.Error().Str("containerId", containerId).Msg(fmt.Sprintf("Unable to stop container: %v", err.Error()))
+			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+				project.ID,
+				domain.Error,
+				fmt.Sprintf("Unable to stop container: %v", err.Error()),
+			))
 			return false, err
 		}
 
-		log.Info().Str("containerId", containerId).Msg("container stopped.")
-		delete(cs.liveContainers, containerId)
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.Error,
+			"Container stopped.",
+		))
+
+		delete(cs.liveContainers, project.ContainerId)
 		return true, nil
 	}
 
-	log.Info().Str("containerId", containerId).Msg("Deadline extended; container not stopped.")
+	cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+		project.ID,
+		domain.Error,
+		"Deadline extended; container not stopped.",
+	))
 	return false, nil
 }
