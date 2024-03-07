@@ -8,6 +8,7 @@ import (
 	"pulsar/internal/adapters/secondary/docker"
 	"pulsar/internal/adapters/secondary/fs"
 	"pulsar/internal/adapters/secondary/postgres"
+	"pulsar/internal/adapters/secondary/rabbitmq"
 
 	"github.com/joho/godotenv"
 )
@@ -29,8 +30,9 @@ func main() {
 	}
 
 	dbConn := postgres.SetupDB(os.Getenv("POSTGRES_CONNECTION"))
-	projectRepo := postgres.NewProjectRepo(dbConn)
+	rabbitmq := rabbitmq.NewMessageQueue(os.Getenv("RABBIT_MQ_STRING"))
 
+	projectRepo := postgres.NewProjectRepo(dbConn)
 	containerManager := docker.NewContainerManager()
 	defer containerManager.Close()
 
@@ -44,7 +46,7 @@ func main() {
 		panic("Unable to setup authentication")
 	}
 
-	web.StartServer(&projectRepo, containerManager, fileRepository)
+	web.StartServer(&projectRepo, rabbitmq, containerManager, fileRepository)
 }
 
 // swag init -g cmd/main.go -o docs/

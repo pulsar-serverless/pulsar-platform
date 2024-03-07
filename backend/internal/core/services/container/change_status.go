@@ -4,30 +4,39 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	domain "pulsar/internal/core/domain/log"
+	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
-func (cs *containerService) changeAppStatus(containerId string) error {
-	containerInfo, ok := cs.liveContainers[containerId]
+func (cs *containerService) changeAppStatus(project *project.Project) error {
+	containerInfo, ok := cs.liveContainers[project.ContainerId]
 
 	if !ok {
-		log.Info().Str("containerId", containerId).Msg("No app state found: creating a default app state")
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.WARNING,
+			"App state not found; creating a default app state.",
+		))
+
 		containerInfo = &ContainerInfo{
 			lastAccessed:  time.Now(),
 			server:        make(chan bool),
 			isServerAlive: true,
 		}
 
-		cs.liveContainers[containerId] = containerInfo
+		cs.liveContainers[project.ContainerId] = containerInfo
 
 		go func(containerId string) {
-			log.Info().Str("containerId", containerId).Msg(fmt.Sprintf("scheduled app to stop after %v", cs.maxContainerAge))
+			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+				project.ID,
+				domain.WARNING,
+				fmt.Sprintf("Scheduled app to stop after %v.", cs.maxContainerAge),
+			))
 			time.Sleep(cs.maxContainerAge)
-			cs.end <- containerId
-		}(containerId)
+			cs.end <- project
+		}(project.ContainerId)
 
 		return nil
 	}
@@ -36,19 +45,22 @@ func (cs *containerService) changeAppStatus(containerId string) error {
 
 	select {
 	case containerInfo.server <- true:
-		log.Info().Str("containerId", containerId).Msg("Announce the app inside the container is alive")
 		return nil
 	case <-timeout.C:
-		log.Info().Str("containerId", containerId).Msg("Timeout listener for app state did not respond")
-		return services.NewAppError(services.ErrInternalServer, errors.New("Unable to access app state in time"))
+		return services.NewAppError(services.ErrInternalServer, errors.New("unable to access app state in time"))
 	}
 }
 
 func (cs *containerService) ChangeAppStatus(ctx context.Context, appId string) error {
 	project, err := cs.projectRepo.GetProject(ctx, appId)
 	if err != nil {
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.Error,
+			"Timeout listener for app state did not respond. Unable to access app state in time.",
+		))
 		return services.NewAppError(services.ErrNotFound, err)
 	}
 
-	return cs.changeAppStatus(project.ContainerId)
+	return cs.changeAppStatus(project)
 }

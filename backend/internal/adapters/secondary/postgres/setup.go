@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"pulsar/internal/core/domain/log"
 	"pulsar/internal/core/domain/project"
 
 	"gorm.io/driver/postgres"
@@ -14,7 +15,12 @@ func SetupDB(dsn string) *gorm.DB {
 		panic("Unable to connect to the database")
 	}
 
-	err = db.AutoMigrate(&project.Project{}, &project.SourceCode{}, &project.EnvVariable{})
+	err = db.AutoMigrate(
+		&project.Project{},
+		&project.SourceCode{},
+		&project.EnvVariable{},
+		&log.AppLog{})
+
 	if err != nil {
 		panic("failed to perform migrations: " + err.Error())
 	}

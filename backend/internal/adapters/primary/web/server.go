@@ -5,6 +5,7 @@ import (
 	"pulsar/internal/adapters/secondary/postgres"
 	"pulsar/internal/core/services/container"
 	"pulsar/internal/core/services/envs"
+	"pulsar/internal/core/services/log"
 	"pulsar/internal/core/services/project"
 	"pulsar/internal/ports"
 
@@ -21,8 +22,9 @@ type Server struct {
 	envService       envs.IEnvService
 }
 
-func StartServer(db *postgres.Database, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
-	containerService := container.NewContainerService(containerMan, fileRepo, db)
+func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
+	logService := log.NewLogService(mq, db)
+	containerService := container.NewContainerService(containerMan, logService, fileRepo, db)
 	projectService := project.NewProjectService(db, containerService, fileRepo)
 	envService := envs.NewEnvService(db, *projectService)
 

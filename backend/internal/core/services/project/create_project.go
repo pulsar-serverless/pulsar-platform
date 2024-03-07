@@ -58,12 +58,7 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 			return
 		}
 
-		buildContext, err := projectService.fileRepo.CreateBuildContext(newProject)
-		if err != nil {
-			return
-		}
-
-		projectService.containerService.DeployContainer(ctx, newProject, buildContext)
+		projectService.InstallProject(context.TODO(), newProject)
 	}(&newProject)
 
 	return GenericProjectRespFromProject(&newProject), nil

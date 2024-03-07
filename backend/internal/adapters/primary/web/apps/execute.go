@@ -29,7 +29,7 @@ func ExecuteFunction(containerService container.IContainerService, projectServic
 				return ctx.JSON(resp.Status, resp)
 			}
 
-			containerService.StartApp(project.ContainerId, successChan, errorChan)
+			containerService.StartApp(project, successChan, errorChan)
 
 			select {
 			case <-successChan:

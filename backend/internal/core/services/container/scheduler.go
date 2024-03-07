@@ -7,7 +7,7 @@ func (ss *containerService) eventLoop(ctx context.Context) {
 		select {
 		// start container
 		case containerArg := <-ss.start:
-			ss.startServerlessApp(ctx, containerArg.containerId, containerArg.success, containerArg.error)
+			ss.startServerlessApp(ctx, containerArg.project, containerArg.success, containerArg.error)
 			// stop container
 		case containerId := <-ss.end:
 			ss.stopServerlessApp(ctx, containerId)

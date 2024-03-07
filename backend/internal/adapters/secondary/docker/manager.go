@@ -28,7 +28,7 @@ func (cm *ContainerManager) Close() error {
 	return cm.client.Close()
 }
 
-func (cm *ContainerManager) BuildImage(ctx context.Context, buildContext io.Reader, project *project.Project) error {
+func (cm *ContainerManager) BuildImage(ctx context.Context, buildContext io.Reader, project *project.Project) (io.ReadCloser, error) {
 	buildOptions := types.ImageBuildOptions{
 		Tags:           []string{project.Name},
 		SuppressOutput: false,
@@ -40,11 +40,10 @@ func (cm *ContainerManager) BuildImage(ctx context.Context, buildContext io.Read
 
 	buildResponse, err := cm.client.ImageBuild(ctx, buildContext, buildOptions)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	defer buildResponse.Body.Close()
-	return checkError(buildResponse.Body)
+	return buildResponse.Body, nil
 }
 
 func (cm *ContainerManager) CreateContainer(ctx context.Context, imageName string) (string, error) {
@@ -64,6 +63,9 @@ func (cm *ContainerManager) CreateContainer(ctx context.Context, imageName strin
 		ExposedPorts: nat.PortSet{
 			"3000/tcp": struct{}{},
 		},
+		Tty:          true,
+		AttachStdout: true,
+		AttachStderr: true,
 	}
 
 	resp, err := cm.client.ContainerCreate(ctx, containerConfig, hostConfig, nil, nil, "")
@@ -86,4 +88,14 @@ func (cm *ContainerManager) DeleteContainer(ctx context.Context, containerId str
 func (cm *ContainerManager) GetStatus(ctx context.Context, containerId string) (string, error) {
 	container, err := cm.client.ContainerInspect(ctx, containerId)
 	return container.State.Status, err
+}
+
+func (cm *ContainerManager) GetContainerLogs(ctx context.Context, containerId string) (io.ReadCloser, error) {
+	return cm.client.ContainerLogs(ctx, containerId, container.LogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+		Follow:     true,
+		Timestamps: true,
+		Details:    true,
+	})
 }
