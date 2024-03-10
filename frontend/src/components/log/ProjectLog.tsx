@@ -10,32 +10,32 @@ import {
   Select,
   Stack,
   Typography,
-  Button,
+  Button
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import HorizontalSplitRoundedIcon from "@mui/icons-material/HorizontalSplitRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import LogTable from "./LogTable";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { LogApi } from "@/api/log";
 import { useState } from "react";
 import { ConfirmationDialog } from "../modals/ConfirmationDialog";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { queryClient } from "../providers/QueryProvider";
+import { Log } from "@/models/log";
 
 const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [page, setPage] = useState(1);
   const [clearLog, setClearLog] = useState(false);
 
+  const [logType, setLogType] = useState<Log['type'][]>(['Info' , 'Warning' , 'Error']);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const snackbar = useSnackbar();
 
   const { data: logs } = useQuery({
-    queryKey: [LogApi.getLogs.name, projectId, page],
-    queryFn: () => LogApi.getLogs(projectId, page),
+    queryKey: [LogApi.getLogs.name, projectId, page, searchQuery, logType],
+    queryFn: () => LogApi.getLogs(projectId, logType, searchQuery, page,),
     placeholderData: keepPreviousData,
   });
 
@@ -70,9 +70,13 @@ const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
             sx={{ mb: 2 }}
             gap={2}
           >
-            <FormControl sx={{ minWidth: 120 }} size="small">
-              <Select displayEmpty value="AllLogs">
-                <MenuItem value={"AllLogs"}>All Logs</MenuItem>
+            <FormControl sx={{ minWidth: 180 }} size="small">
+              <Select
+                displayEmpty
+                value={logType}
+                multiple
+                onChange={(e) => setLogType(e.target.value as any)}
+              >
                 <MenuItem value={"Warning"}>Warning</MenuItem>
                 <MenuItem value={"Error"}>Error</MenuItem>
                 <MenuItem value={"Info"}>Info</MenuItem>
@@ -80,6 +84,8 @@ const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
             </FormControl>
             <FormControl variant="outlined" size="small" sx={{ flexGrow: 1 }}>
               <OutlinedInput
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton>
@@ -98,7 +104,7 @@ const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
               Clear all logs
             </Button>
           </Stack>
-          {(!logs || logs.rows.length == 0) ? (
+          {!logs || logs.rows.length == 0 ? (
             <EmptyLogsState />
           ) : (
             <LogTable

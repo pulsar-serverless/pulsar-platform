@@ -305,6 +305,18 @@ const docTemplate = `{
                         "name": "pageSize",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Log type",
+                        "name": "logType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search query",
+                        "name": "searchQuery",
+                        "in": "query"
                     }
                 ],
                 "responses": {

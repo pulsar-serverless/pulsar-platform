@@ -10,13 +10,15 @@ import (
 )
 
 type GetLogsRequest struct {
-	PageNumber int    `query:"pageNumber"`
-	PageSize   int    `query:"pageSize"`
-	ProjectId  string `param:"projectId"`
+	PageNumber  int      `query:"pageNumber"`
+	PageSize    int      `query:"pageSize"`
+	SearchQuery string   `query:"searchQuery"`
+	LogTypes    []string `query:"logTypes[]"`
+	ProjectId   string   `param:"projectId"`
 }
 
 func (service *logService) GetProjectLogs(ctx context.Context, request GetLogsRequest) (*common.Pagination[domain.AppLog], error) {
-	logs, err := service.logRepo.GetProjectLogs(ctx, request.ProjectId, request.PageNumber, request.PageSize)
+	logs, err := service.logRepo.GetProjectLogs(ctx, request.ProjectId, request.LogTypes, request.SearchQuery, request.PageNumber, request.PageSize)
 
 	if err != nil {
 		zeroLog.Error().Err(err).Msg("Unable to fetch project logs")

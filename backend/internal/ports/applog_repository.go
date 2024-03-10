@@ -7,7 +7,7 @@ import (
 )
 
 type IAppLogRepository interface {
-	GetProjectLogs(ctx context.Context, projectId string, pageNumber int, pageSize int) (*common.Pagination[log.AppLog], error)
+	GetProjectLogs(ctx context.Context, projectId string, logTypes []string, searchQuery string, pageNumber int, pageSize int) (*common.Pagination[log.AppLog], error)
 	DeleteProjectLogs(ctx context.Context, projectId string) error
 	CreateProjectLog(ctx context.Context, log *log.AppLog) error
 }
