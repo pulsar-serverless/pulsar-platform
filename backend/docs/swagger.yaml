@@ -313,6 +313,28 @@ paths:
       tags:
       - Env
   /api/projects/logs/{projectId}:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-project-log
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Delete Project logs
+      tags:
+      - Log
     get:
       consumes:
       - application/json

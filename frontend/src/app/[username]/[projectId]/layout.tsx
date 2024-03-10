@@ -1,29 +1,25 @@
 "use client";
 import {
   Box,
-  Container,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Stack,
 } from "@mui/material";
 import { ReactNode } from "react";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import TopicRoundedIcon from "@mui/icons-material/TopicRounded";
-import CreditCardRoundedIcon from "@mui/icons-material/CreditCardRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
 import Link from "next/link";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const navLinks: { link: string; label: string; icon: ReactNode }[] = [
     { link: "home", label: "Home", icon: <HomeRoundedIcon /> },
-    { link: "assets", label: "Assets", icon: <TopicRoundedIcon /> },
-    { link: "billing", label: "Billing", icon: <CreditCardRoundedIcon /> },
+    { link: "analytics", label: "Analytics", icon: <InsertChartRoundedIcon /> },
     { link: "deployment", label: "Deployment", icon: <CloudUploadIcon /> },
   ];
 

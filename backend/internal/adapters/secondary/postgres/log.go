@@ -33,3 +33,8 @@ func (db *Database) CreateProjectLog(ctx context.Context, log *log.AppLog) error
 	result := db.conn.Create(log)
 	return result.Error
 }
+
+func (db *Database) DeleteProjectLogs(ctx context.Context, projectId string) error {
+	result := db.conn.Where(&log.AppLog{ProjectID: projectId}).Delete(&log.AppLog{})
+	return result.Error
+}

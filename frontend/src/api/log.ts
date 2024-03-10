@@ -16,4 +16,11 @@ export const LogApi = {
     );
     return data;
   },
+
+  async deleteLogs(projectID: string) {
+    const { data } = await axiosInstance.delete<Paginated<Log>>(
+      `/projects/logs/${projectID}`
+    );
+    return data;
+  },
 };
