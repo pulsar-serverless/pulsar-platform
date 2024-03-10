@@ -53,7 +53,7 @@ func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize 
 
 	// get total number of projects
 	var count int64
-	repo.conn.Model(&project.Project{UserId: userId}).Count(&count)
+	repo.conn.Model(&project.Project{}).Where(&project.Project{UserId: userId}).Count(&count)
 
 	result := repo.conn.Scopes(Paginate(pagination)).
 		Where(&project.Project{UserId: userId}).

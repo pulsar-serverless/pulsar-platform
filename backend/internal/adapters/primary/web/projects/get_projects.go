@@ -2,7 +2,6 @@ package projects
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"pulsar/internal/core/services/project"
 
@@ -36,7 +35,6 @@ func GetProjects(projectApi project.IProjectService) echo.HandlerFunc {
 		projects, err := projectApi.GetProjects(context.TODO(), request)
 
 		if err != nil {
-			fmt.Println(err)
 			return c.NoContent(http.StatusInternalServerError)
 		}
 
