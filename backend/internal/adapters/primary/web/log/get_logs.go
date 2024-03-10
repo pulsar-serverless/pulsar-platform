@@ -19,6 +19,8 @@ import (
 // @Param		projectId		path		string					true	"project id"
 // @Param		pageNumber	query		int	true	"Page number"
 // @Param		pageSize	query		int	true	"Page size"
+// @Param		logType	query		string	false	"Log type"
+// @Param		searchQuery	query		string	false	"Search query"
 // @Security	Bearer
 // @Tags		Log
 func GetProjectLogs(logApi log.ILogService) echo.HandlerFunc {

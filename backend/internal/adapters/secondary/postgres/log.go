@@ -5,21 +5,39 @@ import (
 	"math"
 	"pulsar/internal/core/domain/common"
 	"pulsar/internal/core/domain/log"
+
+	"gorm.io/gorm"
 )
 
-func (db *Database) GetProjectLogs(ctx context.Context, projectId string, pageNumber int, pageSize int) (*common.Pagination[log.AppLog], error) {
+func FilterLogs(projectId string, logTypes []string, searchQuery string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		var conditions = make(map[string]interface{})
+		conditions["project_id"] = projectId
+
+		if len(logTypes) != 0 {
+			conditions["type"] = logTypes
+		}
+
+		if searchQuery == "" {
+			return db.Where(conditions)
+		}
+
+		return db.Where(" message ILIKE ? ", "%"+searchQuery+"%").Where(conditions)
+	}
+}
+
+func (db *Database) GetProjectLogs(ctx context.Context, projectId string, logTypes []string, searchQuery string, pageNumber int, pageSize int) (*common.Pagination[log.AppLog], error) {
 	var count int64
 	var logs []*log.AppLog
 
-	db.conn.Model(&log.AppLog{}).Where(log.AppLog{ProjectID: projectId}).Count(&count)
+	db.conn.Model(&log.AppLog{}).Scopes(FilterLogs(projectId, logTypes, searchQuery)).Count(&count)
 
 	pagination := &common.Pagination[log.AppLog]{
 		PageSize:   pageSize,
 		PageNumber: pageNumber,
 	}
 
-	result := db.conn.Scopes(Paginate(pagination)).
-		Where(log.AppLog{ProjectID: projectId}).
+	result := db.conn.Scopes(FilterLogs(projectId, logTypes, searchQuery), Paginate(pagination)).
 		Order("created_at asc").
 		Find(&logs)
 

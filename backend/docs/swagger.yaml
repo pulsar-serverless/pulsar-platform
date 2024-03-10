@@ -355,6 +355,14 @@ paths:
         name: pageSize
         required: true
         type: integer
+      - description: Log type
+        in: query
+        name: logType
+        type: string
+      - description: Search query
+        in: query
+        name: searchQuery
+        type: string
       produces:
       - application/json
       responses:
