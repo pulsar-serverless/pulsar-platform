@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, overflow: 'scroll' }}>
         {children}
       </Box>
     </>
