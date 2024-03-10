@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"pulsar/internal/core/domain/common"
 	domain "pulsar/internal/core/domain/log"
 	"pulsar/internal/ports"
 )
@@ -14,6 +15,7 @@ type logService struct {
 
 type ILogService interface {
 	CreateLogEvent(ctx context.Context, newLog *domain.AppLog) error
+	GetProjectLogs(ctx context.Context, request GetLogsRequest) (*common.Pagination[domain.AppLog], error)
 }
 
 func NewLogService(mq ports.IMessageQueue, logRepo ports.IAppLogRepository) *logService {

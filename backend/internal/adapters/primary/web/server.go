@@ -20,6 +20,7 @@ type Server struct {
 	projectService   project.IProjectService
 	containerService container.IContainerService
 	envService       envs.IEnvService
+	logService       log.ILogService
 }
 
 func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
@@ -33,6 +34,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 		projectService:   projectService, // inject project service inject authentication service
 		containerService: containerService,
 		envService:       envService,
+		logService:       logService,
 	}
 
 	server.echo.Use(middleware.CORS())

@@ -4,6 +4,7 @@ import (
 	"pulsar/internal/adapters/primary/web/apps"
 	"pulsar/internal/adapters/primary/web/auth"
 	"pulsar/internal/adapters/primary/web/envs"
+	"pulsar/internal/adapters/primary/web/log"
 	"pulsar/internal/adapters/primary/web/projects"
 
 	"github.com/labstack/echo/v4"
@@ -30,6 +31,10 @@ func (server *Server) DefineRoutes() {
 		{
 			projectController.POST("/envs/:projectId", envs.OverwriteEnvVariables(server.envService))
 			projectController.GET("/envs/:projectId", envs.GetEnvVariables(server.envService))
+		}
+
+		{
+			projectController.GET("/logs/:projectId", log.GetProjectLogs(server.logService))
 		}
 	}
 

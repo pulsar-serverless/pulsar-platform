@@ -312,6 +312,39 @@ paths:
       summary: Create Environmental Variables
       tags:
       - Env
+  /api/projects/logs/{projectId}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-project-log
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Project log
+      tags:
+      - Log
   /app/status:
     post:
       consumes:
