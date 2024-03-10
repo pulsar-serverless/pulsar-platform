@@ -10,21 +10,42 @@ import {
   Select,
   Stack,
   Typography,
+  Button,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import HorizontalSplitRoundedIcon from "@mui/icons-material/HorizontalSplitRounded";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import LogTable from "./LogTable";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery
+} from "@tanstack/react-query";
 import { LogApi } from "@/api/log";
 import { useState } from "react";
+import { ConfirmationDialog } from "../modals/ConfirmationDialog";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { queryClient } from "../providers/QueryProvider";
 
 const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [page, setPage] = useState(1);
+  const [clearLog, setClearLog] = useState(false);
+
+  const snackbar = useSnackbar();
 
   const { data: logs } = useQuery({
     queryKey: [LogApi.getLogs.name, projectId, page],
     queryFn: () => LogApi.getLogs(projectId, page),
     placeholderData: keepPreviousData,
+  });
+
+  const { mutate: handleClearLogs } = useMutation({
+    mutationFn: LogApi.deleteLogs,
+    onSuccess: () => {
+      snackbar.setSuccessMsg("Project log cleared successfully!");
+      queryClient.invalidateQueries({ queryKey: [LogApi.getLogs.name] });
+    },
+    onError: () => snackbar.setErrorMsg("Unable to clear project logs."),
   });
 
   return (
@@ -68,19 +89,40 @@ const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
                 }
               />
             </FormControl>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteForeverRoundedIcon />}
+              onClick={() => setClearLog(true)}
+            >
+              Clear all logs
+            </Button>
           </Stack>
-          {!logs ? (
+          {(!logs || logs.rows.length == 0) ? (
             <EmptyLogsState />
           ) : (
             <LogTable
               logs={logs.rows!}
               count={logs.totalPages}
               page={logs.page}
-              onPaginate={page => setPage(page)}
+              onPaginate={(page) => setPage(page)}
             />
           )}
         </CardContent>
       </Card>
+
+      {clearLog && (
+        <ConfirmationDialog
+          open={clearLog}
+          title="Clear All Logs"
+          description="Deleting Project Logs will permanently erase all recorded project logs. "
+          handleClose={() => setClearLog(false)}
+          handleConfirm={() => {
+            handleClearLogs(projectId);
+            setClearLog(false);
+          }}
+        />
+      )}
     </>
   );
 };

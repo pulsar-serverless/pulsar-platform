@@ -59,8 +59,7 @@ export default function Page() {
           >
             <Tab label="Project" {...a11yProps(0)} />
             <Tab label="Logs" {...a11yProps(1)} />
-            <Tab label="Analytics" {...a11yProps(2)} />
-            <Tab label="Environmental variables" {...a11yProps(3)} />
+            <Tab label="Environmental variables" {...a11yProps(2)} />
           </Tabs>
         </Container>
       </Box>
@@ -71,7 +70,7 @@ export default function Page() {
         <CustomTabPanel value={value} index={1}>
           <ProjectLog projectId={projectName}/>
         </CustomTabPanel>
-        <CustomTabPanel value={value} index={3}>
+        <CustomTabPanel value={value} index={2}>
           <EnvVariablesForm projectID={projectName} />
         </CustomTabPanel>
       </Container>
