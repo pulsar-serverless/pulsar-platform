@@ -16,6 +16,7 @@ type logService struct {
 type ILogService interface {
 	CreateLogEvent(ctx context.Context, newLog *domain.AppLog) error
 	GetProjectLogs(ctx context.Context, request GetLogsRequest) (*common.Pagination[domain.AppLog], error)
+	DeleteProjectLogs(ctx context.Context, request DeleteLogsRequest) error
 }
 
 func NewLogService(mq ports.IMessageQueue, logRepo ports.IAppLogRepository) *logService {

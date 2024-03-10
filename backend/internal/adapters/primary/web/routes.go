@@ -35,6 +35,7 @@ func (server *Server) DefineRoutes() {
 
 		{
 			projectController.GET("/logs/:projectId", log.GetProjectLogs(server.logService))
+			projectController.DELETE("/logs/:projectId", log.DeleteProjectLogs(server.logService))
 		}
 	}
 
