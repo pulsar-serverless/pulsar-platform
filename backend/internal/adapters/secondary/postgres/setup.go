@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/log"
 	"pulsar/internal/core/domain/project"
 
@@ -19,7 +20,9 @@ func SetupDB(dsn string) *gorm.DB {
 		&project.Project{},
 		&project.SourceCode{},
 		&project.EnvVariable{},
-		&log.AppLog{})
+		&log.AppLog{},
+		&analytics.Invocation{},
+	)
 
 	if err != nil {
 		panic("failed to perform migrations: " + err.Error())
