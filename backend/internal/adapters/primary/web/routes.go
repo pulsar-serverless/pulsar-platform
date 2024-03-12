@@ -42,5 +42,5 @@ func (server *Server) DefineRoutes() {
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
 		echo.WrapHandler(apps.NewProxy()),
-		apps.ExecuteFunction(server.containerService, server.projectService))
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService))
 }

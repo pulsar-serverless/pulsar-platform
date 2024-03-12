@@ -3,6 +3,7 @@ package web
 import (
 	"os"
 	"pulsar/internal/adapters/secondary/postgres"
+	"pulsar/internal/core/services/analytics"
 	"pulsar/internal/core/services/container"
 	"pulsar/internal/core/services/envs"
 	"pulsar/internal/core/services/log"
@@ -21,6 +22,7 @@ type Server struct {
 	containerService container.IContainerService
 	envService       envs.IEnvService
 	logService       log.ILogService
+	analyticsService analytics.IAnalyticsService
 }
 
 func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
@@ -28,6 +30,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 	containerService := container.NewContainerService(containerMan, logService, fileRepo, db)
 	projectService := project.NewProjectService(db, containerService, fileRepo)
 	envService := envs.NewEnvService(db, *projectService)
+	analyticsService := analytics.NewAnalyticsService(db, mq)
 
 	server := &Server{
 		echo:             echo.New(),
@@ -35,6 +38,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 		containerService: containerService,
 		envService:       envService,
 		logService:       logService,
+		analyticsService: analyticsService,
 	}
 
 	server.echo.Use(middleware.CORS())
