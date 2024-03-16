@@ -14,6 +14,9 @@ type analyticsService struct {
 
 type IAnalyticsService interface {
 	PublishInvocationCreatedEvent(ctx context.Context, invocation *domain.Invocation) error
+	GetHourlyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
+	GetMonthlyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
+	GetWeeklyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
 }
 
 func NewAnalyticsService(invocationRepo ports.InvocationRepository, mq ports.IMessageQueue) *analyticsService {
