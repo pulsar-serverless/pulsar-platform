@@ -10,7 +10,9 @@ import (
 )
 
 func SetupDB(dsn string) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		// Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	if err != nil {
 		panic("Unable to connect to the database")

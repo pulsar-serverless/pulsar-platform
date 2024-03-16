@@ -1,6 +1,7 @@
 package web
 
 import (
+	"pulsar/internal/adapters/primary/web/analytics"
 	"pulsar/internal/adapters/primary/web/apps"
 	"pulsar/internal/adapters/primary/web/auth"
 	"pulsar/internal/adapters/primary/web/envs"
@@ -36,6 +37,12 @@ func (server *Server) DefineRoutes() {
 		{
 			projectController.GET("/logs/:projectId", log.GetProjectLogs(server.logService))
 			projectController.DELETE("/logs/:projectId", log.DeleteProjectLogs(server.logService))
+		}
+
+		{
+			projectController.GET("/:projectId/analytics/hourly", analytics.GetProjectHourlyInvocations(server.analyticsService))
+			projectController.GET("/:projectId/analytics/monthly", analytics.GetProjectMonthlyInvocations(server.analyticsService))
+			projectController.GET("/:projectId/analytics/weekly", analytics.GetProjectWeeklyInvocations(server.analyticsService))
 		}
 	}
 

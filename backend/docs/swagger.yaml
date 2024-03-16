@@ -211,6 +211,87 @@ paths:
       summary: Update project
       tags:
       - Project
+  /api/projects/{projectId}/analytics/hourly:
+    get:
+      consumes:
+      - application/json
+      operationId: get-project-hourly-invocations
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Invocation Status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Hourly Project Invocations
+      tags:
+      - Analytics
+  /api/projects/{projectId}/analytics/monthly:
+    get:
+      consumes:
+      - application/json
+      operationId: get-project-monthly-invocations
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Invocation Status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Monthly Project Invocations
+      tags:
+      - Analytics
+  /api/projects/{projectId}/analytics/weekly:
+    get:
+      consumes:
+      - application/json
+      operationId: get-project-weekly-invocations
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Invocation Status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Weekly Project Invocations
+      tags:
+      - Analytics
   /api/projects/code/{projectId}:
     get:
       consumes:

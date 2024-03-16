@@ -31,3 +31,8 @@ func New(ProjectId string, StartedAt time.Time, EndedAt time.Time, err Invocatio
 		EndedAt:   EndedAt,
 		Status:    err}
 }
+
+type InvocationCount struct {
+	Timestamp time.Time `json:"timestamp,"`
+	Count     int       `json:"count"`
+}
