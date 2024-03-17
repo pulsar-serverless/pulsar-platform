@@ -17,6 +17,7 @@ type IProjectService interface {
 	UploadProjectCode(ctx context.Context, req UploadProjectCodeReq) (*project.Project, error)
 	DownloadProjectCode(ctx context.Context, req GetProjectReq) (string, error)
 	InstallProject(ctx context.Context, project *project.Project) error
+	GenerateAPIToken(ctx context.Context, request GenerateAPITokenReq) (*GenerateAPITokenRes, error)
 }
 
 type ProjectService struct {

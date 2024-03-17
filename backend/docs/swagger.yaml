@@ -211,6 +211,29 @@ paths:
       summary: Update project
       tags:
       - Project
+  /api/projects/{id}/api-token:
+    put:
+      consumes:
+      - application/json
+      operationId: generate-api-token
+      parameters:
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Generate API token
+      tags:
+      - Project
   /api/projects/{projectId}/analytics/hourly:
     get:
       consumes:

@@ -25,13 +25,13 @@ export const ConfirmationDialog: React.FC<{
         {title}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+        <DialogContentText id="alert-dialog-description" variant="body2">
           {description}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} variant="outlined">Cancel</Button>
-        <Button onClick={handleConfirm} autoFocus color="error" variant="outlined">
+        <Button onClick={handleClose} variant="outlined" color="secondary">Cancel</Button>
+        <Button onClick={handleConfirm} autoFocus color="error" variant="contained">
           Confirm
         </Button>
       </DialogActions>
