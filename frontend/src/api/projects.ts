@@ -49,4 +49,9 @@ export const ProjectApi = {
     );
     return data;
   },
+
+  async generateApiKey(projectId: string) {
+    const {data} = await axiosInstance.put<{token: string}>( `/projects/${projectId}/api-token`,)
+    return data
+  }
 };

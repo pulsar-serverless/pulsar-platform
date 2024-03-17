@@ -52,7 +52,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
         <List sx={{ mt: "auto" }}>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton LinkComponent={Link} href={"settings"}>
               <ListItemIcon>{<SettingsRoundedIcon />}</ListItemIcon>
               <ListItemText primary={"Settings"} />
             </ListItemButton>
