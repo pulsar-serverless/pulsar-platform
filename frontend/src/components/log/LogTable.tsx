@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { FC } from "react";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+dayjs.extend(localizedFormat);
 
 const LogTable: FC<{ logs: Log[]; page: number; count: number; onPaginate: (page: number) => void }> = ({
   logs,
@@ -36,7 +38,7 @@ const LogTable: FC<{ logs: Log[]; page: number; count: number; onPaginate: (page
                   color="secondary.dark"
                   fontFamily='"Source Code Pro", monospace'
                 >
-                  {dayjs(log.createdAt).format("YYYY-MM-DD HH-mm-ss")}
+                  {dayjs(log.createdAt).format('lll')}
                 </Typography>
               </TableCell>
               <TableCell
