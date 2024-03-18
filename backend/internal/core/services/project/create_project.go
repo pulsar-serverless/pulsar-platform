@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/xid"
+	zeroLog "github.com/rs/zerolog/log"
 )
 
 type CreateProjectReq struct {
@@ -48,6 +49,10 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 	go func(newProject *project.Project) {
 		sourceDir, err := projectService.fileRepo.SetupDefaultProject(newProject)
 		if err != nil {
+			zeroLog.Error().
+				Str("AppID", newProject.ID).
+				Err(err).
+				Msg("Unable to setup default project.")
 			return
 		}
 
@@ -55,6 +60,10 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 
 		_, err = projectService.projectRepo.UpdateProject(ctx, newProject.ID, newProject)
 		if err != nil {
+			zeroLog.Error().
+				Str("AppID", newProject.ID).
+				Err(err).
+				Msg("Unable to setup update project.")
 			return
 		}
 

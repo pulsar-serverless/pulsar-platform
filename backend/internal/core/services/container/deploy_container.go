@@ -9,12 +9,19 @@ import (
 	"io"
 	"pulsar/internal/core/domain/log"
 	"pulsar/internal/core/domain/project"
+
+	zeroLog "github.com/rs/zerolog/log"
 )
 
 func (cs *containerService) DeployContainer(ctx context.Context, newProject *project.Project, buildContext io.Reader) (string, error) {
 	buildOutput, err := cs.containerMan.BuildImage(ctx, buildContext, newProject)
 
 	if err != nil {
+		zeroLog.Error().
+			Str("AppID", newProject.ID).
+			Err(err).
+			Msgf("Unable to build app Image")
+
 		cs.logService.CreateLogEvent(context.Background(), log.NewAppLog(
 			newProject.ID,
 			log.Error,
