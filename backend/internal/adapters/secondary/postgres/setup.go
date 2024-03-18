@@ -24,6 +24,7 @@ func SetupDB(dsn string) *gorm.DB {
 		&project.EnvVariable{},
 		&log.AppLog{},
 		&analytics.Invocation{},
+		&analytics.RuntimeResource{},
 	)
 
 	if err != nil {
