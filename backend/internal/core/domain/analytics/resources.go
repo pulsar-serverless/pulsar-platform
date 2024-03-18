@@ -20,3 +20,23 @@ func NewResourceMetric(invocation *Invocation, totalMem, totalBandwidth int64) *
 		TotalBandwidth: totalBandwidth,
 	}
 }
+
+// docker resource stats
+type MemoryStats struct {
+	Total int64       `json:"usage"`
+	Stats interface{} `json:"stats"`
+}
+
+type NetworkStatsInteface struct {
+	Recieved    int64 `json:"rx_bytes"`
+	Transmitted int64 `json:"tx_bytes"`
+}
+
+type NetworkStats struct {
+	PortInterface NetworkStatsInteface `json:"eth0"`
+}
+
+type DockerStats struct {
+	MemoryStats  MemoryStats `json:"memory_stats"`
+	NetworkStats `json:"networks"`
+}
