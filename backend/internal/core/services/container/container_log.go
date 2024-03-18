@@ -33,38 +33,36 @@ func (ss *containerService) saveContainerLogs(proj *project.Project) {
 }
 
 func parseLog(rawLog string, projectId string) *log.AppLog {
-	defaultLog := log.NewAppLog(
-		projectId,
-		log.WARNING,
-		rawLog,
-	)
-	parts := strings.Split(rawLog, " ")
+	index := strings.Index(rawLog, " ")
 
-	if len(parts) != 2 {
+	if index == -1 {
 		zeroLog.Warn().
 			Str("AppID", projectId).
 			Msgf("Unrecognized log format from container: %v", rawLog)
-		return defaultLog
+		return nil
 	}
 
-	parsedTime, err := time.Parse(parts[0], parts[0])
+	timePart := rawLog[:index]
+	messagePart := rawLog[index:]
+
+	parsedTime, err := time.Parse(time.RFC3339Nano, timePart)
 	if err != nil {
 		zeroLog.Error().
 			Str("AppID", projectId).
 			Err(err).
-			Msgf("Unrecognized timestamp in a container log: %v", parts[0])
-		return defaultLog
+			Msgf("Unrecognized timestamp in a container log: %v", timePart)
+		return nil
 	}
 
 	var newLog = &log.AppLog{CreatedAt: parsedTime}
-	err = json.Unmarshal([]byte(parts[1]), newLog)
+	err = json.Unmarshal([]byte(messagePart), newLog)
 
 	if err != nil {
 		zeroLog.Error().
 			Str("AppID", projectId).
 			Err(err).
-			Msgf("Unrecognized timestamp in a container log: %v", parts[0])
-		return defaultLog
+			Msgf("Unrecognized timestamp in a container log: %v", messagePart)
+		return nil
 	}
 
 	return newLog
