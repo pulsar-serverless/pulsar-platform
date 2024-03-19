@@ -1,9 +1,13 @@
 package docker
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io"
+	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -98,4 +102,52 @@ func (cm *ContainerManager) GetContainerLogs(ctx context.Context, containerId st
 		Timestamps: true,
 		Details:    true,
 	})
+}
+
+func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) error {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	var dockerStats resource.DockerStats
+
+	for {
+		runtimeRes := <-res
+
+		select {
+		case <-ticker.C:
+			stats, err := cm.client.ContainerStats(ctx, containerId, false)
+			if err != nil {
+				return err
+			}
+
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(stats.Body)
+			defer stats.Body.Close()
+
+			err = json.Unmarshal(buf.Bytes(), &dockerStats)
+			if err != nil {
+				return err
+			}
+
+			if dockerStats.MemoryStats.Total > runtimeRes.MaxMemory {
+				runtimeRes.MaxMemory = dockerStats.MemoryStats.Total
+			}
+
+			res <- runtimeRes
+			return nil
+		case <-runtimeRes.Stop:
+			runtimeRes.TotalNetworkBytes = dockerStats.PortInterface.Recieved + dockerStats.PortInterface.Transmitted
+			res <- runtimeRes
+			return nil
+		}
+	}
+}
+
+func (cm *ContainerManager) StopContainerStats(ctx context.Context, res chan *resource.RuntimeResourceObj) {
+	resRuntime := <-res
+
+	resRuntime.Wg.Wait()
+	close(resRuntime.Stop)
+
+	close(res)
 }

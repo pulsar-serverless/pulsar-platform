@@ -1,6 +1,10 @@
 package analytics
 
-import "github.com/google/uuid"
+import (
+	"sync"
+
+	"github.com/google/uuid"
+)
 
 type RuntimeResource struct {
 	Id             uuid.UUID
@@ -39,4 +43,21 @@ type NetworkStats struct {
 type DockerStats struct {
 	MemoryStats  MemoryStats `json:"memory_stats"`
 	NetworkStats `json:"networks"`
+}
+
+type RuntimeResourceObj struct {
+	Wg                *sync.WaitGroup
+	MaxMemory         int64
+	TotalNetworkBytes int64
+	Stop              chan struct{}
+}
+
+func NewRuntimeResObj() *RuntimeResourceObj {
+	var wg sync.WaitGroup
+	stop := make(chan struct{}, 1)
+
+	return &RuntimeResourceObj{
+		Wg:   &wg,
+		Stop: stop,
+	}
 }

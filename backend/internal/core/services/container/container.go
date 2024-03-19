@@ -3,7 +3,9 @@ package container
 import (
 	"context"
 	"io"
+	"pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
+	resource "pulsar/internal/core/services/analytics"
 	service "pulsar/internal/core/services/log"
 	"pulsar/internal/ports"
 	"time"
@@ -26,6 +28,8 @@ type containerService struct {
 	start             chan *containerStartArg
 	end               chan *project.Project
 	status            chan *project.Project
+	resource          chan *analytics.RuntimeResourceObj
+	resourceService   resource.IResourceService
 }
 
 type ContainerInfo struct {
@@ -40,7 +44,7 @@ type containerStartArg struct {
 	error   chan error
 }
 
-func NewContainerService(containerMan ports.IContainerManager, logService service.ILogService, fileRepo ports.IFileRepository, projectRepo ports.IProjectRepo) IContainerService {
+func NewContainerService(containerMan ports.IContainerManager, logService service.ILogService, fileRepo ports.IFileRepository, projectRepo ports.IProjectRepo, resourceService resource.IResourceService) IContainerService {
 	service := &containerService{
 		containerMan:      containerMan,
 		fileRepo:          fileRepo,
@@ -52,6 +56,8 @@ func NewContainerService(containerMan ports.IContainerManager, logService servic
 		start:             make(chan *containerStartArg),
 		end:               make(chan *project.Project),
 		status:            make(chan *project.Project),
+		resource:          make(chan *analytics.RuntimeResourceObj, 1),
+		resourceService:   resourceService,
 	}
 
 	go service.eventLoop(context.Background())
