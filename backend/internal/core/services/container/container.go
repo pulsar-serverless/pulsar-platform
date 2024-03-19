@@ -3,6 +3,7 @@ package container
 import (
 	"context"
 	"io"
+	"pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
 	service "pulsar/internal/core/services/log"
 	"pulsar/internal/ports"
@@ -26,6 +27,7 @@ type containerService struct {
 	start             chan *containerStartArg
 	end               chan *project.Project
 	status            chan *project.Project
+	resourceObj       *analytics.RuntimeResourceObj
 }
 
 type ContainerInfo struct {

@@ -38,6 +38,9 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			isServerAlive: false,
 		}
 
+		// start collecting resource usage
+		cs.containerMan.ReadContainerStats(ctx, project.ContainerId)
+
 		cs.liveContainers[project.ContainerId] = containerInfo
 	} else {
 		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(

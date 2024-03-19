@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 	"io"
+	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
 )
 
@@ -14,4 +15,7 @@ type IContainerManager interface {
 	GetStatus(ctx context.Context, containerId string) (string, error)
 	BuildImage(ctx context.Context, buildContext io.Reader, project *project.Project) (io.ReadCloser, error)
 	GetContainerLogs(ctx context.Context, containerId string) (io.ReadCloser, error)
+	GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) (chan *resource.RuntimeResourceObj, error)
+	ReadContainerStats(ctx context.Context, containerId string) chan *resource.RuntimeResourceObj
+	StopContainerStats(ctx context.Context, res chan *resource.RuntimeResourceObj)
 }

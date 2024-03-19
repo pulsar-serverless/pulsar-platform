@@ -21,7 +21,8 @@ import (
 func ExecuteFunction(
 	containerService container.IContainerService,
 	projectService project.IProjectService,
-	analyticsService services.IAnalyticsService) echo.MiddlewareFunc {
+	analyticsService services.IAnalyticsService,
+	resourceService services.IResourceService) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {

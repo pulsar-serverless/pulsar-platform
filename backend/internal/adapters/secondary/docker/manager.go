@@ -1,9 +1,14 @@
 package docker
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
+	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -98,4 +103,68 @@ func (cm *ContainerManager) GetContainerLogs(ctx context.Context, containerId st
 		Timestamps: true,
 		Details:    true,
 	})
+}
+
+func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) (chan *resource.RuntimeResourceObj, error) {
+	runtimeRes := <-res
+
+	defer runtimeRes.Wg.Done()
+
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	// offset container intialization
+	time.Sleep(2 * time.Second)
+
+	var dockerStats resource.DockerStats
+
+	for {
+		select {
+		case <-ticker.C:
+			stats, err := cm.client.ContainerStats(ctx, containerId, false)
+			if err != nil {
+				return nil, err
+			}
+
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(stats.Body)
+			defer stats.Body.Close()
+
+			err = json.Unmarshal(buf.Bytes(), &dockerStats)
+			if err != nil {
+				return nil, err
+			}
+
+			if dockerStats.MemoryStats.Total > runtimeRes.MaxMemory {
+				runtimeRes.MaxMemory = dockerStats.MemoryStats.Total
+			}
+		case <-runtimeRes.Stop:
+			runtimeRes.TotalNetworkBytes = dockerStats.PortInterface.Recieved + dockerStats.PortInterface.Transmitted
+			res <- runtimeRes
+			fmt.Println(runtimeRes.TotalNetworkBytes)
+			return res, nil
+		}
+	}
+}
+
+func (cm *ContainerManager) ReadContainerStats(ctx context.Context, containerId string) chan *resource.RuntimeResourceObj {
+	runtimeRes := resource.NewRuntimeResObj()
+
+	runtimeCh := make(chan *resource.RuntimeResourceObj, 1)
+	runtimeRes.Wg.Add(1)
+
+	runtimeCh <- runtimeRes
+
+	go cm.GetContainerStats(ctx, containerId, runtimeCh)
+
+	return runtimeCh
+}
+
+func (cm *ContainerManager) StopContainerStats(ctx context.Context, res chan *resource.RuntimeResourceObj) {
+	resRuntime := <-res
+
+	resRuntime.Wg.Wait()
+	close(resRuntime.Stop)
+
+	close(res)
 }
