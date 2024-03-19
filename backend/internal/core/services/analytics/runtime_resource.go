@@ -2,6 +2,7 @@ package analytics
 
 import (
 	"context"
+	"fmt"
 	domain "pulsar/internal/core/domain/analytics"
 )
 
@@ -9,6 +10,8 @@ func (service *resourceService) CreateResourceUtil(ctx context.Context, res *dom
 	resource := domain.NewResourceMetric(
 		inv, res.MaxMemory, res.TotalNetworkBytes,
 	)
+
+	fmt.Println("Inside resource service")
 
 	return service.resourceRepo.CreateResourceUtil(ctx, resource)
 

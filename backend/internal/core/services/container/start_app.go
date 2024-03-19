@@ -21,6 +21,7 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 		))
 
 		err := cs.containerMan.StartContainer(ctx, project.ContainerId)
+
 		if err != nil {
 			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
 				project.ID,
@@ -30,6 +31,7 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			errorChan <- services.NewAppError(services.ErrInternalServer, err)
 		}
 
+		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource)
 		go cs.saveContainerLogs(project)
 
 		containerInfo = &ContainerInfo{
@@ -37,9 +39,6 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			server:        make(chan bool),
 			isServerAlive: false,
 		}
-
-		// start collecting resource usage
-		cs.containerMan.ReadContainerStats(ctx, project.ContainerId)
 
 		cs.liveContainers[project.ContainerId] = containerInfo
 	} else {

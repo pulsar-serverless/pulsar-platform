@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
@@ -105,25 +104,20 @@ func (cm *ContainerManager) GetContainerLogs(ctx context.Context, containerId st
 	})
 }
 
-func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) (chan *resource.RuntimeResourceObj, error) {
-	runtimeRes := <-res
-
-	defer runtimeRes.Wg.Done()
-
+func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) error {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
-
-	// offset container intialization
-	time.Sleep(2 * time.Second)
 
 	var dockerStats resource.DockerStats
 
 	for {
+		runtimeRes := <-res
+
 		select {
 		case <-ticker.C:
 			stats, err := cm.client.ContainerStats(ctx, containerId, false)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			buf := new(bytes.Buffer)
@@ -132,32 +126,21 @@ func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId s
 
 			err = json.Unmarshal(buf.Bytes(), &dockerStats)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			if dockerStats.MemoryStats.Total > runtimeRes.MaxMemory {
 				runtimeRes.MaxMemory = dockerStats.MemoryStats.Total
 			}
+
+			res <- runtimeRes
+			return nil
 		case <-runtimeRes.Stop:
 			runtimeRes.TotalNetworkBytes = dockerStats.PortInterface.Recieved + dockerStats.PortInterface.Transmitted
 			res <- runtimeRes
-			fmt.Println(runtimeRes.TotalNetworkBytes)
-			return res, nil
+			return nil
 		}
 	}
-}
-
-func (cm *ContainerManager) ReadContainerStats(ctx context.Context, containerId string) chan *resource.RuntimeResourceObj {
-	runtimeRes := resource.NewRuntimeResObj()
-
-	runtimeCh := make(chan *resource.RuntimeResourceObj, 1)
-	runtimeRes.Wg.Add(1)
-
-	runtimeCh <- runtimeRes
-
-	go cm.GetContainerStats(ctx, containerId, runtimeCh)
-
-	return runtimeCh
 }
 
 func (cm *ContainerManager) StopContainerStats(ctx context.Context, res chan *resource.RuntimeResourceObj) {

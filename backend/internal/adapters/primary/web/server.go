@@ -23,16 +23,15 @@ type Server struct {
 	envService       envs.IEnvService
 	logService       log.ILogService
 	analyticsService analytics.IAnalyticsService
-	resourceService  analytics.IResourceService
 }
 
 func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan ports.IContainerManager, fileRepo ports.IFileRepository) {
 	logService := log.NewLogService(mq, db)
-	containerService := container.NewContainerService(containerMan, logService, fileRepo, db)
+	resourceService := analytics.NewResourceService(db)
+	containerService := container.NewContainerService(containerMan, logService, fileRepo, db, resourceService)
 	projectService := project.NewProjectService(db, containerService, fileRepo)
 	envService := envs.NewEnvService(db, *projectService)
 	analyticsService := analytics.NewAnalyticsService(db, mq)
-	resourceService := analytics.NewResourceService(db)
 
 	server := &Server{
 		echo:             echo.New(),
@@ -41,7 +40,6 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 		envService:       envService,
 		logService:       logService,
 		analyticsService: analyticsService,
-		resourceService:  resourceService,
 	}
 
 	server.echo.Use(middleware.CORS())
