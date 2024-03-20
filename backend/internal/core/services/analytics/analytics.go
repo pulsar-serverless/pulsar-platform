@@ -17,8 +17,6 @@ type IAnalyticsService interface {
 	GetHourlyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
 	GetMonthlyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
 	GetWeeklyInvocations(ctx context.Context, request GetInvocations) ([]*domain.InvocationCount, error)
-	CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, inv *domain.Invocation) error
-	GetInvocationResourceUtil(ctx context.Context, invocationId string) (*domain.RuntimeResource, error)
 }
 
 func NewAnalyticsService(invocationRepo ports.InvocationRepository, mq ports.IMessageQueue) *analyticsService {

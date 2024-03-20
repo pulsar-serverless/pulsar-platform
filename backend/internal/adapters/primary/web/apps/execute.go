@@ -51,11 +51,9 @@ func ExecuteFunction(
 
 			endTime := time.Now()
 
-			newInvocation := analytics.New(project.ID, startTime, endTime, status)
-
 			go analyticsService.PublishInvocationCreatedEvent(
 				context.Background(),
-				newInvocation)
+				analytics.New(project.ID, startTime, endTime, status))
 
 			return err
 		}

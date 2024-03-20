@@ -32,9 +32,14 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			errorChan <- services.NewAppError(services.ErrInternalServer, err)
 		}
 
-		cs.resource = analytics.NewRuntimeResObj()
-		cs.monitor = analytics.NewRuntimeResMonitor()
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.INFO,
+			fmt.Sprintf("Starting collecting container stats, id: %v", project.ContainerId)))
 
+		cs.resource = analytics.NewRuntimeResObj()
+		cs.resource.ContainerId = project.ContainerId
+		cs.monitor = analytics.NewRuntimeResMonitor()
 		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource, cs.monitor)
 
 		go cs.saveContainerLogs(project)
