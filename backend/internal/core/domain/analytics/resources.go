@@ -8,20 +8,17 @@ import (
 
 type RuntimeResource struct {
 	Id             uuid.UUID
-	Invocation     *Invocation `gorm:"foreignKey:InvocationId"`
-	InvocationId   uuid.UUID
-	TotalTime      int64
+	ContainerId    string
 	TotalMemory    int64
 	TotalBandwidth int64
 }
 
-func NewResourceMetric(invocation *Invocation, totalMem, totalBandwidth int64) *RuntimeResource {
+func NewResourceMetric(res *RuntimeResourceObj) *RuntimeResource {
 	return &RuntimeResource{
 		Id:             uuid.New(),
-		InvocationId:   invocation.Id,
-		TotalTime:      int64(invocation.EndedAt.Sub(invocation.StartedAt).Seconds()),
-		TotalMemory:    totalMem,
-		TotalBandwidth: totalBandwidth,
+		ContainerId:    res.ContainerId,
+		TotalMemory:    res.MaxMemory,
+		TotalBandwidth: res.TotalNetworkBytes,
 	}
 }
 
@@ -46,18 +43,23 @@ type DockerStats struct {
 }
 
 type RuntimeResourceObj struct {
-	Wg                *sync.WaitGroup
+	ContainerId       string
 	MaxMemory         int64
 	TotalNetworkBytes int64
-	Stop              chan struct{}
 }
 
 func NewRuntimeResObj() *RuntimeResourceObj {
-	var wg sync.WaitGroup
-	stop := make(chan struct{}, 1)
+	return &RuntimeResourceObj{}
+}
 
-	return &RuntimeResourceObj{
-		Wg:   &wg,
-		Stop: stop,
+type RuntimeResMonitor struct {
+	Wg   *sync.WaitGroup
+	Stop chan struct{}
+}
+
+func NewRuntimeResMonitor() *RuntimeResMonitor {
+	return &RuntimeResMonitor{
+		Wg:   new(sync.WaitGroup),
+		Stop: make(chan struct{}),
 	}
 }

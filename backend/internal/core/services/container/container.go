@@ -15,6 +15,7 @@ type IContainerService interface {
 	DeployContainer(ctx context.Context, project *project.Project, buildContext io.Reader) (string, error)
 	StartApp(project *project.Project, successChan chan bool, errChan chan error)
 	ChangeAppStatus(ctx context.Context, containerId string) error
+	AccessResource() *analytics.RuntimeResourceObj
 }
 
 type containerService struct {
@@ -22,14 +23,15 @@ type containerService struct {
 	fileRepo          ports.IFileRepository
 	projectRepo       ports.IProjectRepo
 	logService        service.ILogService
+	resourceService   resource.IResourceService
 	liveContainers    map[string]*ContainerInfo
 	maxContainerAge   time.Duration
 	operationsTimeout time.Duration
 	start             chan *containerStartArg
 	end               chan *project.Project
 	status            chan *project.Project
-	resource          chan *analytics.RuntimeResourceObj
-	resourceService   resource.IResourceService
+	resource          *analytics.RuntimeResourceObj
+	monitor           *analytics.RuntimeResMonitor
 }
 
 type ContainerInfo struct {
@@ -50,14 +52,13 @@ func NewContainerService(containerMan ports.IContainerManager, logService servic
 		fileRepo:          fileRepo,
 		projectRepo:       projectRepo,
 		logService:        logService,
+		resourceService:   resourceService,
 		liveContainers:    make(map[string]*ContainerInfo),
 		maxContainerAge:   time.Second * 30,
 		operationsTimeout: time.Second * 10,
 		start:             make(chan *containerStartArg),
 		end:               make(chan *project.Project),
 		status:            make(chan *project.Project),
-		resource:          make(chan *analytics.RuntimeResourceObj, 1),
-		resourceService:   resourceService,
 	}
 
 	go service.eventLoop(context.Background())

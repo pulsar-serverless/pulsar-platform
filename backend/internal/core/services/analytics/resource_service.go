@@ -7,16 +7,16 @@ import (
 )
 
 type resourceService struct {
-	resourceRepo ports.ResourceRepository
+	invocationRepo ports.InvocationRepository
 }
 
 type IResourceService interface {
-	CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, inv *domain.Invocation) error
+	CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj) error
 	GetInvocationResourceUtil(ctx context.Context, invocationId string) (*domain.RuntimeResource, error)
 }
 
-func NewResourceService(resourceRepo ports.ResourceRepository) *resourceService {
+func NewResourceService(invocationRepo ports.InvocationRepository) *resourceService {
 	return &resourceService{
-		resourceRepo: resourceRepo,
+		invocationRepo: invocationRepo,
 	}
 }
