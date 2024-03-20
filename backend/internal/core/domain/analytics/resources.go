@@ -46,18 +46,22 @@ type DockerStats struct {
 }
 
 type RuntimeResourceObj struct {
-	Wg                *sync.WaitGroup
 	MaxMemory         int64
 	TotalNetworkBytes int64
-	Stop              chan struct{}
 }
 
 func NewRuntimeResObj() *RuntimeResourceObj {
-	var wg sync.WaitGroup
-	stop := make(chan struct{}, 1)
+	return &RuntimeResourceObj{}
+}
 
-	return &RuntimeResourceObj{
-		Wg:   &wg,
-		Stop: stop,
+type RuntimeResMonitor struct {
+	Wg   *sync.WaitGroup
+	Stop chan struct{}
+}
+
+func NewRuntimeResMonitor() *RuntimeResMonitor {
+	return &RuntimeResMonitor{
+		Wg:   new(sync.WaitGroup),
+		Stop: make(chan struct{}),
 	}
 }

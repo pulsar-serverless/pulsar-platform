@@ -28,7 +28,8 @@ type containerService struct {
 	start             chan *containerStartArg
 	end               chan *project.Project
 	status            chan *project.Project
-	resource          chan *analytics.RuntimeResourceObj
+	resource          *analytics.RuntimeResourceObj
+	monitor           *analytics.RuntimeResMonitor
 	resourceService   resource.IResourceService
 }
 
@@ -56,7 +57,8 @@ func NewContainerService(containerMan ports.IContainerManager, logService servic
 		start:             make(chan *containerStartArg),
 		end:               make(chan *project.Project),
 		status:            make(chan *project.Project),
-		resource:          make(chan *analytics.RuntimeResourceObj, 1),
+		resource:          analytics.NewRuntimeResObj(),
+		monitor:           analytics.NewRuntimeResMonitor(),
 		resourceService:   resourceService,
 	}
 

@@ -31,7 +31,8 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			errorChan <- services.NewAppError(services.ErrInternalServer, err)
 		}
 
-		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource)
+		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource, cs.monitor)
+
 		go cs.saveContainerLogs(project)
 
 		containerInfo = &ContainerInfo{
