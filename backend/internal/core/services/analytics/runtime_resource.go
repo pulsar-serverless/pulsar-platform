@@ -5,15 +5,15 @@ import (
 	domain "pulsar/internal/core/domain/analytics"
 )
 
-func (service *resourceService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, inv *domain.Invocation) error {
+func (service *analyticsService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, inv *domain.Invocation) error {
 	resource := domain.NewResourceMetric(
 		inv, res.MaxMemory, res.TotalNetworkBytes,
 	)
 
-	return service.resourceRepo.CreateResourceUtil(ctx, resource)
+	return service.invocationRepo.CreateResourceUtil(ctx, resource)
 
 }
 
-func (service *resourceService) GetInvocationResourceUtil(ctx context.Context, invocationId string) (*domain.RuntimeResource, error) {
-	return service.resourceRepo.GetInvocationResourceUtil(ctx, invocationId)
+func (service *analyticsService) GetInvocationResourceUtil(ctx context.Context, invocationId string) (*domain.RuntimeResource, error) {
+	return service.invocationRepo.GetInvocationResourceUtil(ctx, invocationId)
 }

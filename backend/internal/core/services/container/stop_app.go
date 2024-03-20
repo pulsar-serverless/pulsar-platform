@@ -25,7 +25,6 @@ func (cs *containerService) stopServerlessApp(ctx context.Context, project *proj
 
 		// stop collecting stats
 		cs.containerMan.StopContainerStats(ctx, cs.monitor)
-		fmt.Println("Network: ", cs.resource.TotalNetworkBytes)
 
 		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
 			project.ID,

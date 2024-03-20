@@ -1,10 +1,7 @@
 package docker
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"io"
 	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
@@ -114,9 +111,6 @@ func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId s
 
 	var dockerStats resource.DockerStats
 
-	// offset containerization
-	time.Sleep(2 * time.Second)
-
 	for {
 		select {
 		case <-ticker.C:
@@ -147,24 +141,6 @@ func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId s
 }
 
 func (cm *ContainerManager) StopContainerStats(ctx context.Context, monitor *resource.RuntimeResMonitor) {
-	fmt.Println("Inside stop container stats")
 	close(monitor.Stop)
 	monitor.Wg.Wait()
-}
-
-func formatStats(res *resource.RuntimeResourceObj, stats types.ContainerStats, dockerStats *resource.DockerStats) (*resource.RuntimeResourceObj, error) {
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(stats.Body)
-
-	err := json.Unmarshal(buf.Bytes(), &dockerStats)
-	if err != nil {
-		return res, err
-	}
-
-	if dockerStats.MemoryStats.Total > res.MaxMemory {
-		res.MaxMemory = dockerStats.MemoryStats.Total
-	}
-
-	return res, nil
-
 }

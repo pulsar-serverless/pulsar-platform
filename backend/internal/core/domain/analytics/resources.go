@@ -8,7 +8,6 @@ import (
 
 type RuntimeResource struct {
 	Id             uuid.UUID
-	Invocation     *Invocation `gorm:"foreignKey:InvocationId"`
 	InvocationId   uuid.UUID
 	TotalTime      int64
 	TotalMemory    int64
