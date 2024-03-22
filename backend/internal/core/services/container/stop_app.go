@@ -32,7 +32,7 @@ func (cs *containerService) stopServerlessApp(ctx context.Context, project *proj
 			fmt.Sprintf("Stopped collecting container stats, id: %v", project.ContainerId)))
 
 		// save container stats
-		err = cs.resourceService.CreateResourceUtil(ctx, cs.resource)
+		err = cs.resourceService.CreateResourceUtil(ctx, cs.resource, project)
 		if err != nil {
 			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
 				project.ID,

@@ -3,10 +3,11 @@ package analytics
 import (
 	"context"
 	domain "pulsar/internal/core/domain/analytics"
+	"pulsar/internal/core/domain/project"
 )
 
-func (service *resourceService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj) error {
-	resource := domain.NewResourceMetric(res)
+func (service *resourceService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, proj *project.Project) error {
+	resource := domain.NewResourceMetric(res, proj)
 
 	return service.invocationRepo.CreateResourceUtil(ctx, resource)
 
