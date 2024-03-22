@@ -1,6 +1,7 @@
 package analytics
 
 import (
+	"math"
 	"pulsar/internal/core/domain/project"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 type RuntimeResource struct {
 	Id             uuid.UUID
 	Project        *project.Project `gorm:"foreignKey:ProjectId"`
-	ProjectId      string
+	ProjectId      string           `gorm:"index;column:project_id"`
 	ContainerId    string
 	TotalMemory    int64
 	TotalBandwidth int64
@@ -29,8 +30,17 @@ func NewResourceMetric(res *RuntimeResourceObj, proj *project.Project) *RuntimeR
 }
 
 type ResourceUtil struct {
-	ProjectId   string    `json:"project_id"`
-	MemoryUtil  int64     `json:"mem_usage"`
-	NetworkUtil int64     `json:"net_usage"`
-	UsageTime   time.Time `json:"usage_time"`
+	ProjectId   string `json:"project_id"`
+	MemoryUtil  int64  `gorm:"column:mem_usage" json:"mem_usage_mb"`
+	NetworkUtil int64  `gorm:"column:net_usage" json:"net_usage_mb"`
+	UsagePeriod string `gorm:"column:usage_month" json:"usage_period"`
+}
+
+func ResourceUtilFromMetric(res *RuntimeResource) *ResourceUtil {
+	return &ResourceUtil{
+		ProjectId:   res.ProjectId,
+		MemoryUtil:  int64(math.Floor(float64(res.TotalMemory) / (1024 * 1024))), // conversion to megabyte
+		NetworkUtil: int64(math.Floor(float64(res.TotalBandwidth) / (1024 * 1024))),
+		UsagePeriod: res.UsageTime.String(),
+	}
 }

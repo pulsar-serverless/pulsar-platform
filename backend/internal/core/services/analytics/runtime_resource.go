@@ -3,9 +3,15 @@ package analytics
 import (
 	"context"
 	domain "pulsar/internal/core/domain/analytics"
+	"pulsar/internal/core/domain/common"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 )
+
+type GetProjectResRequest struct {
+	PageNumber, PageSize int
+	ProjectId            string
+}
 
 func (service *resourceService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, proj *project.Project) error {
 	resource := domain.NewResourceMetric(res, proj)
@@ -14,13 +20,24 @@ func (service *resourceService) CreateResourceUtil(ctx context.Context, res *dom
 
 }
 
-func (service *resourceService) GetProjectResourceUtil(ctx context.Context, projectId string) ([]*domain.ResourceUtil, error) {
-	result, err := service.invocationRepo.GetProjectResourceUtil(ctx, projectId)
+func (service *resourceService) GetProjectResourceUtil(ctx context.Context, req GetProjectResRequest) (*common.Pagination[domain.ResourceUtil], error) {
+	result, err := service.invocationRepo.GetProjectResourceUtil(ctx, req.ProjectId, req.PageNumber, req.PageSize)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrInternalServer, err)
 	}
 
-	return result, nil
+	data := &common.Pagination[domain.ResourceUtil]{
+		PageSize:   result.PageSize,
+		PageNumber: result.PageNumber,
+		TotalPages: result.TotalPages,
+	}
+
+	data.Rows = make([]*domain.ResourceUtil, len(result.Rows))
+	for i, row := range result.Rows {
+		data.Rows[i] = domain.ResourceUtilFromMetric(row)
+	}
+
+	return data, nil
 }
 
 func (service *resourceService) GetTotalProjectResourceUtil(ctx context.Context, projectId string) (*domain.ResourceUtil, error) {
