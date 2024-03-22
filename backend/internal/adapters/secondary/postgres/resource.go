@@ -21,7 +21,7 @@ func (db *Database) GetProjectResourceUtil(ctx context.Context, projectId string
 	}
 
 	var count int64
-	db.conn.Model(&analytics.RuntimeResource{}).Where(&analytics.RuntimeResource{ProjectId: projectId})
+	db.conn.Model(&analytics.RuntimeResource{}).Where(&analytics.RuntimeResource{ProjectId: projectId}).Count(&count)
 
 	data := db.conn.Scopes(Paginate(pagination)).
 		Where(&analytics.RuntimeResource{ProjectId: projectId}).
