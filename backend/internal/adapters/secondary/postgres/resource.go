@@ -10,6 +10,13 @@ func (db *Database) CreateResourceUtil(ctx context.Context, res *analytics.Runti
 	return result.Error
 }
 
-func (db *Database) GetInvocationResourceUtil(ctx context.Context, containerId string) (*analytics.RuntimeResource, error) {
+func (db *Database) GetProjectResourceUtil(ctx context.Context, projectId string) ([]*analytics.ResourceUtil, error) {
+	return nil, nil
+}
+
+func (db *Database) GetTotalProjectResourceUtil(ctx context.Context, projectId string) (*analytics.ResourceUtil, error) {
+	return nil, nil
+}
+func (db *Database) GetMonthlyProjectResourceUtil(ctx context.Context, projectId string, month string) (*analytics.ResourceUtil, error) {
 	return nil, nil
 }

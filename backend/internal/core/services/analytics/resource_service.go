@@ -13,7 +13,9 @@ type resourceService struct {
 
 type IResourceService interface {
 	CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, proj *project.Project) error
-	GetInvocationResourceUtil(ctx context.Context, invocationId string) (*domain.RuntimeResource, error)
+	GetProjectResourceUtil(ctx context.Context, projectId string) ([]*domain.ResourceUtil, error)
+	GetTotalProjectResourceUtil(ctx context.Context, projectId string) (*domain.ResourceUtil, error)
+	GetMonthlyProjectResourceUtil(ctx context.Context, projectId string, month string) (*domain.ResourceUtil, error)
 }
 
 func NewResourceService(invocationRepo ports.InvocationRepository) *resourceService {
