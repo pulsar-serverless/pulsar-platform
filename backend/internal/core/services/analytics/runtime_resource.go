@@ -9,8 +9,10 @@ import (
 )
 
 type GetProjectResRequest struct {
-	PageNumber, PageSize int
-	ProjectId            string
+	PageNumber int    `query:"pageNumber"`
+	PageSize   int    `query:"pageSize"`
+	ProjectId  string `param:"projectId"`
+	Month      string `query:"month"`
 }
 
 func (service *resourceService) CreateResourceUtil(ctx context.Context, res *domain.RuntimeResourceObj, proj *project.Project) error {
