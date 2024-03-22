@@ -1,7 +1,6 @@
 package analytics
 
 import (
-	"math"
 	"pulsar/internal/core/domain/project"
 	"time"
 
@@ -39,8 +38,8 @@ type ResourceUtil struct {
 func ResourceUtilFromMetric(res *RuntimeResource) *ResourceUtil {
 	return &ResourceUtil{
 		ProjectId:   res.ProjectId,
-		MemoryUtil:  int64(math.Floor(float64(res.TotalMemory) / (1024 * 1024))), // conversion to megabyte
-		NetworkUtil: int64(math.Floor(float64(res.TotalBandwidth) / (1024 * 1024))),
+		MemoryUtil:  res.TotalMemory, // conversion to megabyte
+		NetworkUtil: res.TotalBandwidth,
 		UsagePeriod: res.UsageTime.String(),
 	}
 }
