@@ -38,8 +38,8 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			fmt.Sprintf("Starting collecting container stats, id: %v", project.ContainerId)))
 
 		cs.resource = analytics.NewRuntimeResObj()
-		cs.resource.ContainerId = project.ContainerId
 		cs.monitor = analytics.NewRuntimeResMonitor()
+
 		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource, cs.monitor)
 
 		go cs.saveContainerLogs(project)
