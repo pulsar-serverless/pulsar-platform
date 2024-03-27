@@ -3,13 +3,12 @@ package apps
 import (
 	"context"
 	"pulsar/internal/adapters/primary/web/apierrors"
+	"pulsar/internal/adapters/primary/web/utils"
 	"pulsar/internal/core/domain/analytics"
 	services "pulsar/internal/core/services/analytics"
 	"pulsar/internal/core/services/container"
 	"pulsar/internal/core/services/project"
 	"time"
-
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -28,7 +27,7 @@ func ExecuteFunction(
 			successChan := make(chan bool, 1)
 			errorChan := make(chan error, 1)
 
-			subdomain := getSubdomain(ctx.Request().Host)
+			subdomain := utils.GetSubdomain(ctx.Request().Host)
 			project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
 
 			if err != nil {
@@ -58,13 +57,4 @@ func ExecuteFunction(
 			return err
 		}
 	}
-}
-
-func getSubdomain(hostname string) string {
-	parts := strings.Split(hostname, ".")
-
-	if len(parts) >= 2 {
-		return parts[0]
-	}
-	return ""
 }

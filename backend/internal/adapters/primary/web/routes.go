@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (server *Server) DefineRoutes() {
+func (server *Server) DefineRoutes(jwtSecrete string) {
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
@@ -50,5 +50,7 @@ func (server *Server) DefineRoutes() {
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
 		echo.WrapHandler(apps.NewProxy()),
-		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService))
+		auth.IsAuthorized(server.projectService, jwtSecrete),
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService),
+	)
 }
