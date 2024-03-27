@@ -1,63 +1,45 @@
 package analytics
 
 import (
-	"sync"
+	"pulsar/internal/core/domain/project"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type RuntimeResource struct {
 	Id             uuid.UUID
-	Invocation     *Invocation `gorm:"foreignKey:InvocationId"`
-	InvocationId   uuid.UUID
-	TotalTime      int64
+	Project        *project.Project `gorm:"foreignKey:ProjectId"`
+	ProjectId      string           `gorm:"index;column:project_id"`
+	ContainerId    string
 	TotalMemory    int64
 	TotalBandwidth int64
+	UsageTime      time.Time
 }
 
-func NewResourceMetric(invocation *Invocation, totalMem, totalBandwidth int64) *RuntimeResource {
+func NewResourceMetric(res *RuntimeResourceObj, proj *project.Project) *RuntimeResource {
 	return &RuntimeResource{
 		Id:             uuid.New(),
-		InvocationId:   invocation.Id,
-		TotalTime:      int64(invocation.EndedAt.Sub(invocation.StartedAt).Seconds()),
-		TotalMemory:    totalMem,
-		TotalBandwidth: totalBandwidth,
+		ContainerId:    proj.ContainerId,
+		ProjectId:      proj.ID,
+		TotalMemory:    res.MaxMemory,
+		TotalBandwidth: res.TotalNetworkBytes,
+		UsageTime:      time.Now(),
 	}
 }
 
-// docker resource stats
-type MemoryStats struct {
-	Total int64       `json:"usage"`
-	Stats interface{} `json:"stats"`
+type ResourceUtil struct {
+	ProjectId   string `json:"project_id"`
+	MemoryUtil  int64  `gorm:"column:mem_usage" json:"mem_usage_mb"`
+	NetworkUtil int64  `gorm:"column:net_usage" json:"net_usage_mb"`
+	UsagePeriod string `gorm:"column:usage_month" json:"usage_period"`
 }
 
-type NetworkStatsInteface struct {
-	Recieved    int64 `json:"rx_bytes"`
-	Transmitted int64 `json:"tx_bytes"`
-}
-
-type NetworkStats struct {
-	PortInterface NetworkStatsInteface `json:"eth0"`
-}
-
-type DockerStats struct {
-	MemoryStats  MemoryStats `json:"memory_stats"`
-	NetworkStats `json:"networks"`
-}
-
-type RuntimeResourceObj struct {
-	Wg                *sync.WaitGroup
-	MaxMemory         int64
-	TotalNetworkBytes int64
-	Stop              chan struct{}
-}
-
-func NewRuntimeResObj() *RuntimeResourceObj {
-	var wg sync.WaitGroup
-	stop := make(chan struct{}, 1)
-
-	return &RuntimeResourceObj{
-		Wg:   &wg,
-		Stop: stop,
+func ResourceUtilFromMetric(res *RuntimeResource) *ResourceUtil {
+	return &ResourceUtil{
+		ProjectId:   res.ProjectId,
+		MemoryUtil:  res.TotalMemory, // conversion to megabyte
+		NetworkUtil: res.TotalBandwidth,
+		UsagePeriod: res.UsageTime.String(),
 	}
 }

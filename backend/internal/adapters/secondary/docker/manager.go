@@ -1,9 +1,7 @@
 package docker
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
@@ -104,15 +102,16 @@ func (cm *ContainerManager) GetContainerLogs(ctx context.Context, containerId st
 	})
 }
 
-func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res chan *resource.RuntimeResourceObj) error {
+func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId string, res *resource.RuntimeResourceObj, monitor *resource.RuntimeResMonitor) error {
+	monitor.Wg.Add(1)
+	defer monitor.Wg.Done()
+
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
 	var dockerStats resource.DockerStats
 
 	for {
-		runtimeRes := <-res
-
 		select {
 		case <-ticker.C:
 			stats, err := cm.client.ContainerStats(ctx, containerId, false)
@@ -120,34 +119,28 @@ func (cm *ContainerManager) GetContainerStats(ctx context.Context, containerId s
 				return err
 			}
 
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(stats.Body)
-			defer stats.Body.Close()
-
-			err = json.Unmarshal(buf.Bytes(), &dockerStats)
+			res, err = formatStats(res, stats, &dockerStats)
 			if err != nil {
 				return err
 			}
 
-			if dockerStats.MemoryStats.Total > runtimeRes.MaxMemory {
-				runtimeRes.MaxMemory = dockerStats.MemoryStats.Total
+		case <-monitor.Stop:
+			stats, err := cm.client.ContainerStats(ctx, containerId, false)
+			if err != nil {
+				return err
+			}
+			res, err = formatStats(res, stats, &dockerStats)
+			if err != nil {
+				return err
 			}
 
-			res <- runtimeRes
-			return nil
-		case <-runtimeRes.Stop:
-			runtimeRes.TotalNetworkBytes = dockerStats.PortInterface.Recieved + dockerStats.PortInterface.Transmitted
-			res <- runtimeRes
+			res.TotalNetworkBytes = dockerStats.PortInterface.Recieved + dockerStats.PortInterface.Transmitted
 			return nil
 		}
 	}
 }
 
-func (cm *ContainerManager) StopContainerStats(ctx context.Context, res chan *resource.RuntimeResourceObj) {
-	resRuntime := <-res
-
-	resRuntime.Wg.Wait()
-	close(resRuntime.Stop)
-
-	close(res)
+func (cm *ContainerManager) StopContainerStats(ctx context.Context, monitor *resource.RuntimeResMonitor) {
+	close(monitor.Stop)
+	monitor.Wg.Wait()
 }

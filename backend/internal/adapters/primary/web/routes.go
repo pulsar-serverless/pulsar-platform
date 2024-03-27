@@ -7,6 +7,7 @@ import (
 	"pulsar/internal/adapters/primary/web/envs"
 	"pulsar/internal/adapters/primary/web/log"
 	"pulsar/internal/adapters/primary/web/projects"
+	"pulsar/internal/adapters/primary/web/resources"
 
 	"github.com/labstack/echo/v4"
 )
@@ -44,6 +45,12 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 			projectController.GET("/:projectId/analytics/hourly", analytics.GetProjectHourlyInvocations(server.analyticsService))
 			projectController.GET("/:projectId/analytics/monthly", analytics.GetProjectMonthlyInvocations(server.analyticsService))
 			projectController.GET("/:projectId/analytics/weekly", analytics.GetProjectWeeklyInvocations(server.analyticsService))
+		}
+
+		{
+			projectController.GET("/:projectId/resources/monthly", resources.GetProjectMonthlyConsumption(server.resourceService))
+			projectController.GET("/:projectId/resources", resources.GetResourceUtilList(server.resourceService))
+			projectController.GET("/:projectId/resources/total", resources.GetProjectTotalUtil(server.resourceService))
 		}
 	}
 

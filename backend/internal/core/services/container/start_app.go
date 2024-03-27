@@ -3,6 +3,7 @@ package container
 import (
 	"context"
 	"fmt"
+	"pulsar/internal/core/domain/analytics"
 	domain "pulsar/internal/core/domain/log"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
@@ -31,7 +32,16 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			errorChan <- services.NewAppError(services.ErrInternalServer, err)
 		}
 
-		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource)
+		cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
+			project.ID,
+			domain.INFO,
+			fmt.Sprintf("Starting collecting container stats, id: %v", project.ContainerId)))
+
+		cs.resource = analytics.NewRuntimeResObj()
+		cs.monitor = analytics.NewRuntimeResMonitor()
+
+		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource, cs.monitor)
+
 		go cs.saveContainerLogs(project)
 
 		containerInfo = &ContainerInfo{
