@@ -48,7 +48,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 	server.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// setup API routes
-	server.DefineRoutes()
+	server.DefineRoutes(jwtSecrete)
 	// start server
 	server.echo.Logger.Fatal(server.echo.Start(":" + os.Getenv("PORT")))
 }

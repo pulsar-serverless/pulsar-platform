@@ -13,8 +13,7 @@ func generateJWTToken(secreteKey string, iat *time.Time) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(24 * 30 * time.Hour)
-	claims["iat"] = iat
+	claims["tiat"] = iat
 
 	return token.SignedString([]byte(secreteKey))
 }
