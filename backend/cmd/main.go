@@ -46,7 +46,7 @@ func main() {
 		panic("Unable to setup authentication")
 	}
 
-	web.StartServer(&projectRepo, rabbitmq, containerManager, fileRepository)
+	web.StartServer(&projectRepo, rabbitmq, containerManager, fileRepository, os.Getenv("JWT_SECRETE"))
 }
 
 // swag init -g cmd/main.go -o docs/

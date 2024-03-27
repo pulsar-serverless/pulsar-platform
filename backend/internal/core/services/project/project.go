@@ -24,12 +24,14 @@ type ProjectService struct {
 	projectRepo      ports.IProjectRepo
 	containerService container.IContainerService
 	fileRepo         ports.IFileRepository
+	jwtSecreteKey    string
 }
 
-func NewProjectService(pr ports.IProjectRepo, containerService container.IContainerService, fileRepo ports.IFileRepository) *ProjectService {
+func NewProjectService(pr ports.IProjectRepo, containerService container.IContainerService, fileRepo ports.IFileRepository, jwtSecreteKey string) *ProjectService {
 	return &ProjectService{
 		projectRepo:      pr,
 		containerService: containerService,
 		fileRepo:         fileRepo,
+		jwtSecreteKey:    jwtSecreteKey,
 	}
 }
