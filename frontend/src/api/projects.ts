@@ -53,5 +53,10 @@ export const ProjectApi = {
   async generateApiKey(projectId: string) {
     const {data} = await axiosInstance.put<{token: string}>( `/projects/${projectId}/api-token`,)
     return data
+  },
+
+  async removeAPIKey(projectId: string) {
+    const {data} = await axiosInstance.delete( `/projects/${projectId}/api-token`,)
+    return data
   }
 };
