@@ -16,7 +16,7 @@ const (
 
 type Invocation struct {
 	Id        uuid.UUID
-	Project   *project.Project `gorm:"foreignKey:ProjectId"`
+	Project   *project.Project `gorm:"foreignKey:ProjectId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Status    InvocationStatus
 	ProjectId string
 	StartedAt time.Time
