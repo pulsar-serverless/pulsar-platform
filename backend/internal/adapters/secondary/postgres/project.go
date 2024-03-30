@@ -36,6 +36,13 @@ func (repo *Database) UpdateProject(ctx context.Context, projectId string, updat
 	return &project, result.Error
 }
 
+func (repo *Database) UpdateProjectFields(ctx context.Context, projectId string, updatedProject map[string]interface{}) (*project.Project, error) {
+	var project project.Project
+	result := repo.conn.Model(&project).Where("id = ?", projectId).Updates(updatedProject)
+
+	return &project, result.Error
+}
+
 func (repo *Database) GetProject(ctx context.Context, projectId string) (*project.Project, error) {
 	project := project.Project{ID: projectId}
 	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").First(&project)

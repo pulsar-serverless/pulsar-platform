@@ -15,4 +15,5 @@ type IProjectRepo interface {
 	GetProjects(ctx context.Context, pageNumber int, pageSize int, userId string) (*common.Pagination[project.Project], error)
 	DeleteProject(ctx context.Context, projectId string) error
 	UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error
+	UpdateProjectFields(ctx context.Context, projectId string, updatedProject map[string]interface{}) (*project.Project, error)
 }

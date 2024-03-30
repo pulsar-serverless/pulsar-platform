@@ -25,6 +25,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 		projectController.GET("/:id", projects.GetProject(server.projectService))
 		projectController.PUT("/:id", projects.UpdateProjects(server.projectService))
 		projectController.PUT("/:id/api-token", projects.GenerateAPIToken(server.projectService))
+		projectController.DELETE("/:id/api-token", projects.RemoveAPIKey(server.projectService))
 
 		{
 			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
