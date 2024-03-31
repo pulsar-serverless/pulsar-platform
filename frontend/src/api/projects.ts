@@ -58,5 +58,10 @@ export const ProjectApi = {
   async removeAPIKey(projectId: string) {
     const {data} = await axiosInstance.delete( `/projects/${projectId}/api-token`,)
     return data
+  },
+
+  async deleteProject(projectId: string) {
+    const {data} = await axiosInstance.delete( `/projects/${projectId}`,)
+    return data
   }
 };
