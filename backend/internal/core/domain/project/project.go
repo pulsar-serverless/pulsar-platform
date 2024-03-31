@@ -11,7 +11,6 @@ import (
 type DeploymentStatus string
 
 const (
-	Ready    DeploymentStatus = "ready"
 	Failed   DeploymentStatus = "failed"
 	Building DeploymentStatus = "building"
 	Done     DeploymentStatus = "done"

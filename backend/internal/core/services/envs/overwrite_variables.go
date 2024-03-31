@@ -5,6 +5,8 @@ import (
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	projectServices "pulsar/internal/core/services/project"
+
+	zeroLog "github.com/rs/zerolog/log"
 )
 
 type EnvVariables struct {
@@ -42,7 +44,37 @@ func (envServices *envService) OverwriteEnvVariables(ctx context.Context, reques
 	existingProject.EnvVariables = envs
 
 	go func() {
-		envServices.projectService.InstallProject(context.TODO(), existingProject)
+		envServices.projectService.UpdateProject(
+			ctx,
+			projectServices.UpdateProjectReq{
+				ProjectId:      existingProject.ID,
+				UpdatedProject: &project.Project{DeploymentStatus: project.Building},
+			},
+		)
+
+		err := envServices.projectService.InstallProject(context.TODO(), existingProject)
+		if err != nil {
+			zeroLog.Error().
+				Str("AppID", existingProject.ID).
+				Err(err).
+				Msg("Unable to install a project.")
+
+			envServices.projectService.UpdateProject(
+				ctx,
+				projectServices.UpdateProjectReq{
+					ProjectId:      existingProject.ID,
+					UpdatedProject: &project.Project{DeploymentStatus: project.Failed},
+				},
+			)
+			return
+		}
+		envServices.projectService.UpdateProject(
+			ctx,
+			projectServices.UpdateProjectReq{
+				ProjectId:      existingProject.ID,
+				UpdatedProject: &project.Project{DeploymentStatus: project.Done},
+			},
+		)
 	}()
 
 	return variables, nil
