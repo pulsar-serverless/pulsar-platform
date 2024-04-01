@@ -34,6 +34,7 @@ export default function Page() {
   } = useQuery({
     queryKey: [ProjectApi.getProject.name, projectName],
     queryFn: () => ProjectApi.getProject(projectName),
+    refetchInterval: 2000
   });
 
   const [value, setValue] = useState(0);

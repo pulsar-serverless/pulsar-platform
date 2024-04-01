@@ -7,14 +7,12 @@ import (
 )
 
 type UpdateProjectReq struct {
-	ProjectId string
-	Name      string
+	ProjectId      string
+	UpdatedProject *project.Project
 }
 
 func (projectService *ProjectService) UpdateProject(ctx context.Context, req UpdateProjectReq) (*GenericProjectResp, error) {
-	updatedProject := project.Project{Name: req.Name}
-
-	project, err := projectService.projectRepo.UpdateProject(ctx, req.ProjectId, &updatedProject)
+	project, err := projectService.projectRepo.UpdateProject(ctx, req.ProjectId, req.UpdatedProject)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrBadRequest, err)
 	}

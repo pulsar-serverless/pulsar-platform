@@ -37,6 +37,7 @@ const ProjectLog: React.FC<{ projectId: string }> = ({ projectId }) => {
     queryKey: [LogApi.getLogs.name, projectId, page, searchQuery, logType],
     queryFn: () => LogApi.getLogs(projectId, logType, searchQuery, page,),
     placeholderData: keepPreviousData,
+    refetchInterval: 2000
   });
 
   const { mutate: handleClearLogs } = useMutation({

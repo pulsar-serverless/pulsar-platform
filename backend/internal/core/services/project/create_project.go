@@ -37,9 +37,10 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 
 func (projectService *ProjectService) CreateProject(ctx context.Context, req CreateProjectReq) (*GenericProjectResp, error) {
 	var newProject = project.Project{
-		ID:     fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
-		Name:   req.ProjectName,
-		UserId: req.UserId,
+		ID:               fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
+		Name:             req.ProjectName,
+		UserId:           req.UserId,
+		DeploymentStatus: project.Building,
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {
@@ -57,6 +58,7 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 		}
 
 		newProject.SourceCode = &project.SourceCode{URI: sourceDir, ID: uuid.New()}
+		newProject.DeploymentStatus = project.Building
 
 		_, err = projectService.projectRepo.UpdateProject(ctx, newProject.ID, newProject)
 		if err != nil {
@@ -67,7 +69,17 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 			return
 		}
 
-		projectService.InstallProject(context.TODO(), newProject)
+		err = projectService.InstallProject(context.TODO(), newProject)
+		if err != nil {
+			zeroLog.Error().
+				Str("AppID", newProject.ID).
+				Err(err).
+				Msg("Unable to install a project.")
+			projectService.projectRepo.UpdateProject(ctx, newProject.ID, &project.Project{DeploymentStatus: project.Failed})
+			return
+		}
+
+		projectService.projectRepo.UpdateProject(ctx, newProject.ID, &project.Project{DeploymentStatus: project.Done})
 	}(&newProject)
 
 	return GenericProjectRespFromProject(&newProject), nil
