@@ -16,8 +16,8 @@ const (
 )
 
 type PricingPlan struct {
-	ID          uuid.UUID      `gorm:"PrimaryKey" json:"id"`
-	Name        string         `gorm:"unique" json:"name"`
+	ID          uuid.UUID      `gorm:"PrimaryKey"`
+	Name        string         `gorm:"unique"`
 	Description string         ``
 	PlanTeir    Teir           `gorm:"default:'free';not null;column:plan_teir"`
 	ResourcesId *uuid.UUID     `gorm:"column:resources_id"`
