@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Get Monthly Project Resource Consumptions
-// @ID			get-monthly-project-resource
+// @Summary	Get Total Project Resource Consumptions
+// @ID			get-total-project-resource
 // @Accept		json
 // @Produce	json
 // @Success	200		{object} any
