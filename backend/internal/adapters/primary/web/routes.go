@@ -4,6 +4,7 @@ import (
 	"pulsar/internal/adapters/primary/web/analytics"
 	"pulsar/internal/adapters/primary/web/apps"
 	"pulsar/internal/adapters/primary/web/auth"
+	"pulsar/internal/adapters/primary/web/billing"
 	"pulsar/internal/adapters/primary/web/envs"
 	"pulsar/internal/adapters/primary/web/log"
 	"pulsar/internal/adapters/primary/web/projects"
@@ -52,6 +53,11 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 			projectController.GET("/:projectId/resources/monthly", resources.GetProjectMonthlyConsumption(server.resourceService))
 			projectController.GET("/:projectId/resources", resources.GetResourceUtilList(server.resourceService))
 			projectController.GET("/:projectId/resources/total", resources.GetProjectTotalUtil(server.resourceService))
+		}
+
+		{
+			projectController.GET("/plans", billing.GetPricingPlans(server.billingService))
+			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
 		}
 	}
 
