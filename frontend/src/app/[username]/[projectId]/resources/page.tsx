@@ -1,5 +1,5 @@
 "use client";
-import InvocationGraph from "@/components/analytics/InvocationsGraph";
+import ResourceApp from "@/components/resources/cards";
 import { Container, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 
@@ -12,13 +12,13 @@ function Page() {
 				variant="h6"
 				sx={{ textTransform: "capitalize" }}
 				gutterBottom>
-				Analytics
+				Resources
 			</Typography>
 			<Typography variant="body2">
-				Effortlessly monitor executions and track errors.
+				Effortlessly track your resource usage.
 			</Typography>
 
-			<InvocationGraph projectId={projectId} />
+			<ResourceApp projectId={projectId} />
 		</Container>
 	);
 }

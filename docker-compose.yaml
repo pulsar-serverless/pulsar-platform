@@ -4,22 +4,22 @@ services:
     image: postgres:16
     restart: always
     environment:
-      POSTGRES_PASSWORD: 'mysecretpassword'
-      POSTGRES_HOST: 'pulsar'
-      POSTGRES_DB: 'pulsar'
-      POSTGRES_USER: 'pulsar'
+      POSTGRES_PASSWORD: "mysecretpassword"
+      POSTGRES_HOST: "pulsar"
+      POSTGRES_DB: "pulsar"
+      POSTGRES_USER: "pulsar"
     ports:
       - "5436:5432"
     networks:
       - pulsar-internal-network
-      
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
     networks:
-        - pulsar-internal-network
+      - pulsar-internal-network
 
 networks:
   pulsar-internal-network:
