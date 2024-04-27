@@ -16,14 +16,12 @@ definitions:
     type: object
   project.DeploymentStatus:
     enum:
-    - ready
     - failed
     - building
     - done
     - none
     type: string
     x-enum-varnames:
-    - Ready
     - Failed
     - Building
     - Done
@@ -337,6 +335,119 @@ paths:
       summary: Get Weekly Project Invocations
       tags:
       - Analytics
+  /api/projects/{projectId}/plan:
+    post:
+      consumes:
+      - application/json
+      operationId: set-project-pricing-plan
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Plan Id
+        in: query
+        name: planId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - Bearer: []
+      summary: Set Project Pricing Plan
+      tags:
+      - Billing
+  /api/projects/{projectId}/resources:
+    get:
+      consumes:
+      - application/json
+      operationId: get-project-resource
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: Month
+        in: query
+        name: month
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Project Resource Consumption
+      tags:
+      - Resources
+  /api/projects/{projectId}/resources/monthly:
+    get:
+      consumes:
+      - application/json
+      operationId: get-monthly-project-resource
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Month
+        in: query
+        name: month
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Monthly Project Resource Consumption
+      tags:
+      - Resources
+  /api/projects/{projectId}/resources/total:
+    get:
+      consumes:
+      - application/json
+      operationId: get-total-project-resource
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Total Project Resource Consumptions
+      tags:
+      - Resources
   /api/projects/code/{projectId}:
     get:
       consumes:
@@ -501,6 +612,34 @@ paths:
       summary: Get Project log
       tags:
       - Log
+  /api/projects/plans:
+    get:
+      consumes:
+      - application/json
+      operationId: get-pricing-plans
+      parameters:
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      security:
+      - Bearer: []
+      summary: Get Pricing Plans
+      tags:
+      - Billing
   /app/status:
     post:
       consumes:
