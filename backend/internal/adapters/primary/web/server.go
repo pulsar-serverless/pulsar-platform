@@ -9,6 +9,7 @@ import (
 	"pulsar/internal/core/services/envs"
 	"pulsar/internal/core/services/log"
 	"pulsar/internal/core/services/project"
+	"pulsar/internal/core/services/user"
 	"pulsar/internal/ports"
 
 	"github.com/labstack/echo/v4"
@@ -26,6 +27,7 @@ type Server struct {
 	analyticsService analytics.IAnalyticsService
 	resourceService  analytics.IResourceService
 	billingService   billing.IBillingService
+	userService      user.IUserService
 }
 
 func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan ports.IContainerManager, fileRepo ports.IFileRepository, jwtSecrete string) {
@@ -36,6 +38,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 	envService := envs.NewEnvService(db, *projectService)
 	analyticsService := analytics.NewAnalyticsService(db, mq)
 	billingService := billing.NewBillingService(db)
+	userService := user.NewUserService(db)
 
 	server := &Server{
 		echo:             echo.New(),
@@ -46,6 +49,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 		analyticsService: analyticsService,
 		resourceService:  resourceService,
 		billingService:   billingService,
+		userService:      userService,
 	}
 
 	server.echo.Use(middleware.CORS())

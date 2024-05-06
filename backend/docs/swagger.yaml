@@ -640,6 +640,36 @@ paths:
       summary: Get Pricing Plans
       tags:
       - Billing
+  /api/users:
+    get:
+      consumes:
+      - application/json
+      operationId: get-users
+      parameters:
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+      security:
+      - Bearer: []
+      summary: Get users
+      tags:
+      - USER
   /app/status:
     post:
       consumes:
