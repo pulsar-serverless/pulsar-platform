@@ -18,6 +18,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+
     if (isAuthenticated && !isLoading) {
       router.push(`/${user?.name}`);
     }
