@@ -9,6 +9,7 @@ import (
 	"pulsar/internal/adapters/primary/web/log"
 	"pulsar/internal/adapters/primary/web/projects"
 	"pulsar/internal/adapters/primary/web/resources"
+	"pulsar/internal/adapters/primary/web/users"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,6 +18,9 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
+
+	userController := apiController.Group("/users")
+	userController.GET("", users.GetUsers(server.userService))
 
 	projectController := apiController.Group("/projects")
 	{
