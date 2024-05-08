@@ -27,9 +27,9 @@ export const ProjectApi = {
     return data;
   },
 
-  async getProjects(pageNumber: number = 0, pagesize: number = 20) {
+  async getProjects(pageNumber: number = 0, pagesize: number = 20, userId?: string) {
     const { data } = await axiosInstance.get<Paginated<Project>>(`/projects`, {
-      params: { pageNumber, pagesize },
+      params: { userId, pageNumber, pagesize, },
     });
     return data;
   },

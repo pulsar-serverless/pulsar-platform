@@ -34,13 +34,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { User } from "@/models/user";
+import { AuthGuard } from "@/components/providers/AuthGuard";
+import { useRouter } from "next/navigation";
 
 const columnHelper = createColumnHelper<User>();
 
-const TableMenu = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
+const TableMenu: React.FC<{ user: User }> = ({ user }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -48,6 +48,7 @@ const TableMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const router = useRouter();
   return (
     <>
       <IconButton onClick={handleClick} size="small">
@@ -62,26 +63,37 @@ const TableMenu = () => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>View projects</MenuItem>
-        <MenuItem onClick={handleClose} color="error">Remove All projects</MenuItem>
-        <MenuItem onClick={handleClose} color="error.light">Pause All projects</MenuItem>
+        <MenuItem
+          onClick={() => {
+            router.push(`/${user.userId}`);
+            handleClose();
+          }}
+        >
+          View projects
+        </MenuItem>
+        <MenuItem onClick={handleClose} color="error">
+          Remove All projects
+        </MenuItem>
+        <MenuItem onClick={handleClose} color="error.light">
+          Pause All projects
+        </MenuItem>
       </Menu>
     </>
   );
-}
+};
 
 const Page = () => {
   const [pageCount, setPageCount] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<User[]>([]);
 
   const columns = useMemo(
     () => [
       columnHelper.accessor("userId", {
         cell: (row) => (
-          <Button variant="text" size="small" color="secondary">
+          <>
             {row.getValue()}
-          </Button>
+          </>
         ),
         header: "Identifier",
       }),
@@ -94,7 +106,7 @@ const Page = () => {
       columnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: () => <TableMenu/>
+        cell: (props) => <TableMenu user={props.row.original} />,
       }),
     ],
     []
@@ -131,13 +143,13 @@ const Page = () => {
     }
   }, [users]);
   return (
-    <>
+    <AuthGuard role="Admin">
       <Container maxWidth="md" sx={{ py: 3 }}>
         <Typography mb={2.5} variant="h5" component="div">
           Users
         </Typography>
         <Typography variant="body2">
-          Effortlessly monitor executions and track errors.
+          Effortlessly manage users and their projects.
         </Typography>
 
         <Stack alignItems="end" mb={1.5} mt={4}>
@@ -195,11 +207,13 @@ const Page = () => {
             page={pageIndex}
             onPageChange={(_, page) => table.setPageIndex(page)}
             rowsPerPage={pageSize}
-            onRowsPerPageChange={(e) => table.setPageSize(parseInt(e.target.value, 10))}
+            onRowsPerPageChange={(e) =>
+              table.setPageSize(parseInt(e.target.value, 10))
+            }
           />
         </TableContainer>
       </Container>
-    </>
+    </AuthGuard>
   );
 };
 
