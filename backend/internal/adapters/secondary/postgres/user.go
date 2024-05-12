@@ -19,7 +19,7 @@ func (db *Database) GetUsers(ctx context.Context, pageSize, pageNumber int, sear
 
 	var rows []*user.User
 	response := db.conn.Raw(`
-		SELECT user_id AS "UserId", Count(*) AS "ProjectCount" 
+		SELECT user_id AS "UserId", Count(CASE WHEN deleted_at = NULL THEN 1 END) AS "ProjectCount" 
 		FROM projects 
 		WHERE user_id ILIKE ?
 		GROUP BY user_id
