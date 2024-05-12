@@ -11,6 +11,7 @@ import CreateProjectCard from "@/components/project/CreateProjectCard";
 import ProjectCard from "@/components/project/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectApi } from "@/api/projects";
+import { useParams } from "next/navigation";
 
 export default function Page() {
   const [page, setPage] = useState(1);
@@ -18,13 +19,15 @@ export default function Page() {
     setPage(value);
   };
 
+  const { username } = useParams<{ username: string }>();
+
   const { data: projects } = useQuery({
-    queryKey: [ProjectApi.getProjects.name, page],
-    queryFn: () => ProjectApi.getProjects(page , 10),
+    queryKey: [ProjectApi.getProjects.name, page, username],
+    queryFn: () => ProjectApi.getProjects(page , 10, username),
   });
 
   return (
-    <Container maxWidth="md" sx={{ py: 3 }}>
+    <Container maxWidth="md" sx={{ py: 3,overflow: 'auto' }}>
       <Typography variant="h6" sx={{ textTransform: "capitalize" }}>
         Recent Projects
       </Typography>
@@ -41,7 +44,7 @@ export default function Page() {
         ))}
       </Grid>
 
-      <Box my={6}>
+      <Box mt={6}>
         <Pagination
           count={projects?.totalPages || 0}
           page={page}

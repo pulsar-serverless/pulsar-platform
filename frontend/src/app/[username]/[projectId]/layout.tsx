@@ -13,8 +13,9 @@ import { ReactNode } from "react";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
+import InsertChartRoundedIcon from "@mui/icons-material/InsertChartRounded";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const navLinks: { link: string; label: string; icon: ReactNode }[] = [
@@ -22,6 +23,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     { link: "analytics", label: "Analytics", icon: <InsertChartRoundedIcon /> },
     { link: "deployment", label: "Deployment", icon: <CloudUploadIcon /> },
   ];
+  const url = usePathname();
 
   return (
     <>
@@ -42,7 +44,12 @@ export default function Layout({ children }: { children: ReactNode }) {
         <List>
           {navLinks.map((link, index) => (
             <ListItem key={link.link} disablePadding>
-              <ListItemButton LinkComponent={Link} href={link.link}>
+              <ListItemButton
+                LinkComponent={Link}
+                href={link.link}
+                selected={url.includes(link.link)}
+                color="secondary"
+              >
                 <ListItemIcon>{link.icon}</ListItemIcon>
                 <ListItemText primary={link.label} />
               </ListItemButton>
@@ -52,14 +59,19 @@ export default function Layout({ children }: { children: ReactNode }) {
 
         <List sx={{ mt: "auto" }}>
           <ListItem disablePadding>
-            <ListItemButton LinkComponent={Link} href={"settings"}>
+            <ListItemButton
+              LinkComponent={Link}
+              href={"settings"}
+              selected={url.includes("settings")}
+              color="secondary"
+            >
               <ListItemIcon>{<SettingsRoundedIcon />}</ListItemIcon>
               <ListItemText primary={"Settings"} />
             </ListItemButton>
           </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, overflow: 'scroll' }}>
+      <Box component="main" sx={{ flexGrow: 1, overflow: "scroll" }}>
         {children}
       </Box>
     </>

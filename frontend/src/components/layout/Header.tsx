@@ -25,7 +25,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export const Header = () => {
   const theme = useTheme();
-  const { isAuthenticated, logout } = useAuth0();
+  const { isAuthenticated, logout, user } = useAuth0();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -81,7 +81,7 @@ export const Header = () => {
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
               >
-                <Avatar sx={{ width: 24, height: 24 }} />
+                <Avatar sx={{ width: 24, height: 24 }} src={user?.picture} />
               </IconButton>
 
               <Menu
@@ -109,9 +109,11 @@ export const Header = () => {
                       variant="subtitle1"
                       gutterBottom
                     >
-                      Dagem Tadesse
+                      {user?.name}
                     </Typography>
-                    <Typography variant="body2">Developer</Typography>
+                    <Typography variant="body2">
+                      {user?.roleType.includes("Admin") ? "Admin" : "Developer"}
+                    </Typography>
                   </Box>
                   <Tooltip title="Logout">
                     <IconButton
@@ -127,13 +129,6 @@ export const Header = () => {
                     </IconButton>
                   </Tooltip>
                 </Stack>
-                <Divider />
-                <MenuItem sx={{ py: 2 }}>
-                  <ListItemIcon>
-                    <PersonIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"View Profile"} />
-                </MenuItem>
               </Menu>
             </>
           )}

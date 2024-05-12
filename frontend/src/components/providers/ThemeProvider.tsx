@@ -14,7 +14,7 @@ const theme = createTheme({
       main: "#ffffff",
     },
     warning: {
-      main: yellow[500]
+      main: yellow[500],
     },
     text: {
       primary: "#fff",
@@ -33,6 +33,12 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: { textTransform: "none" },
+      },
+    },
+
+    MuiListItemButton: {
+      styleOverrides: {
+        root: { borderRadius: 12 },
       },
     },
     MuiTab: {
