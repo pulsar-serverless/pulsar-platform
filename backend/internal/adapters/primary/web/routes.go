@@ -18,6 +18,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
+	apiController.Use(auth.AuthorizeStatus(server.userService))
 
 	userController := apiController.Group("/users")
 

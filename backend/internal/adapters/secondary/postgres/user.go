@@ -49,3 +49,9 @@ func (db *Database) ChangeAccountStatus(ctx context.Context, userId, status stri
 	}).Create(&user.AccountStatus{UserId: userId, Status: status})
 	return result.Error
 }
+
+func (db *Database) GetAccountStatus(ctx context.Context, userId string) (string, error) {
+	var status string
+	result := db.conn.Model(&user.AccountStatus{}).Select("status").Where(&user.AccountStatus{UserId: userId}).Find(&status)
+	return status, result.Error
+}
