@@ -43,10 +43,11 @@ import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
 
 const columnHelper = createColumnHelper<User>();
 
-const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({
-  user,
-  onDelete,
-}) => {
+const TableMenu: React.FC<{
+  user: User;
+  onDelete: () => void;
+  onStatusChange: () => void;
+}> = ({ user, onDelete, onStatusChange }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -87,8 +88,14 @@ const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({
         >
           Remove All projects
         </MenuItem>
-        <MenuItem onClick={handleClose} color="error.light">
-          Activate/Suspend
+        <MenuItem
+          onClick={() => {
+            onStatusChange();
+            handleClose();
+          }}
+          color="error.light"
+        >
+          Activate/Suspend User
         </MenuItem>
       </Menu>
     </>
@@ -103,8 +110,12 @@ const Page = () => {
   const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<
     undefined | string
   >();
+  const [confirmStatusChange, setConfirmStatusChange] = useState<
+    User | undefined
+  >();
 
   const snackbar = useSnackbar();
+
   const { mutate: handleDeleteAllProjects } = useMutation({
     mutationFn: userApi.deleteAllProjects,
     onSuccess: () => {
@@ -112,6 +123,16 @@ const Page = () => {
       queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name] });
     },
     onError: () => snackbar.setErrorMsg("Unable to delete user's projects."),
+  });
+
+  const { mutate: handleAccountStatusChange } = useMutation({
+    mutationFn: (user: User) =>
+      userApi.changeAccountStatus(user.userId, user.status == 'Active'? 'Suspended' : 'Active'),
+    onSuccess: () => {
+      snackbar.setSuccessMsg("Account status changed successfully!");
+      queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name] });
+    },
+    onError: () => snackbar.setErrorMsg("Unable to user's account status."),
   });
 
   const columns = useMemo(
@@ -142,6 +163,9 @@ const Page = () => {
             onDelete={() =>
               setConfirmDeleteAllProject(props.row.original.userId)
             }
+            onStatusChange={() => {
+              setConfirmStatusChange(props.row.original);
+            }}
           />
         ),
       }),
@@ -260,6 +284,23 @@ const Page = () => {
           handleConfirm={() => {
             handleDeleteAllProjects(confirmDeleteAllProject);
             setConfirmDeleteAllProject(undefined);
+          }}
+        />
+      )}
+
+      {confirmStatusChange && (
+        <ConfirmationDialog
+          open={!!confirmStatusChange}
+          title={
+            confirmStatusChange.status == "Active"
+              ? "Suspend user account"
+              : "Activate user account"
+          }
+          description="Please note that suspending or activating a user account will limit or restore access to the platform accordingly. Proceed with care."
+          handleClose={() => setConfirmStatusChange(undefined)}
+          handleConfirm={() => {
+            handleAccountStatusChange(confirmStatusChange);
+            setConfirmStatusChange(undefined);
           }}
         />
       )}
