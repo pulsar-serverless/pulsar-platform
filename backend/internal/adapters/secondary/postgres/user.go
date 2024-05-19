@@ -19,10 +19,18 @@ func (db *Database) GetUsers(ctx context.Context, pageSize, pageNumber int, sear
 
 	var rows []*user.User
 	response := db.conn.Raw(`
-		SELECT user_id AS "UserId", Count(CASE WHEN deleted_at = NULL THEN 1 END) AS "ProjectCount" 
-		FROM projects 
-		WHERE user_id ILIKE ?
-		GROUP BY user_id
+		SELECT 
+			projects.user_id AS "UserId", 
+			Count(CASE WHEN projects.deleted_at = NULL THEN 1 END) AS "ProjectCount", 
+			COALESCE(account_statuses.status, 'Active') AS "Status"
+		FROM 
+			projects 
+		LEFT JOIN 
+			account_statuses
+		ON
+			account_statuses.user_id =  projects.user_id
+		WHERE projects.user_id ILIKE ?
+		GROUP BY projects.user_id, account_statuses.status
 		LIMIT ?
 		OFFSET  ?
 	`, "%"+searchQuery+"%", pageSize, (pageNumber-1)*pageSize).Scan(&rows)
