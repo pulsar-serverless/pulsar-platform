@@ -25,7 +25,7 @@ import { useEffect, useMemo, useState } from "react";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React from "react";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { userApi } from "@/api/user";
 import {
   createColumnHelper,
@@ -36,10 +36,13 @@ import {
 import { User } from "@/models/user";
 import { AuthGuard } from "@/components/providers/AuthGuard";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { queryClient } from "@/components/providers/QueryProvider";
+import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
 
 const columnHelper = createColumnHelper<User>();
 
-const TableMenu: React.FC<{ user: User }> = ({ user }) => {
+const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({ user, onDelete }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -71,7 +74,7 @@ const TableMenu: React.FC<{ user: User }> = ({ user }) => {
         >
           View projects
         </MenuItem>
-        <MenuItem onClick={handleClose} color="error">
+        <MenuItem onClick={() => {onDelete(); handleClose();}} color="error">
           Remove All projects
         </MenuItem>
         <MenuItem onClick={handleClose} color="error.light">
@@ -87,14 +90,22 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<User[]>([]);
 
+  const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<undefined | string>();
+
+  const snackbar = useSnackbar();
+  const { mutate: handleDeleteAllProjects } = useMutation({
+    mutationFn: userApi.deleteAllProjects,
+    onSuccess: () => {
+      snackbar.setSuccessMsg("All Projects of the user deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name] });
+    },
+    onError: () => snackbar.setErrorMsg("Unable to delete user's projects."),
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("userId", {
-        cell: (row) => (
-          <>
-            {row.getValue()}
-          </>
-        ),
+        cell: (row) => <>{row.getValue()}</>,
         header: "Identifier",
       }),
       columnHelper.accessor("email", {
@@ -106,7 +117,7 @@ const Page = () => {
       columnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: (props) => <TableMenu user={props.row.original} />,
+        cell: (props) => <TableMenu user={props.row.original} onDelete={() => setConfirmDeleteAllProject(props.row.original.userId)}/>,
       }),
     ],
     []
@@ -142,6 +153,7 @@ const Page = () => {
       setPageCount(users.totalPages);
     }
   }, [users]);
+
   return (
     <AuthGuard role="Admin">
       <Container maxWidth="md" sx={{ py: 3 }}>
@@ -213,6 +225,18 @@ const Page = () => {
           />
         </TableContainer>
       </Container>
+      {confirmDeleteAllProject && (
+        <ConfirmationDialog
+          open={!!confirmDeleteAllProject}
+          title="Delete All Projects"
+          description="Deleting all projects will permanently erase all records of all projects of a user."
+          handleClose={() => setConfirmDeleteAllProject(undefined)}
+          handleConfirm={() => {
+            handleDeleteAllProjects(confirmDeleteAllProject);
+            setConfirmDeleteAllProject(undefined);
+          }}
+        />
+      )}
     </AuthGuard>
   );
 };

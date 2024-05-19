@@ -73,6 +73,16 @@ func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize 
 	return pagination, result.Error
 }
 
+func (repo *Database) GetAllProjects(ctx context.Context, userId string) ([]*project.Project, error) {
+	var projects []*project.Project
+
+	result := repo.conn.
+		Where(&project.Project{UserId: userId}).
+		Find(&projects)
+
+	return projects, result.Error
+}
+
 func (repo *Database) DeleteProject(ctx context.Context, projectId string) error {
 	result := repo.conn.Where("id = ?", projectId).Delete(&project.Project{})
 	return result.Error

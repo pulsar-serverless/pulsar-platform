@@ -670,6 +670,25 @@ paths:
       summary: Get users
       tags:
       - USER
+  /api/users/{id}/projects:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-users-projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+      security:
+      - Bearer: []
+      summary: Delete users projects
+      tags:
+      - USER
   /app/status:
     post:
       consumes:

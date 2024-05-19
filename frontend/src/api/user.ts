@@ -9,4 +9,9 @@ export const userApi = {
     });
     return data;
   },
+
+  async deleteAllProjects(userId: string){
+    const { data } = await axiosInstance.delete(`/users/${userId}/projects`);
+    return data;
+  }
 };
