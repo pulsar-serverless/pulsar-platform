@@ -23,6 +23,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 	userController := apiController.Group("/users")
 
 	userController.GET("", users.GetUsers(server.userService))
+	userController.GET("/status", users.GetAccountStatus(server.userService))
 	userController.PUT("/:id/", users.ChangeAccountStatus(server.userService))
 	userController.DELETE("/:id/projects", projects.DeleteAllProjects(server.projectService))
 
