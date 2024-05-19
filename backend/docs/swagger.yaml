@@ -670,6 +670,31 @@ paths:
       summary: Get users
       tags:
       - USER
+  /api/users/{id}:
+    put:
+      consumes:
+      - application/json
+      operationId: change-users-account-status
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+      security:
+      - Bearer: []
+      summary: Change user account status
+      tags:
+      - USER
   /api/users/{id}/projects:
     delete:
       consumes:
