@@ -1,7 +1,5 @@
 package user
 
-import "gorm.io/gorm"
-
 type Status = string
 
 const (
@@ -10,7 +8,6 @@ const (
 )
 
 type AccountStatus struct {
-	gorm.Model
 	UserId string `gorm:"primary_key"`
 	Status Status ``
 	Reason string ``

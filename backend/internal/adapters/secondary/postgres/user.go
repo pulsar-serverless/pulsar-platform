@@ -6,6 +6,8 @@ import (
 	"pulsar/internal/core/domain/common"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/domain/user"
+
+	"gorm.io/gorm/clause"
 )
 
 func (db *Database) GetUsers(ctx context.Context, pageSize, pageNumber int, searchQuery string) (*common.Pagination[user.User], error) {
@@ -38,4 +40,12 @@ func (db *Database) GetUsers(ctx context.Context, pageSize, pageNumber int, sear
 	result.TotalPages = int64(math.Ceil(float64(count) / float64(pageSize)))
 	result.Rows = rows
 	return result, response.Error
+}
+
+func (db *Database) ChangeAccountStatus(ctx context.Context, userId, status string) error {
+	result := db.conn.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "user_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"status"}),
+	}).Create(&user.AccountStatus{UserId: userId, Status: status})
+	return result.Error
 }

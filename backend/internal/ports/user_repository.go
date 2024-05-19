@@ -8,4 +8,5 @@ import (
 
 type IUserRepository interface {
 	GetUsers(ctx context.Context, pageSize, pageNumber int, searchQuery string) (*common.Pagination[user.User], error)
+	ChangeAccountStatus(ctx context.Context, userId, status string) error
 }
