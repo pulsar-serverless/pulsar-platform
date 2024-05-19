@@ -19,4 +19,9 @@ export const userApi = {
     const { data } = await axiosInstance.put(`/users/${userId}/`, { status });
     return data;
   },
+
+  async getAccountStatus() {
+    const { data } = await axiosInstance.get<string>(`/users/status`);
+    return data;
+  },
 };
