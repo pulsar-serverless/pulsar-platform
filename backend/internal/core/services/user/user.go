@@ -10,6 +10,8 @@ import (
 
 type IUserService interface {
 	GetUsers(ctx context.Context, req GetUserReq) (*common.Pagination[user.User], error)
+	ChangeAccountStatus(ctx context.Context, req ChangeAccountStatusReq) error
+	GetUserStatus(ctx context.Context, userId string) (string, error)
 }
 
 type userService struct {

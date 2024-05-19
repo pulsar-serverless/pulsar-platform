@@ -11,6 +11,10 @@ type ApiError struct {
 	Message string `json:"message"`
 }
 
+func New(status int, message string) *ApiError {
+	return &ApiError{Status: status, Message: message}
+}
+
 func FromError(err error) ApiError {
 	var apiError ApiError
 	var appError service.AppError

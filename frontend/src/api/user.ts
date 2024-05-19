@@ -10,8 +10,13 @@ export const userApi = {
     return data;
   },
 
-  async deleteAllProjects(userId: string){
+  async deleteAllProjects(userId: string) {
     const { data } = await axiosInstance.delete(`/users/${userId}/projects`);
     return data;
-  }
+  },
+
+  async changeAccountStatus(userId: string, status: string) {
+    const { data } = await axiosInstance.put(`/users/${userId}/`, { status });
+    return data;
+  },
 };

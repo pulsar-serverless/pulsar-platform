@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Chip,
   Container,
   FormControl,
   IconButton,
@@ -42,7 +43,11 @@ import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
 
 const columnHelper = createColumnHelper<User>();
 
-const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({ user, onDelete }) => {
+const TableMenu: React.FC<{
+  user: User;
+  onDelete: () => void;
+  onStatusChange: () => void;
+}> = ({ user, onDelete, onStatusChange }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -74,11 +79,23 @@ const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({ user, onDel
         >
           View projects
         </MenuItem>
-        <MenuItem onClick={() => {onDelete(); handleClose();}} color="error">
+        <MenuItem
+          onClick={() => {
+            onDelete();
+            handleClose();
+          }}
+          color="error"
+        >
           Remove All projects
         </MenuItem>
-        <MenuItem onClick={handleClose} color="error.light">
-          Pause All projects
+        <MenuItem
+          onClick={() => {
+            onStatusChange();
+            handleClose();
+          }}
+          color="error.light"
+        >
+          Activate/Suspend User
         </MenuItem>
       </Menu>
     </>
@@ -90,9 +107,15 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<User[]>([]);
 
-  const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<undefined | string>();
+  const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<
+    undefined | string
+  >();
+  const [confirmStatusChange, setConfirmStatusChange] = useState<
+    User | undefined
+  >();
 
   const snackbar = useSnackbar();
+
   const { mutate: handleDeleteAllProjects } = useMutation({
     mutationFn: userApi.deleteAllProjects,
     onSuccess: () => {
@@ -102,14 +125,31 @@ const Page = () => {
     onError: () => snackbar.setErrorMsg("Unable to delete user's projects."),
   });
 
+  const { mutate: handleAccountStatusChange } = useMutation({
+    mutationFn: (user: User) =>
+      userApi.changeAccountStatus(user.userId, user.status == 'Active'? 'Suspended' : 'Active'),
+    onSuccess: () => {
+      snackbar.setSuccessMsg("Account status changed successfully!");
+      queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name] });
+    },
+    onError: () => snackbar.setErrorMsg("Unable to user's account status."),
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("userId", {
         cell: (row) => <>{row.getValue()}</>,
         header: "Identifier",
       }),
-      columnHelper.accessor("email", {
-        header: "Email",
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: (row) => (
+          <Chip
+            variant="outlined"
+            label={row.getValue()}
+            color={row.getValue() == "Active" ? "success" : "error"}
+          />
+        ),
       }),
       columnHelper.accessor("projectCount", {
         header: "Projects",
@@ -117,7 +157,17 @@ const Page = () => {
       columnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: (props) => <TableMenu user={props.row.original} onDelete={() => setConfirmDeleteAllProject(props.row.original.userId)}/>,
+        cell: (props) => (
+          <TableMenu
+            user={props.row.original}
+            onDelete={() =>
+              setConfirmDeleteAllProject(props.row.original.userId)
+            }
+            onStatusChange={() => {
+              setConfirmStatusChange(props.row.original);
+            }}
+          />
+        ),
       }),
     ],
     []
@@ -234,6 +284,23 @@ const Page = () => {
           handleConfirm={() => {
             handleDeleteAllProjects(confirmDeleteAllProject);
             setConfirmDeleteAllProject(undefined);
+          }}
+        />
+      )}
+
+      {confirmStatusChange && (
+        <ConfirmationDialog
+          open={!!confirmStatusChange}
+          title={
+            confirmStatusChange.status == "Active"
+              ? "Suspend user account"
+              : "Activate user account"
+          }
+          description="Please note that suspending or activating a user account will limit or restore access to the platform accordingly. Proceed with care."
+          handleClose={() => setConfirmStatusChange(undefined)}
+          handleConfirm={() => {
+            handleAccountStatusChange(confirmStatusChange);
+            setConfirmStatusChange(undefined);
           }}
         />
       )}
