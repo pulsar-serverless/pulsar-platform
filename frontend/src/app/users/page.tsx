@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Chip,
   Container,
   FormControl,
   IconButton,
@@ -42,7 +43,10 @@ import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
 
 const columnHelper = createColumnHelper<User>();
 
-const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({ user, onDelete }) => {
+const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({
+  user,
+  onDelete,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -74,11 +78,17 @@ const TableMenu: React.FC<{ user: User; onDelete: () => void }> = ({ user, onDel
         >
           View projects
         </MenuItem>
-        <MenuItem onClick={() => {onDelete(); handleClose();}} color="error">
+        <MenuItem
+          onClick={() => {
+            onDelete();
+            handleClose();
+          }}
+          color="error"
+        >
           Remove All projects
         </MenuItem>
         <MenuItem onClick={handleClose} color="error.light">
-          Pause All projects
+          Activate/Suspend
         </MenuItem>
       </Menu>
     </>
@@ -90,7 +100,9 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<User[]>([]);
 
-  const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<undefined | string>();
+  const [confirmDeleteAllProject, setConfirmDeleteAllProject] = useState<
+    undefined | string
+  >();
 
   const snackbar = useSnackbar();
   const { mutate: handleDeleteAllProjects } = useMutation({
@@ -108,8 +120,15 @@ const Page = () => {
         cell: (row) => <>{row.getValue()}</>,
         header: "Identifier",
       }),
-      columnHelper.accessor("email", {
-        header: "Email",
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: (row) => (
+          <Chip
+            variant="outlined"
+            label={row.getValue()}
+            color={row.getValue() == "Active" ? "success" : "error"}
+          />
+        ),
       }),
       columnHelper.accessor("projectCount", {
         header: "Projects",
@@ -117,7 +136,14 @@ const Page = () => {
       columnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: (props) => <TableMenu user={props.row.original} onDelete={() => setConfirmDeleteAllProject(props.row.original.userId)}/>,
+        cell: (props) => (
+          <TableMenu
+            user={props.row.original}
+            onDelete={() =>
+              setConfirmDeleteAllProject(props.row.original.userId)
+            }
+          />
+        ),
       }),
     ],
     []
