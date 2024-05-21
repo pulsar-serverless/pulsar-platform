@@ -130,7 +130,7 @@ const Page = () => {
       userApi.changeAccountStatus(user.userId, user.status == 'Active'? 'Suspended' : 'Active'),
     onSuccess: () => {
       snackbar.setSuccessMsg("Account status changed successfully!");
-      queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name] });
+      queryClient.invalidateQueries({ queryKey: [userApi.getUsers.name, userApi.getAccountStatus.name] });
     },
     onError: () => snackbar.setErrorMsg("Unable to user's account status."),
   });

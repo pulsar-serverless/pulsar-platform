@@ -714,6 +714,25 @@ paths:
       summary: Delete users projects
       tags:
       - USER
+  /api/users/status:
+    get:
+      consumes:
+      - application/json
+      operationId: get-users-account-status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+      security:
+      - Bearer: []
+      summary: Get user account status
+      tags:
+      - USER
   /app/status:
     post:
       consumes:

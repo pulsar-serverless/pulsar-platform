@@ -4,9 +4,10 @@ import { CustomThemeProvider } from "@/components/providers/ThemeProvider";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Header } from "@/components/layout/Header";
-import { Stack } from "@mui/material";
+import { Alert, Box, Stack } from "@mui/material";
 import { HttpInterceptor } from "@/components/interceptors/HttpInterceptor";
 import { SnackbarProvider } from "@/components/providers/SnackbarProvider";
+import { AccountAlert } from "@/components/AccountAlert";
 
 export const metadata = {
   title: "Pulsar",
@@ -39,10 +40,11 @@ export default function RootLayout({
                       overflowY: "scroll",
                     }}
                   >
+                    <AccountAlert />
                     {children}
                   </Stack>
                 </QueryProvider>
-                <SnackbarProvider/>
+                <SnackbarProvider />
               </CustomThemeProvider>
             </StoreProvider>
           </HttpInterceptor>
