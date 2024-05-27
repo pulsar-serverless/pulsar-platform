@@ -6,4 +6,18 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+
+  env: {
+    auth0_domain: process.env.NEXT_PUBLIC_AUTH0_DOMAIN,
+    auth0_audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
+    auth0_client_id: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
+    auth0_client_secret: process.env.NEXT_PUBLIC_AUTH0_CLIENT_SECRETE,
+  },
+
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+  },
 });
