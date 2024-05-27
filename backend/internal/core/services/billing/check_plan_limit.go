@@ -7,7 +7,7 @@ import (
 	"pulsar/internal/core/services"
 )
 
-func (billingService *BillingService) CheckPlanLimit(ctx context.Context, projectId, planId string, usage *analytics.ResourceUtil) error {
+func (billingService *BillingService) CheckPlanLimit(ctx context.Context, planId string, usage *analytics.ResourceUtil) error {
 	projectPlan, err := billingService.GetPlanResource(ctx, GetPlanResReq{PlanId: planId})
 	if err != nil {
 		return err
