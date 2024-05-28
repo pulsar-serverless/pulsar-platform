@@ -1,6 +1,4 @@
-import { AccountAlert } from "@/components/AccountAlert";
 import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
-import { AuthProvider } from "@/components/providers/AuthProvider";
 import { CustomThemeProvider } from "@/components/providers/ThemeProvider";
 import { CssBaseline, Stack } from "@mui/material";
 import React from "react";

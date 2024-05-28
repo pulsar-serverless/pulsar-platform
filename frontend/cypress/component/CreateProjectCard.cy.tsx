@@ -24,5 +24,13 @@ describe("<CreateProjectCard />", () => {
         </CssBaseline>
       </CustomThemeProvider>
     );
+
+    cy.contains("Create a new project");
+    // input must exist
+    cy.get("input").should("exist");
+
+    // action buttons exist
+    cy.get("button").contains("Create").should("exist");
+    cy.get("button").contains("Cancel").should("exist");
   });
 });

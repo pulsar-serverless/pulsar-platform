@@ -12,6 +12,7 @@ export default defineConfig({
     auth0_audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
     auth0_client_id: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
     auth0_client_secret: process.env.NEXT_PUBLIC_AUTH0_CLIENT_SECRETE,
+    auth0_redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
   },
 
   component: {
