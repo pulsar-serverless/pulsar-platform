@@ -74,6 +74,6 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 	server.echo.Any("*",
 		echo.WrapHandler(apps.NewProxy()),
 		auth.IsAuthorized(server.projectService, jwtSecrete),
-		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService),
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.resourceService, server.billingService),
 	)
 }
