@@ -20,7 +20,7 @@ func AuthorizeStatus(userApi user.IUserService) echo.MiddlewareFunc {
 					return ctx.JSON(errResp.Status, errResp)
 				}
 
-				if accountStatus != domain.Active {
+				if accountStatus == domain.Suspended {
 					return ctx.JSON(http.StatusUnauthorized, apierrors.New(http.StatusUnauthorized, "Unauthorized access: Account suspended"))
 				}
 
