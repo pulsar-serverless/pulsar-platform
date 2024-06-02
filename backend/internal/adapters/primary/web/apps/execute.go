@@ -38,14 +38,18 @@ func ExecuteFunction(
 				return ctx.JSON(resp.Status, resp)
 			}
 
-			// check for resource limit
-			// projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
-
-			// err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
-			// if err != nil {
-			// 	resp := apierrors.FromError(err)
-			// 	return ctx.JSON(resp.Status, resp)
-			// }
+			// check if project has pricing plan associated
+			if project.PricingPlan != nil {
+				// check for resource limit
+				projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
+				if projectUsage != nil {
+					err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
+					if err != nil {
+						resp := apierrors.FromError(err)
+						return ctx.JSON(resp.Status, resp)
+					}
+				}
+			}
 
 			startTime := time.Now()
 			status := analytics.Success
