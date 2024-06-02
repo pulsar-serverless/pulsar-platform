@@ -1,74 +1,76 @@
 // ResourceCards.tsx
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { ResourcesApi } from "@/api/resources";
+import bytes from "bytes";
 
-interface TotalResourceUtil {
-	mem_usage_mb: number;
-	net_usage_mb: number;
-	project_id: string;
-	usage_period: string;
-}
+const ResourceCards: React.FC<{ projectId: string }> = ({ projectId }) => {
+  const { data: resourceUsage } = useQuery({
+    queryKey: [ResourcesApi.getTotalProjectResourceUtil.name],
+    queryFn: () => ResourcesApi.getTotalProjectResourceUtil(projectId),
+    placeholderData: {
+      mem_usage_mb: 0,
+      net_usage_mb: 0,
+      project_id: projectId,
+      usage_period: "",
+    },
+  });
 
-interface ResourceCardsProps {
-	totalResourceUtil: TotalResourceUtil | null; // Explicitly type the prop
-}
+  return (
+    <>
+      <Stack direction="row" gap={3}>
+        <Card sx={{ flexGrow: 1 }}>
+          <CardContent>
+            <Typography
+              variant="subtitle1"
+              sx={{ textTransform: "capitalize" }}
+              fontWeight={"medium"}
+              component="div"
+              gutterBottom
+            >
+              Memory Usage
+            </Typography>
+            <Typography variant="h3">
+              {bytes(resourceUsage?.mem_usage_mb || 0)}
+            </Typography>
+          </CardContent>
+        </Card>
 
-const ResourceCards: React.FC<ResourceCardsProps> = ({ totalResourceUtil }) => {
-	return (
-		<div>
-			{totalResourceUtil && (
-				<div className="parent-card">
-					{/* Card for mem_usage_mb */}
-					<Card className="card">
-						<CardContent className="card-body">
-							<Typography variant="h5" component="div" className="card-title">
-								Memory Usage
-							</Typography>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								className="card-text">
-								hi
-								{/* {totalResourceUtil.mem_usage_mb} Megabytes */}
-							</Typography>
-						</CardContent>
-					</Card>
+        <Card sx={{ flexGrow: 1 }}>
+          <CardContent>
+            <Typography
+              variant="subtitle1"
+              sx={{ textTransform: "capitalize" }}
+              fontWeight={"medium"}
+              gutterBottom
+              component="div"
+            >
+              Network Usage
+            </Typography>
+            <Typography variant="h3">
+              {bytes(resourceUsage?.net_usage_mb || 0)}
+            </Typography>
+          </CardContent>
+        </Card>
 
-					{/* Card for net_usage_mb */}
-					<Card className="card">
-						<CardContent className="card-body">
-							<Typography variant="h5" component="div" className="card-title">
-								Network Usage
-							</Typography>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								className="card-text">
-								hi
-								{/* {totalResourceUtil.net_usage_mb} Megabytes */}
-							</Typography>
-						</CardContent>
-					</Card>
-
-					{/* Card for usage_period */}
-					<Card className="card">
-						<CardContent className="card-body">
-							<Typography variant="h5" component="div" className="card-title">
-								Usage Period
-							</Typography>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								className="card-text">
-								hello
-								{/* {totalResourceUtil.usage_period} */}
-							</Typography>
-						</CardContent>
-					</Card>
-				</div>
-			)}
-		</div>
-	);
+        <Card sx={{ flexGrow: 1 }}>
+          <CardContent>
+            <Typography
+              variant="subtitle1"
+              sx={{ textTransform: "capitalize" }}
+              fontWeight={"medium"}
+              gutterBottom
+              component="div"
+            >
+              Usage Period
+            </Typography>
+            <Typography variant="h3">{resourceUsage?.usage_period}</Typography>
+          </CardContent>
+        </Card>
+      </Stack>
+    </>
+  );
 };
 
 export default ResourceCards;

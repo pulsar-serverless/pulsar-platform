@@ -58,7 +58,7 @@ const InvocationGraph: React.FC<{ projectId: string }> = ({ projectId }) => {
 
   return (
     <>
-      <Card sx={{ mt: 3 }}>
+      <Card>
         <CardContent>
           <InvocationFilter
             {...{ status, setStatus, graphType, setGraphType }}

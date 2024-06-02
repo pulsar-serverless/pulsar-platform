@@ -14,7 +14,6 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import InsertChartRoundedIcon from "@mui/icons-material/InsertChartRounded";
-import  MemoryRoundedIcon  from "@mui/icons-material/MemoryRounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -22,7 +21,6 @@ export default function Layout({ children }: { children: ReactNode }) {
   const navLinks: { link: string; label: string; icon: ReactNode }[] = [
     { link: "home", label: "Home", icon: <HomeRoundedIcon /> },
     { link: "analytics", label: "Analytics", icon: <InsertChartRoundedIcon /> },
-    { link: "resources", label: "Resources", icon: <MemoryRoundedIcon /> },
     { link: "deployment", label: "Deployment", icon: <CloudUploadIcon /> },
   ];
   const url = usePathname();
