@@ -39,13 +39,13 @@ func ExecuteFunction(
 			}
 
 			// check for resource limit
-			projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
+			// projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
 
-			err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
-			if err != nil {
-				resp := apierrors.FromError(err)
-				return ctx.JSON(resp.Status, resp)
-			}
+			// err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
+			// if err != nil {
+			// 	resp := apierrors.FromError(err)
+			// 	return ctx.JSON(resp.Status, resp)
+			// }
 
 			startTime := time.Now()
 			status := analytics.Success
