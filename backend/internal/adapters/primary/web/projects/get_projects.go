@@ -3,6 +3,7 @@ package projects
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"pulsar/internal/core/services/project"
 
 	"github.com/labstack/echo/v4"
@@ -21,17 +22,25 @@ import (
 func GetProjects(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input struct {
-			PageNumber int `query:"pageNumber"`
-			PageSize   int `query:"pageSize"`
+			PageNumber int    `query:"pageNumber"`
+			PageSize   int    `query:"pageSize"`
+			UserId     string `query:"userId"`
 		}
 
 		if err := c.Bind(&input); err != nil {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-		userId := c.Get("userId").(string)
+		if input.UserId == "" {
+			input.UserId = c.Get("userId").(string)
+		} else {
+			decoded, err := url.PathUnescape(input.UserId)
+			if err == nil {
+				input.UserId = string(decoded)
+			}
+		}
 
-		request := project.GetProjectsReq{PageNumber: input.PageNumber, PageSize: input.PageSize, UserId: userId}
+		request := project.GetProjectsReq{PageNumber: input.PageNumber, PageSize: input.PageSize, UserId: input.UserId}
 		projects, err := projectApi.GetProjects(context.TODO(), request)
 
 		if err != nil {

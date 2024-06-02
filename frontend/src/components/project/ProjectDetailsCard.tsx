@@ -41,7 +41,7 @@ export const ProjectDetailsCard = ({
         sx={{
           width: "100%",
           display: "flex",
-          mt: 4
+          mt: 4,
         }}
       >
         <CardMedia
@@ -120,7 +120,22 @@ export const ProjectDetailsCard = ({
                   primary={"Status"}
                   secondary={
                     !isLoading ? (
-                      project?.deploymentStatus
+                      <Stack direction="row" alignItems={"center"} gap={1.5}>
+                        <Box
+                          sx={{
+                            width: "1em",
+                            height: "1em",
+                            bgcolor: statusColor(project!.deploymentStatus),
+                            borderRadius: "50%",
+                          }}
+                        ></Box>
+                        <Typography
+                          variant="body2"
+                          textTransform={"capitalize"}
+                        >
+                          {project?.deploymentStatus}
+                        </Typography>
+                      </Stack>
                     ) : (
                       <Skeleton
                         variant="text"
@@ -139,4 +154,14 @@ export const ProjectDetailsCard = ({
       </Card>
     </>
   );
+};
+
+export const statusColor = (status: Project["deploymentStatus"]) => {
+  return status == "failed"
+    ? "error.main"
+    : status == "building"
+    ? "primary.main"
+    : status == "done"
+    ? "success.main"
+    : "grey.500";
 };

@@ -3,6 +3,7 @@ package projects
 import (
 	"context"
 	"net/http"
+	domain "pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services/project"
 
 	"github.com/labstack/echo/v4"
@@ -31,7 +32,7 @@ func UpdateProjects(projectApi project.IProjectService) echo.HandlerFunc {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-		request := project.UpdateProjectReq{Name: input.Name, ProjectId: input.Id}
+		request := project.UpdateProjectReq{ProjectId: input.Id, UpdatedProject: &domain.Project{Name: input.Name}}
 		projects, err := projectApi.UpdateProject(context.TODO(), request)
 
 		if err != nil {

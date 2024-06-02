@@ -5,6 +5,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Alert,
 } from "@mui/material";
 
 export const ConfirmationDialog: React.FC<{
@@ -21,17 +22,20 @@ export const ConfirmationDialog: React.FC<{
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        {title}
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description" variant="body2">
-          {description}
-        </DialogContentText>
+        <Alert severity="warning">{description}</Alert>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} variant="outlined" color="secondary">Cancel</Button>
-        <Button onClick={handleConfirm} autoFocus color="error" variant="contained">
+        <Button onClick={handleClose} variant="outlined" color="secondary">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleConfirm}
+          autoFocus
+          color="error"
+          variant="contained"
+        >
           Confirm
         </Button>
       </DialogActions>

@@ -27,9 +27,9 @@ export const ProjectApi = {
     return data;
   },
 
-  async getProjects(pageNumber: number = 0, pagesize: number = 20) {
+  async getProjects(pageNumber: number = 0, pagesize: number = 20, userId?: string) {
     const { data } = await axiosInstance.get<Paginated<Project>>(`/projects`, {
-      params: { pageNumber, pagesize },
+      params: { userId, pageNumber, pagesize, },
     });
     return data;
   },
@@ -52,6 +52,16 @@ export const ProjectApi = {
 
   async generateApiKey(projectId: string) {
     const {data} = await axiosInstance.put<{token: string}>( `/projects/${projectId}/api-token`,)
+    return data
+  },
+
+  async removeAPIKey(projectId: string) {
+    const {data} = await axiosInstance.delete( `/projects/${projectId}/api-token`,)
+    return data
+  },
+
+  async deleteProject(projectId: string) {
+    const {data} = await axiosInstance.delete( `/projects/${projectId}`,)
     return data
   }
 };

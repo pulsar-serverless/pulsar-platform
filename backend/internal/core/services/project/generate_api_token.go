@@ -2,25 +2,20 @@ package project
 
 import (
 	"context"
-	"crypto/rand"
-	b64 "encoding/base64"
 	domain "pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
+	"time"
 
-	"golang.org/x/crypto/bcrypt"
+	"github.com/golang-jwt/jwt"
 )
 
-const TOKEN_LENGTH = 32
+func generateJWTToken(secreteKey string, iat *time.Time) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
 
-func generateKey(length int) (string, error) {
-	key := make([]byte, length)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["tiat"] = iat
 
-	_, err := rand.Read(key)
-	if err != nil {
-		return "", err
-	}
-
-	return b64.StdEncoding.EncodeToString(key), nil
+	return token.SignedString([]byte(secreteKey))
 }
 
 type GenerateAPITokenReq struct {
@@ -32,21 +27,16 @@ type GenerateAPITokenRes struct {
 }
 
 func (service *ProjectService) GenerateAPIToken(ctx context.Context, request GenerateAPITokenReq) (*GenerateAPITokenRes, error) {
-	token, err := generateKey(TOKEN_LENGTH)
-	if err != nil {
-		return nil, services.NewAppError(services.ErrInternalServer, err)
-	}
+	iat := time.Now()
 
-	hashedToken, err := bcrypt.GenerateFromPassword([]byte(token), 14)
+	token, err := generateJWTToken(service.jwtSecreteKey, &iat)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrInternalServer, err)
 	}
 
 	_, err = service.projectRepo.UpdateProject(ctx,
 		request.ProjectId,
-		&domain.Project{
-			ApiToken: string(hashedToken),
-		},
+		&domain.Project{TokenIssuedAt: &iat},
 	)
 	if err != nil {
 		return nil, services.NewAppError(services.ErrInternalServer, err)

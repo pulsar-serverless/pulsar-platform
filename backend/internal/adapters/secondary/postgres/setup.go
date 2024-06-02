@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"pulsar/internal/core/domain/analytics"
+	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/log"
 	"pulsar/internal/core/domain/project"
+	"pulsar/internal/core/domain/user"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -25,6 +27,9 @@ func SetupDB(dsn string) *gorm.DB {
 		&log.AppLog{},
 		&analytics.Invocation{},
 		&analytics.RuntimeResource{},
+		&billing.PricingPlan{},
+		&billing.PlanResources{},
+		&user.AccountStatus{},
 	)
 
 	if err != nil {

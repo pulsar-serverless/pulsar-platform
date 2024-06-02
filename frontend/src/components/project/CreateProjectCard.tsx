@@ -17,7 +17,7 @@ function CreateProjectCard() {
             display: "grid",
             placeItems: "center",
             p: 3,
-            minHeight: 200,
+            minHeight: 232,
           }}
         >
           <Stack alignItems={"center"}>

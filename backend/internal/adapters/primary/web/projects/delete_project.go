@@ -3,6 +3,7 @@ package projects
 import (
 	"context"
 	"net/http"
+	"pulsar/internal/adapters/primary/web/apierrors"
 	"pulsar/internal/core/services/project"
 
 	"github.com/labstack/echo/v4"
@@ -23,8 +24,10 @@ func DeleteProject(projectApi project.IProjectService) echo.HandlerFunc {
 		err := projectApi.DeleteProject(context.TODO(), project.DeleteProjectReq{ProjectId: id})
 
 		if err != nil {
-			c.NoContent(http.StatusInternalServerError)
+			errResp := apierrors.FromError(err)
+			return c.JSON(errResp.Status, errResp)
 		}
+
 		return c.NoContent(http.StatusOK)
 	}
 }

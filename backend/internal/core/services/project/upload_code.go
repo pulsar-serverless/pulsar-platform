@@ -45,7 +45,12 @@ func (projectService *ProjectService) UploadProjectCode(ctx context.Context, req
 			log.Error().Str("appId", project.ID).Msg(fmt.Sprintf("Unable to remove project code: %v", err))
 		}
 
-		projectService.InstallProject(context.TODO(), project)
+		projectService.projectRepo.UpdateProject(ctx, project.ID, &domain.Project{DeploymentStatus: domain.Building})
+		if err = projectService.InstallProject(context.TODO(), project); err != nil {
+			projectService.projectRepo.UpdateProject(ctx, project.ID, &domain.Project{DeploymentStatus: domain.Failed})
+			return
+		}
+		projectService.projectRepo.UpdateProject(ctx, project.ID, &domain.Project{DeploymentStatus: domain.Done})
 	}(existingProject, oldProjectPath)
 
 	return existingProject, nil

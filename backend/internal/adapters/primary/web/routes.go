@@ -4,18 +4,28 @@ import (
 	"pulsar/internal/adapters/primary/web/analytics"
 	"pulsar/internal/adapters/primary/web/apps"
 	"pulsar/internal/adapters/primary/web/auth"
+	"pulsar/internal/adapters/primary/web/billing"
 	"pulsar/internal/adapters/primary/web/envs"
 	"pulsar/internal/adapters/primary/web/log"
 	"pulsar/internal/adapters/primary/web/projects"
 	"pulsar/internal/adapters/primary/web/resources"
+	"pulsar/internal/adapters/primary/web/users"
 
 	"github.com/labstack/echo/v4"
 )
 
-func (server *Server) DefineRoutes() {
+func (server *Server) DefineRoutes(jwtSecrete string) {
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
+	apiController.Use(auth.AuthorizeStatus(server.userService))
+
+	userController := apiController.Group("/users")
+
+	userController.GET("", users.GetUsers(server.userService))
+	userController.GET("/status", users.GetAccountStatus(server.userService))
+	userController.PUT("/:id/", users.ChangeAccountStatus(server.userService))
+	userController.DELETE("/:id/projects", projects.DeleteAllProjects(server.projectService))
 
 	projectController := apiController.Group("/projects")
 	{
@@ -25,6 +35,7 @@ func (server *Server) DefineRoutes() {
 		projectController.GET("/:id", projects.GetProject(server.projectService))
 		projectController.PUT("/:id", projects.UpdateProjects(server.projectService))
 		projectController.PUT("/:id/api-token", projects.GenerateAPIToken(server.projectService))
+		projectController.DELETE("/:id/api-token", projects.RemoveAPIKey(server.projectService))
 
 		{
 			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
@@ -52,10 +63,17 @@ func (server *Server) DefineRoutes() {
 			projectController.GET("/:projectId/resources", resources.GetResourceUtilList(server.resourceService))
 			projectController.GET("/:projectId/resources/total", resources.GetProjectTotalUtil(server.resourceService))
 		}
+
+		{
+			projectController.GET("/plans", billing.GetPricingPlans(server.billingService))
+			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
+		}
 	}
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
 		echo.WrapHandler(apps.NewProxy()),
-		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService))
+		auth.IsAuthorized(server.projectService, jwtSecrete),
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.resourceService, server.billingService),
+	)
 }

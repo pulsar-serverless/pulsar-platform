@@ -3,13 +3,13 @@ package apps
 import (
 	"context"
 	"pulsar/internal/adapters/primary/web/apierrors"
+	"pulsar/internal/adapters/primary/web/utils"
 	"pulsar/internal/core/domain/analytics"
 	services "pulsar/internal/core/services/analytics"
+	"pulsar/internal/core/services/billing"
 	"pulsar/internal/core/services/container"
 	"pulsar/internal/core/services/project"
 	"time"
-
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,16 +21,27 @@ import (
 func ExecuteFunction(
 	containerService container.IContainerService,
 	projectService project.IProjectService,
-	analyticsService services.IAnalyticsService) echo.MiddlewareFunc {
+	analyticsService services.IAnalyticsService,
+	resourceService services.IResourceService,
+	billingService billing.IBillingService) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			successChan := make(chan bool, 1)
 			errorChan := make(chan error, 1)
 
-			subdomain := getSubdomain(ctx.Request().Host)
+			subdomain := utils.GetSubdomain(ctx.Request().Host)
 			project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
 
+			if err != nil {
+				resp := apierrors.FromError(err)
+				return ctx.JSON(resp.Status, resp)
+			}
+
+			// check for resource limit
+			projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
+
+			err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
 			if err != nil {
 				resp := apierrors.FromError(err)
 				return ctx.JSON(resp.Status, resp)
@@ -58,13 +69,4 @@ func ExecuteFunction(
 			return err
 		}
 	}
-}
-
-func getSubdomain(hostname string) string {
-	parts := strings.Split(hostname, ".")
-
-	if len(parts) >= 2 {
-		return parts[0]
-	}
-	return ""
 }
