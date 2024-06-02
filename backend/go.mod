@@ -3,25 +3,6 @@ module pulsar
 go 1.21.9
 
 require (
-	github.com/auth0/go-jwt-middleware/v2 v2.2.1
-	github.com/docker/docker v25.0.3+incompatible
-	github.com/docker/go-connections v0.5.0
-	github.com/google/uuid v1.6.0
-	github.com/joho/godotenv v1.5.1
-	github.com/labstack/echo/v4 v4.11.4
-	github.com/mholt/archiver/v4 v4.0.0-alpha.8
-	github.com/otiai10/copy v1.14.0
-	github.com/rabbitmq/amqp091-go v1.9.0
-	github.com/rs/xid v1.5.0
-	github.com/rs/zerolog v1.32.0
-	github.com/swaggo/echo-swagger v1.4.1
-	github.com/swaggo/swag v1.16.3
-	golang.org/x/crypto v0.21.0
-	gorm.io/driver/postgres v1.5.4
-	gorm.io/gorm v1.25.6
-)
-
-require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/PuerkitoBio/purell v1.2.1 // indirect
