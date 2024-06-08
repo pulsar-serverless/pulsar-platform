@@ -29,5 +29,6 @@ go.work
 .env
 
 frontend/node_modules/
+node_modules/
 template-app/node_modules/
 .DS_Store

@@ -3,7 +3,8 @@ import React from "react";
 import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { ResourcesApi } from "@/api/resources";
-import bytes from "bytes";
+
+const BYTES_IN_MB = 1048576;
 
 const ResourceCards: React.FC<{ projectId: string }> = ({ projectId }) => {
   const { data: resourceUsage } = useQuery({
@@ -29,10 +30,12 @@ const ResourceCards: React.FC<{ projectId: string }> = ({ projectId }) => {
               component="div"
               gutterBottom
             >
-              Memory Usage
+              Memory Usage (MB)
             </Typography>
             <Typography variant="h3">
-              {bytes(resourceUsage?.mem_usage_mb || 0)}
+              {`${((resourceUsage?.mem_usage_mb || 0) / BYTES_IN_MB).toFixed(
+                2
+              )}`}
             </Typography>
           </CardContent>
         </Card>
@@ -46,10 +49,12 @@ const ResourceCards: React.FC<{ projectId: string }> = ({ projectId }) => {
               gutterBottom
               component="div"
             >
-              Network Usage
+              Network Usage (MB)
             </Typography>
             <Typography variant="h3">
-              {bytes(resourceUsage?.net_usage_mb || 0)}
+              {`${((resourceUsage?.net_usage_mb || 0) / BYTES_IN_MB).toFixed(
+                2
+              )}`}
             </Typography>
           </CardContent>
         </Card>
