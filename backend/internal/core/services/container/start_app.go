@@ -8,9 +8,11 @@ import (
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
+
+	"github.com/docker/go-connections/nat"
 )
 
-func (cs *containerService) startServerlessApp(ctx context.Context, project *project.Project, success chan bool, errorChan chan error) {
+func (cs *containerService) startServerlessApp(ctx context.Context, project *project.Project, success chan *nat.PortBinding, errorChan chan error) {
 	containerInfo, ok := cs.liveContainers[project.ContainerId]
 
 	if !ok {
@@ -21,7 +23,7 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 			"Container not started; Starting app container.",
 		))
 
-		err := cs.containerMan.StartContainer(ctx, project.ContainerId)
+		portBinding, err := cs.containerMan.StartContainer(ctx, project.ContainerId)
 
 		if err != nil {
 			cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
@@ -41,13 +43,13 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 		cs.monitor = analytics.NewRuntimeResMonitor()
 
 		go cs.containerMan.GetContainerStats(ctx, project.ContainerId, cs.resource, cs.monitor)
-
 		go cs.saveContainerLogs(project)
 
 		containerInfo = &ContainerInfo{
 			lastAccessed:  time.Now(),
 			server:        make(chan bool),
 			isServerAlive: false,
+			portBinding:   portBinding,
 		}
 
 		cs.liveContainers[project.ContainerId] = containerInfo
@@ -83,7 +85,7 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 					domain.WARNING,
 					"Serverless app started.",
 				))
-				success <- isServerAlive
+				success <- containerInfo.portBinding
 			case <-timeout.C:
 				cs.logService.CreateLogEvent(context.Background(), domain.NewAppLog(
 					project.ID,
@@ -92,11 +94,11 @@ func (cs *containerService) startServerlessApp(ctx context.Context, project *pro
 				))
 			}
 		} else {
-			success <- true
+			success <- containerInfo.portBinding
 		}
 	}()
 }
 
-func (ss *containerService) StartApp(proj *project.Project, successChan chan bool, errChan chan error) {
+func (ss *containerService) StartApp(proj *project.Project, successChan chan *nat.PortBinding, errChan chan error) {
 	ss.start <- &containerStartArg{proj, successChan, errChan}
 }

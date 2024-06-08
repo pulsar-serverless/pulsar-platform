@@ -10,8 +10,6 @@ import (
 	"pulsar/internal/adapters/primary/web/projects"
 	"pulsar/internal/adapters/primary/web/resources"
 	"pulsar/internal/adapters/primary/web/users"
-
-	"github.com/labstack/echo/v4"
 )
 
 func (server *Server) DefineRoutes(jwtSecrete string) {
@@ -72,8 +70,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
-		echo.WrapHandler(apps.NewProxy()),
-		auth.IsAuthorized(server.projectService, jwtSecrete),
 		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.resourceService, server.billingService),
+		auth.IsAuthorized(server.projectService, jwtSecrete),
 	)
 }

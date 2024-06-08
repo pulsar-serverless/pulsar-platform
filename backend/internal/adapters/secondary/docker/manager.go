@@ -2,6 +2,8 @@ package docker
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
@@ -50,14 +52,7 @@ func (cm *ContainerManager) BuildImage(ctx context.Context, buildContext io.Read
 
 func (cm *ContainerManager) CreateContainer(ctx context.Context, imageName string) (string, error) {
 	hostConfig := &container.HostConfig{
-		PortBindings: nat.PortMap{
-			"3000/tcp": []nat.PortBinding{
-				{
-					HostIP:   "0.0.0.0",
-					HostPort: "3000",
-				},
-			},
-		},
+		PublishAllPorts: true,
 	}
 
 	containerConfig := &container.Config{
@@ -75,8 +70,20 @@ func (cm *ContainerManager) CreateContainer(ctx context.Context, imageName strin
 	return resp.ID, err
 }
 
-func (cm *ContainerManager) StartContainer(ctx context.Context, containerId string) error {
-	return cm.client.ContainerStart(ctx, containerId, container.StartOptions{})
+func (cm *ContainerManager) StartContainer(ctx context.Context, containerId string) (*nat.PortBinding, error) {
+	err := cm.client.ContainerStart(ctx, containerId, container.StartOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	container, err := cm.client.ContainerInspect(ctx, containerId)
+	portMapping, ok := container.NetworkSettings.Ports["3000/tcp"]
+
+	fmt.Printf("dagem %+v\n", container.NetworkSettings.Ports)
+	if !ok || len(portMapping) == 0 {
+		return nil, errors.New("unable to find application port")
+	}
+	return &portMapping[0], err
 }
 
 func (cm *ContainerManager) StopContainer(ctx context.Context, containerId string) error {
