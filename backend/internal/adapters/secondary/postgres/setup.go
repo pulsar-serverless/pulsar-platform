@@ -29,6 +29,8 @@ func SetupDB(dsn string) *gorm.DB {
 		&analytics.RuntimeResource{},
 		&billing.PricingPlan{},
 		&billing.PlanResources{},
+		&billing.Invoice{},
+		&billing.ResourcePricing{},
 		&user.AccountStatus{},
 	)
 

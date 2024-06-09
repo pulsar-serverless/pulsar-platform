@@ -13,6 +13,7 @@ type IBillingService interface {
 	GetPricingPlans(ctx context.Context, req GetPlansReq) (*common.Pagination[GetPlansResp], error)
 	SetProjectPlan(ctx context.Context, req SetPlanReq) error
 	CheckPlanLimit(ctx context.Context, planId string, usage *analytics.ResourceUtil) error
+	GenerateInvoice(ctx context.Context, req GenerateInvoiceReq) (string, error)
 }
 
 type BillingService struct {
