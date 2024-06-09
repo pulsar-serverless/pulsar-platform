@@ -38,3 +38,8 @@ func (db *Database) SetProjectPlan(ctx context.Context, projectId string, planId
 
 	return result.Error
 }
+
+func (db *Database) SaveInvoice(ctx context.Context, invoice *billing.Invoice) error {
+	result := db.conn.Create(invoice)
+	return result.Error
+}
