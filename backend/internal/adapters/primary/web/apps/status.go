@@ -9,14 +9,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	 update serverless app status
-// @ID			app-status
-// @Accept		json
-// @Produce	json
-// @Router		/app/status [post]
-// @Param        subdomain   query      string  true  "App subdomain"
-// @Security	Bearer
-// @Tags		App
+//	@Summary	update serverless app status
+//	@ID			app-status
+//	@Accept		json
+//	@Produce	json
+//	@Router		/app/status [post]
+//	@Param		subdomain	query	string	true	"App subdomain"
+//	@Security	Bearer
+//	@Tags		App
 func Status(containerService container.IContainerService) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
 		subdomain := ctx.QueryParam("subdomain")

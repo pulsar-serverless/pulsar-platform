@@ -10,16 +10,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Create Environmental Variables
-// @ID			create-env-variables
-// @Accept		json
-// @Produce	json
-// @Success	200		{object}	[]project.EnvVariable
-// @Router		/api/projects/envs/{projectId} [post]
-// @Param		projectId		path		string					true	"project id"
-// @Param		request	body		envs.OverwriteEnvVariablesReq	true	"Create env variables"
-// @Security	Bearer
-// @Tags		Env
+//	@Summary	Create Environmental Variables
+//	@ID			create-env-variables
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	[]project.EnvVariable
+//	@Router		/api/projects/envs/{projectId} [post]
+//	@Param		projectId	path	string							true	"project id"
+//	@Param		request		body	envs.OverwriteEnvVariablesReq	true	"Create env variables"
+//	@Security	Bearer
+//	@Tags		Env
 func OverwriteEnvVariables(envApi envs.IEnvService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input envs.OverwriteEnvVariablesReq

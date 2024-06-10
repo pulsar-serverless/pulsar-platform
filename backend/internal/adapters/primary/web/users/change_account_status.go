@@ -9,15 +9,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Change user account status
-// @ID			change-users-account-status
-// @Accept		json
-// @Produce	json
-// @Success	200	{object}	[]any
-// @Router		/api/users/{id} [put]
-// @Param		id	path		string	true	"user id"
-// @Security	Bearer
-// @Tags		USER
+//	@Summary	Change user account status
+//	@ID			change-users-account-status
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	[]any
+//	@Router		/api/users/{id} [put]
+//	@Param		id	path	string	true	"user id"
+//	@Security	Bearer
+//	@Tags		USER
 func ChangeAccountStatus(userApi user.IUserService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var request user.ChangeAccountStatusReq

@@ -9,16 +9,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Get Weekly Project Invocations
-// @ID			get-project-weekly-invocations
-// @Accept		json
-// @Produce	json
-// @Success	200		{object} any
-// @Router		/api/projects/{projectId}/analytics/weekly [get]
-// @Param		projectId		path		string					true	"project id"
-// @Param		status	query		string	false	"Invocation Status"
-// @Security	Bearer
-// @Tags		Analytics
+//	@Summary	Get Weekly Project Invocations
+//	@ID			get-project-weekly-invocations
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	any
+//	@Router		/api/projects/{projectId}/analytics/weekly [get]
+//	@Param		projectId	path	string	true	"project id"
+//	@Param		status		query	string	false	"Invocation Status"
+//	@Security	Bearer
+//	@Tags		Analytics
 func GetProjectWeeklyInvocations(analyticsApi analytics.IAnalyticsService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var request analytics.GetInvocations

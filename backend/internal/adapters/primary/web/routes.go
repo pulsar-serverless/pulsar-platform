@@ -68,12 +68,15 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 			projectController.GET("/plans", billing.GetPricingPlans(server.billingService))
 			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
 		}
+		{
+			projectController.GET("/:projectId/invoice", billing.GenerateInvoice(server.billingService))
+		}
 	}
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
 		echo.WrapHandler(apps.NewProxy()),
 		auth.IsAuthorized(server.projectService, jwtSecrete),
-		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.resourceService, server.billingService),
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.billingService),
 	)
 }

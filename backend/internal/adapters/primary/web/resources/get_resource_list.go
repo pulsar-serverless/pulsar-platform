@@ -9,18 +9,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary		Get Project Resource Consumption
-// @ID			get-project-resource
-// @Accept		json
-// @Produce		json
-// @Success		200		{object} any
-// @Router		/api/projects/{projectId}/resources [get]
-// @Param		projectId	path		string	true	"project id"
-// @Param		pageNumber	query		int		true	"Page number"
-// @Param		pageSize	query		int		true	"Page size"
-// @Param		month		query		string	false	"Month"
-// @Security	Bearer
-// @Tags		Resources
+//	@Summary	Get Project Resource Consumption
+//	@ID			get-project-resource
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	any
+//	@Router		/api/projects/{projectId}/resources [get]
+//	@Param		projectId	path	string	true	"project id"
+//	@Param		pageNumber	query	int		true	"Page number"
+//	@Param		pageSize	query	int		true	"Page size"
+//	@Param		month		query	string	false	"Month"
+//	@Security	Bearer
+//	@Tags		Resources
 func GetResourceUtilList(resourceApi analytics.IResourceService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var request analytics.GetProjectResRequest

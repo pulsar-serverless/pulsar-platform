@@ -3,6 +3,7 @@ package billing
 import (
 	"pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -21,7 +22,7 @@ type InvoicePriceData struct {
 
 func NewInvoicePriceData(
 	resUsage *analytics.ResourceUtil,
-	requests *analytics.InvocationCount,
+	requests int,
 	pricing *ResourcePricing) *InvoicePriceData {
 	memUsage := resUsage.MemoryUtil / MBinBytes
 	memUsagePrice := float64(memUsage) * pricing.MemPrice
@@ -29,7 +30,7 @@ func NewInvoicePriceData(
 	netUsage := resUsage.NetworkUtil / MBinBytes
 	netUsagePrice := float64(netUsage) * pricing.NetPrice
 
-	invocationUsage := requests.Count
+	invocationUsage := requests
 	invocationUsagePrice := float64(invocationUsage) * pricing.ReqPrice
 
 	return &InvoicePriceData{
@@ -43,23 +44,25 @@ func NewInvoicePriceData(
 }
 
 type Invoice struct {
-	ID          string  `gorm:"primaryKey"`
-	ProjectID   string  `gorm:"not null"`
-	ProjectName string  `gorm:"not null"`
-	UsageMonth  string  `gorm:"not null"`
-	MemUsage    int64   `gorm:"not null"`
-	MemPrice    float64 `gorm:"default:0"`
-	NetUsage    int64   `gorm:"not null"`
-	NetPrice    float64 `gorm:"default:0"`
-	Requests    int64   `gorm:"default:0"`
-	ReqPrice    float64 `gorm:"default:0"`
-	TotalPrice  float64 `gorm:"default:0"`
+	ID          string    `gorm:"primaryKey"`
+	CreatedAt   time.Time ``
+	ProjectID   string    `gorm:"not null"`
+	ProjectName string    `gorm:"not null"`
+	UsageMonth  string    `gorm:"not null"`
+	MemUsage    int64     `gorm:"not null"`
+	MemPrice    float64   `gorm:"default:0"`
+	NetUsage    int64     `gorm:"not null"`
+	NetPrice    float64   `gorm:"default:0"`
+	Requests    int64     `gorm:"default:0"`
+	ReqPrice    float64   `gorm:"default:0"`
+	TotalPrice  float64   `gorm:"default:0"`
 }
 
 func NewInvoice(proj *project.Project, prices *InvoicePriceData, month string, totalPrice float64) *Invoice {
 
 	return &Invoice{
 		ID:          uuid.New().String(),
+		CreatedAt:   time.Now(),
 		ProjectID:   proj.ID,
 		ProjectName: proj.Name,
 		UsageMonth:  month,

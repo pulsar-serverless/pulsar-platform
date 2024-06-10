@@ -10,15 +10,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Get Environmental Variables
-// @ID			get-env-variables
-// @Accept		json
-// @Produce	json
-// @Success	200		{object}	[]project.EnvVariable
-// @Router		/api/projects/envs/{projectId} [get]
-// @Param		projectId		path		string					true	"project id"
-// @Security	Bearer
-// @Tags		Env
+//	@Summary	Get Environmental Variables
+//	@ID			get-env-variables
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	[]project.EnvVariable
+//	@Router		/api/projects/envs/{projectId} [get]
+//	@Param		projectId	path	string	true	"project id"
+//	@Security	Bearer
+//	@Tags		Env
 func GetEnvVariables(envApi envs.IEnvService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		projectId := c.Param("projectId")

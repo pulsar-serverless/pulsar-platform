@@ -722,6 +722,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/projects/{projectId}/invoice": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Billing"
+                ],
+                "summary": "Generate Month Invoice",
+                "operationId": "generate-project-month-invoice",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Month",
+                        "name": "month",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/billing.GenerateInvoiceResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/projects/{projectId}/plan": {
             "post": {
                 "security": [
@@ -1081,6 +1125,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "billing.GenerateInvoiceResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "envs.EnvVariables": {
             "type": "object",
             "properties": {

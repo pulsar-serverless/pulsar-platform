@@ -13,16 +13,16 @@ type UploadProjectCodeInput struct {
 	ProjectId string `form:"projectId"`
 }
 
-// @Summary	Upload project
-// @ID			upload-project-code
-// @Accept		json
-// @Produce	json
-// @Success	200
-// @Param		projectId	path	string	true	"project id"
-// @Param file formData file true "zipped code"
-// @Router		/api/projects/code/{projectId} [put]
-// @Security	Bearer
-// @Tags		Project
+//	@Summary	Upload project
+//	@ID			upload-project-code
+//	@Accept		json
+//	@Produce	json
+//	@Success	200
+//	@Param		projectId	path		string	true	"project id"
+//	@Param		file		formData	file	true	"zipped code"
+//	@Router		/api/projects/code/{projectId} [put]
+//	@Security	Bearer
+//	@Tags		Project
 func UploadProjectCode(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UploadProjectCodeInput

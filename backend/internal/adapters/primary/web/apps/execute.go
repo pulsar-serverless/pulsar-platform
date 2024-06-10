@@ -22,7 +22,6 @@ func ExecuteFunction(
 	containerService container.IContainerService,
 	projectService project.IProjectService,
 	analyticsService services.IAnalyticsService,
-	resourceService services.IResourceService,
 	billingService billing.IBillingService) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -38,16 +37,10 @@ func ExecuteFunction(
 				return ctx.JSON(resp.Status, resp)
 			}
 
-			// check if project has pricing plan associated
 			if project.PricingPlan != nil {
-				// check for resource limit
-				projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
-				if projectUsage != nil {
-					err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
-					if err != nil {
-						resp := apierrors.FromError(err)
-						return ctx.JSON(resp.Status, resp)
-					}
+				if err := billingService.CheckPlanLimit(context.TODO(), project.ID, *project.PricingPlan); err != nil {
+					resp := apierrors.FromError(err)
+					return ctx.JSON(resp.Status, resp)
 				}
 			}
 

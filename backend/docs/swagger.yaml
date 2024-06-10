@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  billing.GenerateInvoiceResp:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    type: object
   envs.EnvVariables:
     properties:
       key:
@@ -335,6 +342,34 @@ paths:
       summary: Get Weekly Project Invocations
       tags:
       - Analytics
+  /api/projects/{projectId}/invoice:
+    post:
+      consumes:
+      - application/json
+      operationId: generate-project-month-invoice
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Month
+        in: query
+        name: month
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/billing.GenerateInvoiceResp'
+      security:
+      - Bearer: []
+      summary: Generate Month Invoice
+      tags:
+      - Billing
   /api/projects/{projectId}/plan:
     post:
       consumes:

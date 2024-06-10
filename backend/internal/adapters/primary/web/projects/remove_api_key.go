@@ -10,15 +10,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary	Remove API Key
-// @ID			remove-api-key
-// @Accept		json
-// @Produce	json
-// @Param		id		path		string					true	"project id"
-// @Success	200		{object}	any
-// @Router		/api/projects/{id}/api-token [delete]
-// @Security	Bearer
-// @Tags		Project
+//	@Summary	Remove API Key
+//	@ID			remove-api-key
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path		string	true	"project id"
+//	@Success	200	{object}	any
+//	@Router		/api/projects/{id}/api-token [delete]
+//	@Security	Bearer
+//	@Tags		Project
 func RemoveAPIKey(projectApi project.IProjectService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input project.RemoveAPIKeyReq

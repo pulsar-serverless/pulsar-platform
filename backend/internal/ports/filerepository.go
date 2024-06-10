@@ -5,7 +5,10 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/project"
+
+	"github.com/go-pdf/fpdf"
 )
 
 type IFileRepository interface {
@@ -14,4 +17,5 @@ type IFileRepository interface {
 	CreateBuildContext(project *project.Project) (io.Reader, error)
 	ZipSourceCode(sourceDir string) (*os.File, error)
 	RemoveSourceCode(sourceDir string) error
+	SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) error
 }
