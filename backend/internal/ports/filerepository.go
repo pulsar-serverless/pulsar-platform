@@ -17,5 +17,5 @@ type IFileRepository interface {
 	CreateBuildContext(project *project.Project) (io.Reader, error)
 	ZipSourceCode(sourceDir string) (*os.File, error)
 	RemoveSourceCode(sourceDir string) error
-	SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) error
+	SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) (string, error)
 }

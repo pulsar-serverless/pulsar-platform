@@ -56,6 +56,7 @@ type Invoice struct {
 	Requests    int64     `gorm:"default:0"`
 	ReqPrice    float64   `gorm:"default:0"`
 	TotalPrice  float64   `gorm:"default:0"`
+	FilePath    string    ``
 }
 
 func NewInvoice(proj *project.Project, prices *InvoicePriceData, month string, totalPrice float64) *Invoice {

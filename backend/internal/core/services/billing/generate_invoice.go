@@ -14,20 +14,72 @@ import (
 	"github.com/go-pdf/fpdf"
 )
 
+// HTTP Request
 type GenerateInvoiceReq struct {
 	ProjectID string `param:"projectId"`
 	Month     string `query:"month"`
 }
 
+// HTTP Response
 type GenerateInvoiceResp struct {
-	ID  string `json:"id"`
-	URL string `json:"url"`
+	FilePath string `json:"file"`
 }
 
+// Intermediate DTO
 type GenerateInvoiceData struct {
 	Project        *project.Project
 	InvoiceMonth   string
 	InvoicePricing *billing.InvoicePriceData
+}
+
+func (billingService *BillingService) checkInvoiceExists(ctx context.Context, req GenerateInvoiceReq) (*billing.Invoice, error) {
+	return billingService.repo.GetInvoice(ctx, req.ProjectID, req.Month)
+}
+
+func (billingService *BillingService) GenerateInvoice(ctx context.Context, req GenerateInvoiceReq) (*GenerateInvoiceResp, error) {
+	exists, _ := billingService.checkInvoiceExists(ctx, req)
+	if exists != nil {
+		return &GenerateInvoiceResp{FilePath: exists.FilePath}, nil
+	}
+
+	invoiceData, err := billingService.generateInvoiceData(ctx, req.ProjectID, req.Month)
+	if err != nil {
+		return nil, err
+	}
+
+	proj, err := billingService.projectService.GetProject(ctx, projService.GetProjectReq{ProjectId: req.ProjectID})
+	if err != nil {
+		return nil, err
+	}
+
+	data := GenerateInvoiceData{
+		Project:        proj,
+		InvoiceMonth:   req.Month,
+		InvoicePricing: invoiceData,
+	}
+
+	totalPrice := calculateTotalPrice(data)
+
+	invoice := billing.NewInvoice(
+		data.Project,
+		data.InvoicePricing,
+		data.InvoiceMonth,
+		totalPrice,
+	)
+
+	file, err := billingService.generatePdf(invoice)
+	if err != nil {
+		return nil, err
+	}
+
+	invoice.FilePath = file
+
+	err = billingService.repo.SaveInvoice(ctx, invoice)
+	if err != nil {
+		return nil, nil
+	}
+
+	return &GenerateInvoiceResp{FilePath: file}, nil
 }
 
 func calculateTotalPrice(req GenerateInvoiceData) float64 {
@@ -63,43 +115,7 @@ func (billingService *BillingService) generateInvoiceData(ctx context.Context, p
 	return invoiceData, nil
 }
 
-func (billingService *BillingService) GenerateInvoice(ctx context.Context, req GenerateInvoiceReq) (*GenerateInvoiceResp, error) {
-	invoiceData, err := billingService.generateInvoiceData(ctx, req.ProjectID, req.Month)
-	if err != nil {
-		return nil, err
-	}
-
-	proj, err := billingService.projectService.GetProject(ctx, projService.GetProjectReq{ProjectId: req.ProjectID})
-	if err != nil {
-		return nil, err
-	}
-
-	data := GenerateInvoiceData{
-		Project:        proj,
-		InvoiceMonth:   req.Month,
-		InvoicePricing: invoiceData,
-	}
-
-	totalPrice := calculateTotalPrice(data)
-
-	invoice := billing.NewInvoice(
-		data.Project,
-		data.InvoicePricing,
-		data.InvoiceMonth,
-		totalPrice,
-	)
-
-	err = billingService.repo.SaveInvoice(ctx, invoice)
-	if err != nil {
-		return nil, nil
-	}
-
-	_ = billingService.generatePdf(invoice)
-
-	return &GenerateInvoiceResp{ID: invoice.ID, URL: ""}, nil
-}
-
-func (billingService *BillingService) generatePdf(invoice *billing.Invoice) error {
+func (billingService *BillingService) generatePdf(invoice *billing.Invoice) (string, error) {
 	pdf := fpdf.New("P", "mm", "A4", "")
 
 	pdf.AddPage()

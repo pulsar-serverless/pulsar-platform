@@ -51,6 +51,17 @@ func (db *Database) GetResourcePricing(ctx context.Context) (*billing.ResourcePr
 	return res[0], nil
 }
 
+func (db *Database) GetInvoice(ctx context.Context, projectId, month string) (*billing.Invoice, error) {
+	var invoice billing.Invoice
+	result := db.conn.Where(&billing.Invoice{ProjectID: projectId, UsageMonth: month}).Find(&invoice)
+
+	if result.RowsAffected <= 0 {
+		return nil, errors.New("invoice not found")
+	}
+
+	return &invoice, result.Error
+}
+
 func (db *Database) SaveInvoice(ctx context.Context, invoice *billing.Invoice) error {
 	result := db.conn.Create(invoice)
 	return result.Error

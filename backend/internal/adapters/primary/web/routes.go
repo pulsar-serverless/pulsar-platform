@@ -69,7 +69,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
 		}
 		{
-			projectController.GET("/:projectId/invoice", billing.GenerateInvoice(server.billingService))
+			projectController.POST("/:projectId/invoice", billing.GenerateInvoice(server.billingService))
 		}
 	}
 

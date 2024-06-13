@@ -120,13 +120,13 @@ func (fileRepo *ProjectFileRepository) RemoveSourceCode(sourceDir string) error 
 	return os.RemoveAll(sourceDir)
 }
 
-func (fileRepo *ProjectFileRepository) SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) error {
+func (fileRepo *ProjectFileRepository) SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) (string, error) {
 	filePath := path.Join(fileRepo.invoicePath, "invoice-"+invoice.UsageMonth+invoice.ProjectID+".pdf")
 
 	err := pdf.OutputFileAndClose(filePath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return filePath, nil
 }

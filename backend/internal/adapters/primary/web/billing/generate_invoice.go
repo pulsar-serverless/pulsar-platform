@@ -23,18 +23,19 @@ func GenerateInvoice(
 	billingApi billing.IBillingService,
 ) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req billing.GenerateInvoiceReq
+		projectId := c.Param("projectId")
+		month := c.QueryParam("month")
 
-		if err := c.Bind(&req); err != nil {
-			return c.NoContent(http.StatusBadRequest)
+		if projectId == "" || month == "" {
+			return c.NoContent(http.StatusNoContent)
 		}
 
-		invoice, err := billingApi.GenerateInvoice(context.TODO(), req)
+		invoice, err := billingApi.GenerateInvoice(context.TODO(), billing.GenerateInvoiceReq{ProjectID: projectId, Month: month})
 		if err != nil {
 			errResp := apierrors.FromError(err)
 			return c.JSON(errResp.Status, errResp)
 		}
 
-		return c.JSON(http.StatusOK, invoice)
+		return c.File(invoice.FilePath)
 	}
 }
