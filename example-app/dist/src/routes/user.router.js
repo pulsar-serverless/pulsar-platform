@@ -10,15 +10,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-class HomeRouter {
-    static configRouter() {
+class UserRouter {
+    constructor(postController) {
+        this.postController = postController;
+    }
+    configRouter() {
         const router = (0, express_1.Router)();
-        router.get("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
-            return res.status(200).json({
-                msg: "Server running...",
+        router.post("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const newUser = req.body;
+            let err;
+            const response = yield this.postController
+                .postUser(newUser)
+                .catch((error) => {
+                err = error;
+                return null;
+            });
+            if (!response) {
+                return res.status(400).json({
+                    msg: err,
+                });
+            }
+            return res.status(201).json({
+                data: response,
             });
         }));
         return router;
     }
 }
-exports.default = HomeRouter;
+exports.default = UserRouter;

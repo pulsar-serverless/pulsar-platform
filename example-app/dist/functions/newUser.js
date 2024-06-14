@@ -32,27 +32,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const todo_1 = __importStar(require("../models/todo"));
-class PostTodoController {
+const user_1 = __importStar(require("../models/user"));
+class PostUserController {
     constructor(client) {
         this.client = client;
     }
-    postTodo(data) {
+    postUser(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const parsed = todo_1.newTodoSchema.safeParse(data);
+            const parsed = user_1.newUserSchema.safeParse(data);
             if (!parsed.success) {
                 return Promise.reject(`Invalid data provided: ${parsed.error.issues[0].message}`);
             }
             try {
-                const query = yield this.client.todo.create({
+                const query = yield this.client.user.create({
                     data: parsed.data,
                 });
-                return new todo_1.default(query.id, query.title, query.description, query.completed, query.createdAt);
+                return new user_1.default(query.id, query.fullName);
             }
             catch (error) {
-                return Promise.reject("error creating todo");
+                return Promise.reject("error creating user");
             }
         });
     }
 }
-exports.default = PostTodoController;
+exports.default = PostUserController;
