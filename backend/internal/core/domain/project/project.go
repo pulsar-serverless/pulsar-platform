@@ -25,6 +25,7 @@ type Project struct {
 	UserId           string               `gorm:"not null"`
 	ContainerId      string               `gorm:"unique;default:null"`
 	Port             uint                 `gorm:"unique;default:null"`
+	Subdomain        string               `gorm:"uniqueIndex"`
 	TokenIssuedAt    *time.Time           ``
 	DeploymentStatus DeploymentStatus     `gorm:"default:'none'"`
 	CreatedAt        time.Time            `gorm:"autoCreateTime"`

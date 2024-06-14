@@ -10,6 +10,11 @@ export const createProjectSchema = object({
     .matches(/^[a-zA-Z0-9\-]+$/, {
       message: "Project must consist of only alpha-numeric characters or -.",
     }),
+  subdomain: string()
+    .min(6, "Subdomain must be longer than 6 characters.")
+    .matches(/^[a-zA-Z0-9\-]+$/, {
+      message: "Subdomain must consist of only alpha-numeric characters or -.",
+    }),
 });
 
 export const CreateProjectSchema = createProjectSchema;
@@ -27,9 +32,13 @@ export const ProjectApi = {
     return data;
   },
 
-  async getProjects(pageNumber: number = 0, pagesize: number = 20, userId?: string) {
+  async getProjects(
+    pageNumber: number = 0,
+    pagesize: number = 20,
+    userId?: string
+  ) {
     const { data } = await axiosInstance.get<Paginated<Project>>(`/projects`, {
-      params: { userId, pageNumber, pagesize, },
+      params: { userId, pageNumber, pagesize },
     });
     return data;
   },
@@ -51,17 +60,21 @@ export const ProjectApi = {
   },
 
   async generateApiKey(projectId: string) {
-    const {data} = await axiosInstance.put<{token: string}>( `/projects/${projectId}/api-token`,)
-    return data
+    const { data } = await axiosInstance.put<{ token: string }>(
+      `/projects/${projectId}/api-token`
+    );
+    return data;
   },
 
   async removeAPIKey(projectId: string) {
-    const {data} = await axiosInstance.delete( `/projects/${projectId}/api-token`,)
-    return data
+    const { data } = await axiosInstance.delete(
+      `/projects/${projectId}/api-token`
+    );
+    return data;
   },
 
   async deleteProject(projectId: string) {
-    const {data} = await axiosInstance.delete( `/projects/${projectId}`,)
-    return data
-  }
+    const { data } = await axiosInstance.delete(`/projects/${projectId}`);
+    return data;
+  },
 };

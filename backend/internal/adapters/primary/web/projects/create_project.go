@@ -11,7 +11,8 @@ import (
 )
 
 type CreateProjectRequest struct {
-	Name string `form:"name"`
+	Name      string `form:"name"`
+	Subdomain string `form:"subdomain"`
 }
 
 // @Summary	Create project
@@ -35,7 +36,7 @@ func CreateProject(projectApi project.IProjectService) echo.HandlerFunc {
 
 		result, err := projectApi.CreateProject(
 			context.TODO(),
-			project.CreateProjectReq{ProjectName: input.Name, UserId: userId})
+			project.CreateProjectReq{ProjectName: input.Name, UserId: userId, Subdomain: input.Subdomain})
 
 		if err != nil {
 			errResp := apierrors.FromError(err)

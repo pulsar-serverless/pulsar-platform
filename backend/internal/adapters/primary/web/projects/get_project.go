@@ -13,6 +13,7 @@ import (
 type ProjectApiResponse struct {
 	ID               string    `json:"id"`
 	Name             string    `json:"name"`
+	Subdomain        string    `json:"subdomain"`
 	DeploymentStatus string    `json:"deploymentStatus"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
@@ -22,6 +23,7 @@ func ProjectToProjectApiResponse(proj *domain.Project) ProjectApiResponse {
 	return ProjectApiResponse{
 		ID:               proj.ID,
 		Name:             proj.Name,
+		Subdomain:        proj.Subdomain,
 		DeploymentStatus: string(proj.DeploymentStatus),
 		CreatedAt:        proj.CreatedAt,
 		UpdatedAt:        proj.UpdatedAt,

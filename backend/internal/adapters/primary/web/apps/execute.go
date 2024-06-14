@@ -31,7 +31,7 @@ func ExecuteFunction(
 			errorChan := make(chan error, 1)
 
 			subdomain := utils.GetSubdomain(ctx.Request().Host)
-			project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
+			project, err := projectService.GetProjectByDomain(context.Background(), project.GetProjectReq{Subdomain: subdomain})
 
 			if err != nil {
 				resp := apierrors.FromError(err)

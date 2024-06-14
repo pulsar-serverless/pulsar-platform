@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
@@ -15,12 +16,14 @@ import (
 type CreateProjectReq struct {
 	ProjectName string
 	UserId      string
+	Subdomain   string
 }
 
 type GenericProjectResp struct {
 	ID               string                   `json:"id"`
 	Name             string                   `json:"name"`
 	DeploymentStatus project.DeploymentStatus `json:"deploymentStatus"`
+	Subdomain        string                   `json:"subdomain"`
 	CreatedAt        time.Time                `json:"createdAt"`
 	UpdatedAt        time.Time                `json:"updatedAt"`
 }
@@ -30,16 +33,38 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 		ID:               project.ID,
 		Name:             project.Name,
 		DeploymentStatus: project.DeploymentStatus,
+		Subdomain:        project.Subdomain,
 		CreatedAt:        project.CreatedAt,
 		UpdatedAt:        project.UpdatedAt,
 	}
 }
 
 func (projectService *ProjectService) CreateProject(ctx context.Context, req CreateProjectReq) (*GenericProjectResp, error) {
+	var subdomain string
+
+	if req.Subdomain == "" {
+		subdomain = fmt.Sprintf("%s-%s", req.ProjectName, generateAppId())
+	} else {
+		subdomainValid, _ := projectService.projectRepo.CheckSubdomain(ctx, req.Subdomain)
+
+		if !subdomainValid {
+			return nil, services.NewAppError(services.ErrBadRequest, errors.New("subdomain taken"))
+		}
+
+		subdomain = req.Subdomain
+	}
+
+	subdomainValid, _ := projectService.projectRepo.CheckSubdomain(ctx, req.Subdomain)
+
+	if !subdomainValid {
+		return nil, services.NewAppError(services.ErrBadRequest, errors.New("subdomain taken"))
+	}
+
 	var newProject = project.Project{
 		ID:               fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
 		Name:             req.ProjectName,
 		UserId:           req.UserId,
+		Subdomain:        subdomain,
 		DeploymentStatus: project.Building,
 	}
 

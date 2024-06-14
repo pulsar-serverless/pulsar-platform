@@ -50,6 +50,13 @@ func (repo *Database) GetProject(ctx context.Context, projectId string) (*projec
 	return &project, result.Error
 }
 
+func (repo *Database) GetProjectByDomain(ctx context.Context, subdomain string) (*project.Project, error) {
+	var project project.Project
+	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
+
+	return &project, result.Error
+}
+
 func (repo *Database) GetProjects(ctx context.Context, pageNumber int, pageSize int, userId string) (*common.Pagination[project.Project], error) {
 	var projects []*project.Project
 
@@ -91,4 +98,14 @@ func (repo *Database) DeleteProject(ctx context.Context, projectId string) error
 func (repo *Database) UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error {
 	result := repo.conn.Where("id = ?", id).Updates(code)
 	return result.Error
+}
+
+func (repo *Database) CheckSubdomain(ctx context.Context, subdomain string) (bool, error) {
+	result := repo.conn.Where("subdomain = ?", subdomain).Find(&project.Project{})
+
+	if result.RowsAffected <= 0 {
+		return true, nil
+	}
+
+	return false, result.Error
 }
