@@ -4,6 +4,7 @@
   "execution-and-deployment":"Execution and Deployment",
   "environmental-variables":"Enviromental variables",
   "logging-and-monitoring":"Logging and monitoring",
+  "api-key":"API key",
   "billing":"Billing",
   "about": {
     "title": "About",
