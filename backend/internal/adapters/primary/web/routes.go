@@ -13,6 +13,9 @@ import (
 )
 
 func (server *Server) DefineRoutes(jwtSecrete string) {
+	
+	server.echo.GET("/api/projects/plans", billing.GetPricingPlans(server.billingService))
+	
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
@@ -63,7 +66,6 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 		}
 
 		{
-			projectController.GET("/plans", billing.GetPricingPlans(server.billingService))
 			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
 		}
 	}
