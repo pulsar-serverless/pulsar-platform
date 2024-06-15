@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/common"
+	"pulsar/internal/core/domain/project"
 )
 
 func (db *Database) GetPlanResource(ctx context.Context, planId string) (*billing.PlanResources, error) {
@@ -31,7 +33,7 @@ func (db *Database) GetPricingPlans(ctx context.Context, pageNumber int, pageSiz
 }
 
 func (db *Database) SetProjectPlan(ctx context.Context, projectId string, planId string) error {
-	result := db.conn.Where("id = ?", projectId).Update("plan_id", planId)
-
+	result := db.conn.Model(&project.Project{}).Where("id = ?", projectId).Update("plan_id", planId)
+	fmt.Println(result.RowsAffected)
 	return result.Error
 }

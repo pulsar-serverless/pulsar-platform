@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
@@ -26,6 +27,7 @@ type GenericProjectResp struct {
 	Subdomain        string                   `json:"subdomain"`
 	CreatedAt        time.Time                `json:"createdAt"`
 	UpdatedAt        time.Time                `json:"updatedAt"`
+	PricingPlan      *billing.PricingPlan     `json:"pricingPlan"`
 }
 
 func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp {
@@ -36,6 +38,7 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 		Subdomain:        project.Subdomain,
 		CreatedAt:        project.CreatedAt,
 		UpdatedAt:        project.UpdatedAt,
+		PricingPlan:      project.PricingPlan,
 	}
 }
 
