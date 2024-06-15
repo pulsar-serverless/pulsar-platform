@@ -63,12 +63,18 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 		return nil, services.NewAppError(services.ErrBadRequest, errors.New("subdomain taken"))
 	}
 
+	pricingPlan, err := projectService.billingRepo.GetDefaultProjectPlan(ctx)
+	if err != nil {
+		return nil, services.NewAppError(services.ErrInternalServer, err)
+	}
+
 	var newProject = project.Project{
 		ID:               fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
 		Name:             req.ProjectName,
 		UserId:           req.UserId,
 		Subdomain:        subdomain,
 		DeploymentStatus: project.Building,
+		PricingPlan:      pricingPlan,
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {

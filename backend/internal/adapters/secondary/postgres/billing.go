@@ -37,3 +37,9 @@ func (db *Database) SetProjectPlan(ctx context.Context, projectId string, planId
 	fmt.Println(result.RowsAffected)
 	return result.Error
 }
+
+func (db *Database) GetDefaultProjectPlan(ctx context.Context) (*billing.PricingPlan, error) {
+	var plan billing.PricingPlan
+	result := db.conn.Model(&billing.PricingPlan{}).Where("name = ?", "Free plan").First(&plan)
+	return &plan, result.Error
+}
