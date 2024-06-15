@@ -36,7 +36,7 @@ export const Header = () => {
     setAnchorEl(null);
   };
 
-  const username = "username";
+  const username = user?.sub || ""
 
   return (
     <AppBar
