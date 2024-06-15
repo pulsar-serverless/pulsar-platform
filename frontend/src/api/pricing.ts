@@ -15,10 +15,26 @@ export const PricingApi = {
 		return status;
 	},
 
-	async getPricingPlans(pageNumber: number, pageSize: number): Promise<Paginated<PricingPlan>> {
+	async getPricingPlans(
+		pageNumber: number,
+		pageSize: number
+	): Promise<Paginated<PricingPlan>> {
 		const { data } = await axiosInstance.get<any>(`/projects/plans`, {
 			params: { pageNumber, pageSize },
 		});
+		return data;
+	},
+
+	async changePricingPlan(
+		planId: string,
+		projectId: string
+	): Promise<Paginated<PricingPlan>> {
+		const { data } = await axiosInstance.post<any>(
+			`/projects/${projectId}/plan`,
+			{
+				params: { planId },
+			}
+		);
 		return data;
 	},
 };
