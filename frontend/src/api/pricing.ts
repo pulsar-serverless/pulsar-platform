@@ -1,4 +1,6 @@
 import { axiosInstance } from "@/components/interceptors/HttpInterceptor";
+import { PricingPlan } from "@/models/PricingPlan";
+import { Paginated } from "@/models/pagination";
 
 export const PricingApi = {
 	async setProjectPricingPlan(
@@ -13,8 +15,8 @@ export const PricingApi = {
 		return status;
 	},
 
-	async getPricingPlans(pageNumber: number, pageSize: number): Promise<any> {
-		const { data } = await axiosInstance.get<any>(`/api/projects/plans`, {
+	async getPricingPlans(pageNumber: number, pageSize: number): Promise<Paginated<PricingPlan>> {
+		const { data } = await axiosInstance.get<any>(`/projects/plans`, {
 			params: { pageNumber, pageSize },
 		});
 		return data;
