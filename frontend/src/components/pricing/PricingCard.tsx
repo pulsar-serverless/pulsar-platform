@@ -27,7 +27,7 @@ const PricingCard: React.FC<{
       <Card
         sx={{
           flexGrow: 1,
-		  width: '50%'
+          width: "50%",
         }}
       >
         <CardContent>
