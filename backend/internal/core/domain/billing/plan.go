@@ -18,8 +18,9 @@ type PricingPlan struct {
 	ID              uuid.UUID `gorm:"PrimaryKey"`
 	Name            string    `gorm:"unique"`
 	Description     string    ``
-	PlanTeir        Teir      `gorm:"default:'free';not null;column:plan_teir"`
-	NotifyThreshold int64     `gorm:"column:notify_at;default:80"`
+	Price           float64
+	PlanTeir        Teir  `gorm:"default:'free';not null;column:plan_teir"`
+	NotifyThreshold int64 `gorm:"column:notify_at;default:80"`
 	PlanResources   PlanResources
 	gorm.Model
 }
