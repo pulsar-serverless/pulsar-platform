@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/components/interceptors/HttpInterceptor";
+import { ChangeSubdomain } from "@/components/settings/ChangeSubdomain";
 import { Paginated } from "@/models/pagination";
 import { Project } from "@/models/project";
 import { object, string, InferType } from "yup";
@@ -11,7 +12,7 @@ export const createProjectSchema = object({
       message: "Project must consist of only alpha-numeric characters or -.",
     }),
   subdomain: string()
-    .min(6, "Subdomain must be longer than 6 characters.")
+    .min(3, "Subdomain must be longer than 6 characters.")
     .matches(/^[a-zA-Z0-9\-]+$/, {
       message: "Subdomain must consist of only alpha-numeric characters or -.",
     }),
@@ -75,6 +76,13 @@ export const ProjectApi = {
 
   async deleteProject(projectId: string) {
     const { data } = await axiosInstance.delete(`/projects/${projectId}`);
+    return data;
+  },
+
+  async ChangeSubdomain(projectId: string, subdomain: string) {
+    const { data } = await axiosInstance.put(`/projects/${projectId}`, {
+      subdomain: subdomain,
+    });
     return data;
   },
 };
