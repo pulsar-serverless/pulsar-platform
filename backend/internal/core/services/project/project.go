@@ -25,16 +25,18 @@ type IProjectService interface {
 
 type ProjectService struct {
 	projectRepo      ports.IProjectRepo
+	billingRepo      ports.IBillingRepository
 	containerService container.IContainerService
 	fileRepo         ports.IFileRepository
 	jwtSecreteKey    string
 }
 
-func NewProjectService(pr ports.IProjectRepo, containerService container.IContainerService, fileRepo ports.IFileRepository, jwtSecreteKey string) *ProjectService {
+func NewProjectService(pr ports.IProjectRepo, containerService container.IContainerService, fileRepo ports.IFileRepository, jwtSecreteKey string, billingRepo ports.IBillingRepository) *ProjectService {
 	return &ProjectService{
 		projectRepo:      pr,
 		containerService: containerService,
 		fileRepo:         fileRepo,
 		jwtSecreteKey:    jwtSecreteKey,
+		billingRepo:      billingRepo,
 	}
 }

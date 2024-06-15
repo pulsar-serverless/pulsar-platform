@@ -41,7 +41,7 @@ const PricingCard: React.FC<{
             {plan.name}
           </Typography>
           <Typography variant="h5" sx={{ marginBottom: 2 }} gutterBottom>
-            {plan.price ? `$${plan.price} ETB/month` : "0 ETB/month"}
+            {plan.price ? `${plan.price} ETB/month` : "0 ETB/month"}
           </Typography>
           <Typography variant="body2" color="textSecondary">
             {plan.desc}

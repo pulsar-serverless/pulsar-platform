@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services"
 	"time"
@@ -26,6 +27,7 @@ type GenericProjectResp struct {
 	Subdomain        string                   `json:"subdomain"`
 	CreatedAt        time.Time                `json:"createdAt"`
 	UpdatedAt        time.Time                `json:"updatedAt"`
+	PricingPlan      *billing.PricingPlan     `json:"pricingPlan"`
 }
 
 func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp {
@@ -36,6 +38,7 @@ func GenericProjectRespFromProject(project *project.Project) *GenericProjectResp
 		Subdomain:        project.Subdomain,
 		CreatedAt:        project.CreatedAt,
 		UpdatedAt:        project.UpdatedAt,
+		PricingPlan:      project.PricingPlan,
 	}
 }
 
@@ -60,12 +63,18 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 		return nil, services.NewAppError(services.ErrBadRequest, errors.New("subdomain taken"))
 	}
 
+	pricingPlan, err := projectService.billingRepo.GetDefaultProjectPlan(ctx)
+	if err != nil {
+		return nil, services.NewAppError(services.ErrInternalServer, err)
+	}
+
 	var newProject = project.Project{
 		ID:               fmt.Sprintf("%s-%s", req.ProjectName, generateAppId()),
 		Name:             req.ProjectName,
 		UserId:           req.UserId,
 		Subdomain:        subdomain,
 		DeploymentStatus: project.Building,
+		PricingPlan:      pricingPlan,
 	}
 
 	if err := projectService.projectRepo.CreateProject(ctx, &newProject); err != nil {
