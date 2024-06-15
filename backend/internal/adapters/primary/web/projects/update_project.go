@@ -10,8 +10,9 @@ import (
 )
 
 type UpdateProjectRequest struct {
-	Name string `body:"name"`
-	Id   string `param:"id"`
+	Name      string `body:"name"`
+	Subdomain string `body:"subdomain"`
+	Id        string `param:"id"`
 }
 
 // @Summary	Update project
@@ -32,7 +33,7 @@ func UpdateProjects(projectApi project.IProjectService) echo.HandlerFunc {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-		request := project.UpdateProjectReq{ProjectId: input.Id, UpdatedProject: &domain.Project{Name: input.Name}}
+		request := project.UpdateProjectReq{ProjectId: input.Id, UpdatedProject: &domain.Project{Name: input.Name, Subdomain: input.Subdomain}}
 		projects, err := projectApi.UpdateProject(context.TODO(), request)
 
 		if err != nil {

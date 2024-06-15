@@ -30,10 +30,12 @@ func (repo *Database) CreateProject(ctx context.Context, project *project.Projec
 }
 
 func (repo *Database) UpdateProject(ctx context.Context, projectId string, updatedProject *project.Project) (*project.Project, error) {
-	var project project.Project
 	result := repo.conn.Where("id = ?", projectId).Updates(updatedProject)
 
-	return &project, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return repo.GetProject(ctx, projectId)
 }
 
 func (repo *Database) UpdateProjectFields(ctx context.Context, projectId string, updatedProject map[string]interface{}) (*project.Project, error) {
