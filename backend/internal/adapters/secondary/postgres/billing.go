@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"math"
 	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/common"
 )
@@ -24,11 +23,9 @@ func (db *Database) GetPricingPlans(ctx context.Context, pageNumber int, pageSiz
 
 	var planCount int64
 	db.conn.Model(&billing.PricingPlan{}).Count(&planCount)
-
-	result := db.conn.Scopes(Paginate(pagination)).Find(pricingPlans)
+	result := db.conn.Find(&pricingPlans)
 
 	pagination.Rows = pricingPlans
-	pagination.TotalPages = int64(math.Ceil(float64(planCount) / float64(pageSize)))
 
 	return pagination, result.Error
 }
