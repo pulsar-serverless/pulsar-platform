@@ -44,6 +44,7 @@ export const ChangeSubdomain: React.FC<{
       ProjectApi.ChangeSubdomain(project?.id || "", subdomain),
     onSuccess: (data) => {
       snackbar.setSuccessMsg("Project sud-domain updated.");
+      onClose();
     },
     onError: () => snackbar.setErrorMsg("Unable to change project sub-domain."),
   });
