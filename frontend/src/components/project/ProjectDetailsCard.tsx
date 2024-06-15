@@ -26,7 +26,7 @@ export const ProjectDetailsCard = ({
   const theme = useTheme();
 
   const url = new URL(process.env.NEXT_PUBLIC_SERVERLESS_URL!);
-  if (project) url.hostname = project?.id + "." + url.hostname;
+  if (project) url.hostname = project?.subdomain + "." + url.hostname;
 
   return (
     <>

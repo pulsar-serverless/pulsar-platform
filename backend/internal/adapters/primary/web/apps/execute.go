@@ -30,26 +30,25 @@ func ExecuteFunction(
 		errorChan := make(chan error, 1)
 
 		subdomain := utils.GetSubdomain(ctx.Request().Host)
-		project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
+		project, err := projectService.GetProjectByDomain(context.Background(), project.GetProjectReq{Subdomain: subdomain})
 
 		if err != nil {
 			resp := apierrors.FromError(err)
 			return ctx.JSON(resp.Status, resp)
 		}
 
-    // check if project has pricing plan associated
-    if project.PricingPlan != nil {
-      // check for resource limit
-      projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
-      if projectUsage != nil {
-        err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
-        if err != nil {
-          resp := apierrors.FromError(err)
-          return ctx.JSON(resp.Status, resp)
-        }
-      }
-    }
-
+		// check if project has pricing plan associated
+		if project.PricingPlan != nil {
+			// check for resource limit
+			projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
+			if projectUsage != nil {
+				err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
+				if err != nil {
+					resp := apierrors.FromError(err)
+					return ctx.JSON(resp.Status, resp)
+				}
+			}
+		}
 
 		startTime := time.Now()
 		status := analytics.Success

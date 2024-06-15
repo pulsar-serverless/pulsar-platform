@@ -13,6 +13,7 @@ type IProjectService interface {
 	DeleteProject(ctx context.Context, req DeleteProjectReq) error
 	DeleteAllProjects(ctx context.Context, req DeleteAllProjectsReq) error
 	GetProject(ctx context.Context, req GetProjectReq) (*project.Project, error)
+	GetProjectByDomain(ctx context.Context, req GetProjectReq) (*project.Project, error)
 	GetProjects(ctx context.Context, req GetProjectsReq) (*common.Pagination[GenericProjectResp], error)
 	UpdateProject(ctx context.Context, req UpdateProjectReq) (*GenericProjectResp, error)
 	UploadProjectCode(ctx context.Context, req UploadProjectCodeReq) (*project.Project, error)
