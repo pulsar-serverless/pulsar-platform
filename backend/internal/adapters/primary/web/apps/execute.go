@@ -11,6 +11,7 @@ import (
 	"pulsar/internal/core/services/project"
 	"time"
 
+	"github.com/docker/go-connections/nat"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,54 +24,50 @@ func ExecuteFunction(
 	projectService project.IProjectService,
 	analyticsService services.IAnalyticsService,
 	resourceService services.IResourceService,
-	billingService billing.IBillingService) echo.MiddlewareFunc {
+	billingService billing.IBillingService) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		successChan := make(chan *nat.PortBinding, 1)
+		errorChan := make(chan error, 1)
 
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(ctx echo.Context) error {
-			successChan := make(chan bool, 1)
-			errorChan := make(chan error, 1)
+		subdomain := utils.GetSubdomain(ctx.Request().Host)
+		project, err := projectService.GetProjectByDomain(context.Background(), project.GetProjectReq{Subdomain: subdomain})
 
-			subdomain := utils.GetSubdomain(ctx.Request().Host)
-			project, err := projectService.GetProjectByDomain(context.Background(), project.GetProjectReq{Subdomain: subdomain})
+		if err != nil {
+			resp := apierrors.FromError(err)
+			return ctx.JSON(resp.Status, resp)
+		}
 
-			if err != nil {
-				resp := apierrors.FromError(err)
-				return ctx.JSON(resp.Status, resp)
-			}
-
-			// check if project has pricing plan associated
-			if project.PricingPlan != nil {
-				// check for resource limit
-				projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
-				if projectUsage != nil {
-					err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
-					if err != nil {
-						resp := apierrors.FromError(err)
-						return ctx.JSON(resp.Status, resp)
-					}
+		// check if project has pricing plan associated
+		if project.PricingPlan != nil {
+			// check for resource limit
+			projectUsage, _ := resourceService.GetTotalProjectResourceUtil(context.TODO(), project.ID)
+			if projectUsage != nil {
+				err = billingService.CheckPlanLimit(context.TODO(), project.PlanId.String(), projectUsage)
+				if err != nil {
+					resp := apierrors.FromError(err)
+					return ctx.JSON(resp.Status, resp)
 				}
 			}
-
-			startTime := time.Now()
-			status := analytics.Success
-			containerService.StartApp(project, successChan, errorChan)
-
-			select {
-			case <-successChan:
-				err = next(ctx)
-			case err := <-errorChan:
-				resp := apierrors.FromError(err)
-				err = ctx.JSON(resp.Status, resp)
-				status = analytics.Error
-			}
-
-			endTime := time.Now()
-
-			go analyticsService.PublishInvocationCreatedEvent(
-				context.Background(),
-				analytics.New(project.ID, startTime, endTime, status))
-
-			return err
 		}
+
+		startTime := time.Now()
+		status := analytics.Success
+		containerService.StartApp(project, successChan, errorChan)
+
+		select {
+		case info := <-successChan:
+			err = echo.WrapHandler(NewProxy(info))(ctx)
+		case err = <-errorChan:
+			status = analytics.Error
+		}
+
+		endTime := time.Now()
+
+		go analyticsService.PublishInvocationCreatedEvent(
+			context.Background(),
+			analytics.New(project.ID, startTime, endTime, status))
+
+		resp := apierrors.FromError(err)
+		return ctx.JSON(resp.Status, resp)
 	}
 }

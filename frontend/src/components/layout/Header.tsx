@@ -60,7 +60,7 @@ export const Header = () => {
           alignItems={"center"}
         >
           <Button LinkComponent={Link} href="/docs" color="secondary">
-            Docs
+            Documentation
           </Button>
           <Button LinkComponent={Link} href="/pricing" color="secondary">
             Pricing

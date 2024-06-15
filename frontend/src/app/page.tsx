@@ -1,7 +1,7 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { Typography, Container, Button } from "@mui/material";
+import { Typography, Container, Button, Grid, Box } from "@mui/material";
 import { User, useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -23,25 +23,42 @@ export default function Home() {
 
   return (
     <Container>
-      <Stack
-        spacing={3}
-        alignItems="center"
-        justifyContent="center"
-        sx={{ height: "100%" }}
+      <Box
+        sx={{
+          height: "100%",
+          width: "100%",
+          display: "grid",
+          placeItems: "center",
+        }}
       >
-        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-          Login to Pulsar
-        </Typography>
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          startIcon={<GitHubIcon />}
-          onClick={() => loginWithRedirect()}
-        >
-          Continue with Github
-        </Button>
-      </Stack>
+        <Grid container spacing={6} sx={{ alignItems: "center" }}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h2" gutterBottom fontWeight={"bold"}>
+              Serverless <br /> That Fits in Your Pocket.
+            </Typography>
+            <Typography variant="h5" fontWeight={'light'}>
+              Deploy code instantly without the weight of traditional server
+              management.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6} sx={{}}>
+            <Stack alignItems={"center"}>
+              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                Login to Pulsar
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                startIcon={<GitHubIcon />}
+                onClick={() => loginWithRedirect()}
+              >
+                Continue with Github
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
     </Container>
   );
 }
