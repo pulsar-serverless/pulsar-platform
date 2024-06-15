@@ -1,0 +1,31 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const home_1 = __importDefault(require("./routes/home"));
+const todo_router_1 = __importDefault(require("./routes/todo.router"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const client_1 = require("@prisma/client");
+const getTodo_1 = __importDefault(require("./functions/getTodo"));
+const newTodo_1 = __importDefault(require("./functions/newTodo"));
+const newUser_1 = __importDefault(require("./functions/newUser"));
+const user_router_1 = __importDefault(require("./routes/user.router"));
+dotenv_1.default.config({ path: "../.env" });
+const client = new client_1.PrismaClient();
+const getController = new getTodo_1.default(client);
+const postController = new newTodo_1.default(client);
+const userPostContoller = new newUser_1.default(client);
+const userRouter = new user_router_1.default(userPostContoller);
+const todoRouter = new todo_router_1.default(getController, postController);
+const PORT = parseInt(process.env.PORT);
+const app = (0, express_1.default)();
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.json());
+app.use("/api/v1/check", home_1.default.configRouter());
+app.use("/api/v1/user", userRouter.configRouter());
+app.use("/api/v1/todo", todoRouter.configRouter());
+app.listen(PORT, "localhost", () => {
+    console.log("Listening on PORT: ", PORT);
+});
