@@ -27,6 +27,7 @@ func main() {
 			Description:     "Ideal for experimenting, learning, and building small-scale serverless applications.",
 			PlanTeir:        billing.Free,
 			NotifyThreshold: 0,
+			Price:           0.00,
 			PlanResources: billing.PlanResources{
 				ID:        uuid.New(),
 				Memory:    100,
@@ -40,6 +41,7 @@ func main() {
 			Description:     "Paid plans offer more resources, allowing you to handle higher traffic and more complex applications.",
 			PlanTeir:        billing.Pro,
 			NotifyThreshold: 0,
+			Price:           9.99,
 			PlanResources: billing.PlanResources{
 				ID:        uuid.New(),
 				Memory:    100,
