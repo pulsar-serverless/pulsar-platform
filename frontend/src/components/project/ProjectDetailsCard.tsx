@@ -54,7 +54,7 @@ export const ProjectDetailsCard = ({
 					sx={{
 						ml: 2,
 					}}
-					label="Free Plan"
+					label={project?.pricingPlan?.name || "Free Plan"}
 					onClick={handleButtonClick}
 				/>
 			</Box>
