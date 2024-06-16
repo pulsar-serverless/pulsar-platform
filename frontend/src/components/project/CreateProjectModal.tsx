@@ -34,7 +34,7 @@ export const CreateProjectModal = () => {
 
   const { handleSubmit, handleBlur, handleChange, errors, values, touched } =
     useFormik({
-      initialValues: { name: "", subdomain: ""},
+      initialValues: { name: "" },
       validationSchema: createProjectSchema,
       onSubmit: (values, {}) => {
         mutate(values);
@@ -51,7 +51,7 @@ export const CreateProjectModal = () => {
         <DialogTitle>Create a new project</DialogTitle>
         <DialogContent>
           <Typography variant="body2" gutterBottom mb={3}>
-            Please type in the name and optional subdomain of the project to you want to create.
+            Please type in the name of the project to you want to create.
           </Typography>
           <TextField
             placeholder="Project name"
@@ -64,20 +64,6 @@ export const CreateProjectModal = () => {
             value={values.name}
             error={!!(touched.name && errors.name)}
             helperText={errors.name}
-            margin="dense"
-          />
-          <TextField
-            placeholder="Project subdomain"
-            variant="outlined"
-            fullWidth
-            size="small"
-            name="subdomain"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.subdomain}
-            error={!!(touched.subdomain && errors.subdomain)}
-            helperText={errors.subdomain}
-            margin="dense"
           />
         </DialogContent>
         <DialogActions>

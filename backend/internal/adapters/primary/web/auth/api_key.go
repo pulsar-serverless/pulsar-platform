@@ -23,7 +23,7 @@ func IsAuthorized(projectService project.IProjectService, JWTSecreteKey string) 
 		return func(c echo.Context) error {
 			subdomain := utils.GetSubdomain(c.Request().Host)
 
-			project, err := projectService.GetProjectByDomain(context.Background(), project.GetProjectReq{Subdomain: subdomain})
+			project, err := projectService.GetProject(context.Background(), project.GetProjectReq{ProjectId: subdomain})
 			if err != nil {
 				resp := apierrors.FromError(err)
 				return c.JSON(resp.Status, resp)

@@ -9,13 +9,11 @@ import (
 	service "pulsar/internal/core/services/log"
 	"pulsar/internal/ports"
 	"time"
-
-	"github.com/docker/go-connections/nat"
 )
 
 type IContainerService interface {
 	DeployContainer(ctx context.Context, project *project.Project, buildContext io.Reader) (string, error)
-	StartApp(project *project.Project, successChan chan *nat.PortBinding, errChan chan error)
+	StartApp(project *project.Project, successChan chan bool, errChan chan error)
 	ChangeAppStatus(ctx context.Context, containerId string) error
 	AccessResource() *analytics.RuntimeResourceObj
 }
@@ -40,12 +38,11 @@ type ContainerInfo struct {
 	lastAccessed  time.Time
 	server        chan bool
 	isServerAlive bool
-	portBinding   *nat.PortBinding
 }
 
 type containerStartArg struct {
 	project *project.Project
-	success chan *nat.PortBinding
+	success chan bool
 	error   chan error
 }
 

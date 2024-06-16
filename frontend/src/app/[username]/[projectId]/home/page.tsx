@@ -12,7 +12,6 @@ import { ProjectDetailsCard } from "@/components/project/ProjectDetailsCard";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { EnvVariablesForm } from "@/components/project/EnvVariablesForm";
 import ProjectLog from "@/components/log/ProjectLog";
-import { useAuth0 } from "@auth0/auth0-react";
 
 function a11yProps(index: number) {
   return {
@@ -24,11 +23,9 @@ function a11yProps(index: number) {
 export default function Page() {
   dayjs.extend(relativeTime);
 
-  const { projectId: projectName } = useParams<{ projectId: string }>()!;
+  const { projectId: projectName } = useParams<{ projectId: string }>();
   const snackbar = useSnackbar();
   const router = useRouter();
-
-  const { isAuthenticated, logout, user } = useAuth0();
 
   const {
     data: project,
@@ -37,7 +34,7 @@ export default function Page() {
   } = useQuery({
     queryKey: [ProjectApi.getProject.name, projectName],
     queryFn: () => ProjectApi.getProject(projectName),
-    refetchInterval: 2000,
+    refetchInterval: 2000
   });
 
   const [value, setValue] = useState(0);
@@ -49,7 +46,7 @@ export default function Page() {
   if (isError) {
     snackbar.setErrorMsg("Project not found");
     // TODO: change this
-    router.push(`/${user?.sub || ""}`);
+    router.push("/username");
   }
 
   return (
@@ -72,7 +69,7 @@ export default function Page() {
           <ProjectDetailsCard isLoading={isLoading} project={project} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <ProjectLog projectId={projectName} />
+          <ProjectLog projectId={projectName}/>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <EnvVariablesForm projectID={projectName} />

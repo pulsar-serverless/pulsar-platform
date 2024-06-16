@@ -3,9 +3,7 @@
   "project-management":"Project Management",
   "execution-and-deployment":"Execution and Deployment",
   "environmental-variables":"Enviromental variables",
-  "logging":"Logging",
-  "analytics":"Analytics",
-  "api-key":"API key",
+  "logging-and-monitoring":"Logging and monitoring",
   "billing":"Billing",
   "about": {
     "title": "About",

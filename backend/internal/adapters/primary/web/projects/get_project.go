@@ -3,8 +3,6 @@ package projects
 import (
 	"context"
 	"net/http"
-
-	"pulsar/internal/core/domain/billing"
 	domain "pulsar/internal/core/domain/project"
 	"pulsar/internal/core/services/project"
 	"time"
@@ -13,24 +11,20 @@ import (
 )
 
 type ProjectApiResponse struct {
-	ID               string               `json:"id"`
-	Name             string               `json:"name"`
-	Subdomain        string               `json:"subdomain"`
-	DeploymentStatus string               `json:"deploymentStatus"`
-	CreatedAt        time.Time            `json:"createdAt"`
-	UpdatedAt        time.Time            `json:"updatedAt"`
-	PricingPlan      *billing.PricingPlan `json:"pricingPlan"`
+	ID               string    `json:"id"`
+	Name             string    `json:"name"`
+	DeploymentStatus string    `json:"deploymentStatus"`
+	CreatedAt        time.Time `json:"createdAt"`
+	UpdatedAt        time.Time `json:"updatedAt"`
 }
 
 func ProjectToProjectApiResponse(proj *domain.Project) ProjectApiResponse {
 	return ProjectApiResponse{
 		ID:               proj.ID,
 		Name:             proj.Name,
-		Subdomain:        proj.Subdomain,
 		DeploymentStatus: string(proj.DeploymentStatus),
 		CreatedAt:        proj.CreatedAt,
 		UpdatedAt:        proj.UpdatedAt,
-		PricingPlan:      proj.PricingPlan,
 	}
 }
 

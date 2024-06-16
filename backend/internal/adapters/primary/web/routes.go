@@ -10,12 +10,11 @@ import (
 	"pulsar/internal/adapters/primary/web/projects"
 	"pulsar/internal/adapters/primary/web/resources"
 	"pulsar/internal/adapters/primary/web/users"
+
+	"github.com/labstack/echo/v4"
 )
 
 func (server *Server) DefineRoutes(jwtSecrete string) {
-	
-	server.echo.GET("/api/projects/plans", billing.GetPricingPlans(server.billingService))
-	
 	apiController := server.echo.Group("/api")
 
 	apiController.Use(auth.IsAuthenticated)
@@ -66,6 +65,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 		}
 
 		{
+			projectController.GET("/plans", billing.GetPricingPlans(server.billingService))
 			projectController.POST("/:projectId/plan", billing.SetProjectPricing(server.billingService))
 		}
 		{
@@ -75,7 +75,8 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
 	server.echo.Any("*",
-		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.resourceService, server.billingService),
+		echo.WrapHandler(apps.NewProxy()),
 		auth.IsAuthorized(server.projectService, jwtSecrete),
+		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.billingService),
 	)
 }

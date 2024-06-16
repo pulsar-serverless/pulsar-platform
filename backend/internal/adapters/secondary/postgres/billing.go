@@ -2,10 +2,10 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"math"
 	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/common"
-	"pulsar/internal/core/domain/project"
 )
 
 func (db *Database) GetPlanResource(ctx context.Context, planId string) (*billing.PlanResources, error) {
@@ -25,15 +25,44 @@ func (db *Database) GetPricingPlans(ctx context.Context, pageNumber int, pageSiz
 
 	var planCount int64
 	db.conn.Model(&billing.PricingPlan{}).Count(&planCount)
-	result := db.conn.Find(&pricingPlans)
+
+	result := db.conn.Scopes(Paginate(pagination)).Find(pricingPlans)
 
 	pagination.Rows = pricingPlans
+	pagination.TotalPages = int64(math.Ceil(float64(planCount) / float64(pageSize)))
 
 	return pagination, result.Error
 }
 
 func (db *Database) SetProjectPlan(ctx context.Context, projectId string, planId string) error {
-	result := db.conn.Model(&project.Project{}).Where("id = ?", projectId).Update("plan_id", planId)
-	fmt.Println(result.RowsAffected)
+	result := db.conn.Where("id = ?", projectId).Update("plan_id", planId)
+
+	return result.Error
+}
+
+func (db *Database) GetResourcePricing(ctx context.Context) (*billing.ResourcePricing, error) {
+	var res []*billing.ResourcePricing
+
+	result := db.conn.Find(&billing.ResourcePricing{}).Scan(&res)
+	if result.RowsAffected <= 0 {
+		return nil, errors.New("pricing not found")
+	}
+
+	return res[0], nil
+}
+
+func (db *Database) GetInvoice(ctx context.Context, projectId, month string) (*billing.Invoice, error) {
+	var invoice billing.Invoice
+	result := db.conn.Where(&billing.Invoice{ProjectID: projectId, UsageMonth: month}).Find(&invoice)
+
+	if result.RowsAffected <= 0 {
+		return nil, errors.New("invoice not found")
+	}
+
+	return &invoice, result.Error
+}
+
+func (db *Database) SaveInvoice(ctx context.Context, invoice *billing.Invoice) error {
+	result := db.conn.Create(invoice)
 	return result.Error
 }

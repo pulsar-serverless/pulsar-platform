@@ -5,13 +5,11 @@ import (
 	"io"
 	resource "pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/project"
-
-	"github.com/docker/go-connections/nat"
 )
 
 type IContainerManager interface {
 	CreateContainer(ctx context.Context, imageName string) (string, error)
-	StartContainer(ctx context.Context, containerId string) (*nat.PortBinding, error)
+	StartContainer(ctx context.Context, containerId string) error
 	StopContainer(ctx context.Context, containerId string) error
 	DeleteContainer(ctx context.Context, containerId string) error
 	GetStatus(ctx context.Context, containerId string) (string, error)

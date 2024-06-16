@@ -190,7 +190,7 @@ const Page = () => {
   const {
     pagination: { pageIndex, pageSize },
   } = table.getState();
-  
+
   const { data: users } = useQuery({
     queryKey: [userApi.getUsers.name, pageSize, pageIndex, searchQuery],
     queryFn: () => userApi.getUsers(pageSize, pageIndex + 1, searchQuery),
@@ -199,7 +199,7 @@ const Page = () => {
 
   useEffect(() => {
     if (users) {
-      setData(users.rows || []);
+      setData(users.rows);
       setPageCount(users.totalPages);
     }
   }, [users]);

@@ -23,7 +23,7 @@ func (db *Database) GetUsers(ctx context.Context, pageSize, pageNumber int, sear
 	response := db.conn.Raw(`
 		SELECT 
 			projects.user_id AS "UserId", 
-			Count(CASE WHEN projects.deleted_at IS NULL THEN 1 END) AS "ProjectCount", 
+			Count(CASE WHEN projects.deleted_at = NULL THEN 1 END) AS "ProjectCount", 
 			COALESCE(account_statuses.status, 'Active') AS "Status"
 		FROM 
 			projects 

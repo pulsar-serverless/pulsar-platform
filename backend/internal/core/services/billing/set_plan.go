@@ -1,12 +1,10 @@
 package billing
 
-import (
-	"context"
-)
+import "context"
 
 type SetPlanReq struct {
-	ProjectId string `param:"projectId"`
-	PlanId    string `body:"planId"`
+	ProjectId string
+	PlanId    string
 }
 
 func (billingService *BillingService) SetProjectPlan(ctx context.Context, req SetPlanReq) error {

@@ -2,7 +2,6 @@
 
 import { ProjectApi } from "@/api/projects";
 import { ConfirmationDialog } from "@/components/modals/ConfirmationDialog";
-import { ChangeSubdomain } from "@/components/settings/ChangeSubdomain";
 import ChangeTokenDialog from "@/components/settings/ChangeTokenDialog";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import {
@@ -14,13 +13,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 function Page() {
   const [changeToken, setChangeToken] = useState(false);
-  const [changeSubdomain, setChangeSubdomain] = useState(false);
   const [confirm, setConfirm] = useState<
     false | "REMOVE_API_KEY" | "DELETE_PROJECT"
   >(false);
@@ -47,15 +45,6 @@ function Page() {
     onError: () => snackbar.setErrorMsg("Unable to delete the project."),
   });
 
-  const {
-    data: project,
-    isError,
-    isLoading,
-  } = useQuery({
-    queryKey: [ProjectApi.getProject.name, projectId],
-    queryFn: () => ProjectApi.getProject(projectId),
-  });
-
   return (
     <>
       <Container maxWidth="md" sx={{ py: 3 }}>
@@ -64,32 +53,6 @@ function Page() {
         </Typography>
 
         <Stack gap={3}>
-          <Card>
-            <CardContent>
-              <Typography
-                mb={1.5}
-                variant="subtitle1"
-                fontWeight={"medium"}
-                component="div"
-              >
-                Change Subdomain
-              </Typography>
-              <Typography gutterBottom variant="body2" color="text.secondary">
-                Modify your project&apos;s URL by choosing a new subdomain,
-                ideal for creating targeted sections
-              </Typography>
-            </CardContent>
-            <CardActions sx={{ justifyContent: "end", p: 1.5 }}>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => setChangeSubdomain(true)}
-              >
-                Change sub-domain
-              </Button>
-            </CardActions>
-          </Card>
-
           <Card>
             <CardContent>
               <Typography
@@ -169,10 +132,6 @@ function Page() {
           </Card>
         </Stack>
       </Container>
-
-      {changeSubdomain && (
-        <ChangeSubdomain onClose={() => setChangeSubdomain(false)} project={project} />
-      )}
 
       {changeToken && (
         <ChangeTokenDialog
