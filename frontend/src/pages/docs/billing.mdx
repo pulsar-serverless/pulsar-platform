@@ -1,4 +1,6 @@
-# Billing
+import { Steps } from "nextra/components";
+import Image from "next/image";
+import { Callout } from "nextra/components";
 
 # Billing and Pricing Plans
 
@@ -6,7 +8,9 @@
 
 Web App Pulsar offers flexible pricing plans to meet your needs. You can choose between the Free Plan and the Pro Plan based on your requirements. This document will guide you through the features of each plan and how to change your pricing plan.
 
-## Free Plan
+## Pricing Plans Overview
+
+### Free Plan
 
 The Free Plan is ideal for experimenting, learning, and building small-scale serverless applications. It includes the following features:
 
@@ -14,15 +18,13 @@ The Free Plan is ideal for experimenting, learning, and building small-scale ser
 - **Memory**: 1 GB per month of dedicated function memory
 - **Requests**: 100 invocations per month
 
-### Suitable Use Cases
+<Callout>
+	The Free Plan is perfect for developers learning to build serverless
+	applications, small-scale projects with low traffic, and testing and
+	development environments.
+</Callout>
 
-The Free Plan is perfect for:
-
-- Developers learning to build serverless applications
-- Small-scale projects with low traffic
-- Testing and development environments
-
-## Pro Plan
+### Pro Plan
 
 The Pro Plan offers more resources, allowing you to handle higher traffic and more complex applications. It includes the following features:
 
@@ -30,41 +32,74 @@ The Pro Plan offers more resources, allowing you to handle higher traffic and mo
 - **Memory**: 10 GB per month of dedicated function memory
 - **Requests**: 500 invocations per month
 
-### Suitable Use Cases
+<Callout>
+	The Pro Plan is suitable for production applications with moderate to high
+	traffic, projects requiring more memory and bandwidth, and complex serverless
+	applications.
+</Callout>
 
-The Pro Plan is suitable for:
+## Viewing Pricing Plans
 
-- Production applications with moderate to high traffic
-- Projects requiring more memory and bandwidth
-- Complex serverless applications
+To view the pricing plans for your project, follow these steps:
+
+<Steps>
+### Step 1
+
+Navigate to the pricing page to see the available pricing plans for your project.
+
+<Image src="/images/pricing-view.png" alt="Viewing Pricing Plans" width={500} height={500} />
+</Steps>
 
 ## Changing Pricing Plans
 
 To change your pricing plan, follow these steps:
 
-1. Navigate to the specific project for which you want to change the pricing plan.
-2. Click on the current plan (Free Plan or Pro Plan). This will open the pricing plan modal.
-3. In the modal, you will see two options: Free Plan and Pro Plan.
-4. Select the desired plan by clicking on the "Choose Plan" button.
-5. A confirmation dialog will appear. Review the details and click "Confirm" to change your pricing plan.
+<Steps>
+### Step 1
 
-### Confirmation Dialog
+Go to the project page and navigate to the specific project for which you want to change the pricing plan. Click on the "Free Plan" button.
 
-When you click "Choose Plan", a confirmation dialog appears with the following message:
-"Changing your serverless plan may affect costs & resource limits. Review details & confirm."
+<Image
+	src="/images/project-free-plan.png"
+	alt="Project Free Plan Button"
+	width={500}
+	height={500}
+/>
 
-Click "Confirm" to finalize the change, or "Cancel" to abort.
+### Step 2
 
-## Screenshots
+The "Change Pricing Plan" modal will appear. In this modal, you can see the available options: Free Plan and Pro Plan. Click on the "Choose Plan" button for the desired plan.
 
-### Viewing Pricing Plans
+<Image
+	src="/images/pricing-change.png"
+	alt="Change Pricing Plan Modal"
+	width={500}
+	height={500}
+/>
 
-![Viewing Pricing Plans](/images/pricing-view.png)
+### Step 3
 
-### Changing Pricing Plans
+A confirmation dialog will appear, indicating that you are about to change your serverless hosting plan. Review the details and click "Confirm" to proceed with the change.
 
-![Changing Pricing Plans](/images/pricing-change.png)
+<Callout>
+	"Changing your serverless plan may affect costs & resource limits. Review
+	details & confirm."
+</Callout>
 
-### Confirmation Dialog
+<Image
+	src="/images/pricing-confirm.png"
+	alt="Confirmation Dialog"
+	width={500}
+	height={500}
+/>
 
-![Confirmation Dialog](/images/pricing-confirm.png)
+### Step 4
+
+Once you click "Confirm," a message will appear confirming that your project pricing plan has been changed.
+
+<Image src="/images/pricing-changed.png" alt="Pricing Plan Changed Message" width={500} height={500} />
+</Steps>
+
+## Conclusion
+
+Web App Pulsar's flexible pricing plans allow you to choose the best option for your application, whether you're just getting started or managing a high-traffic production app. Make sure to review your needs and select the plan that provides the resources you require.
