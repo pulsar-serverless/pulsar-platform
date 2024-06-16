@@ -36,7 +36,7 @@ export const Header = () => {
     setAnchorEl(null);
   };
 
-  const username = "username";
+  const username = user?.sub || ""
 
   return (
     <AppBar
@@ -60,7 +60,7 @@ export const Header = () => {
           alignItems={"center"}
         >
           <Button LinkComponent={Link} href="/docs" color="secondary">
-            Docs
+            Documentation
           </Button>
           <Button LinkComponent={Link} href="/pricing" color="secondary">
             Pricing

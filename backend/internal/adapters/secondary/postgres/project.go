@@ -30,10 +30,12 @@ func (repo *Database) CreateProject(ctx context.Context, project *project.Projec
 }
 
 func (repo *Database) UpdateProject(ctx context.Context, projectId string, updatedProject *project.Project) (*project.Project, error) {
-	var project project.Project
 	result := repo.conn.Where("id = ?", projectId).Updates(updatedProject)
 
-	return &project, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return repo.GetProject(ctx, projectId)
 }
 
 func (repo *Database) UpdateProjectFields(ctx context.Context, projectId string, updatedProject map[string]interface{}) (*project.Project, error) {
@@ -45,7 +47,14 @@ func (repo *Database) UpdateProjectFields(ctx context.Context, projectId string,
 
 func (repo *Database) GetProject(ctx context.Context, projectId string) (*project.Project, error) {
 	project := project.Project{ID: projectId}
-	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").First(&project)
+	result := repo.conn.Preload("PricingPlan").Preload("SourceCode").Preload("EnvVariables").First(&project)
+
+	return &project, result.Error
+}
+
+func (repo *Database) GetProjectByDomain(ctx context.Context, subdomain string) (*project.Project, error) {
+	var project project.Project
+	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
 
 	return &project, result.Error
 }
@@ -91,4 +100,14 @@ func (repo *Database) DeleteProject(ctx context.Context, projectId string) error
 func (repo *Database) UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error {
 	result := repo.conn.Where("id = ?", id).Updates(code)
 	return result.Error
+}
+
+func (repo *Database) CheckSubdomain(ctx context.Context, subdomain string) (bool, error) {
+	result := repo.conn.Where("subdomain = ?", subdomain).Find(&project.Project{})
+
+	if result.RowsAffected <= 0 {
+		return true, nil
+	}
+
+	return false, result.Error
 }

@@ -1,7 +1,9 @@
 export interface Project {
   id: string;
   name: string;
-  deploymentStatus: 'none' | 'failed' | 'done' | 'building';
+  subdomain: string;
+  deploymentStatus: "none" | "failed" | "done" | "building";
   createdAt: string;
   updatedAt: string;
+  pricingPlan: { name: string } | null;
 }

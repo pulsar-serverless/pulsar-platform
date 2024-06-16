@@ -13,13 +13,14 @@ type GetPlansReq struct {
 }
 
 type GetPlansResp struct {
-	ID                 string `json:"id"`
-	Name               string `json:"name"`
-	Description        string `json:"desc"`
-	Teir               string `json:"teir"`
-	AllocatedMemory    int64  `json:"alloc_memmory"`
-	AllocatedBandwidth int64  `json:"alloc_bandwidth"`
-	AllocatedRequests  int64  `json:"alloc_requests"`
+	ID                 string  `json:"id"`
+	Name               string  `json:"name"`
+	Description        string  `json:"desc"`
+	Teir               string  `json:"tier"`
+	Price              float64 `json:"price"`
+	AllocatedMemory    int64   `json:"allocatedMemory"`
+	AllocatedBandwidth int64   `json:"allocatedBandwidth"`
+	AllocatedRequests  int64   `json:"allocatedRequests"`
 }
 
 func NewGetPlanResp(plan *billing.PricingPlan, res *billing.PlanResources) *GetPlansResp {
@@ -31,6 +32,7 @@ func NewGetPlanResp(plan *billing.PricingPlan, res *billing.PlanResources) *GetP
 		AllocatedMemory:    res.Memory,
 		AllocatedBandwidth: res.Bandwidth,
 		AllocatedRequests:  res.Requests,
+		Price:              plan.Price,
 	}
 }
 

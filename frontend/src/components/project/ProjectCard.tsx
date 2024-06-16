@@ -9,11 +9,14 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { statusColor } from "./ProjectDetailsCard";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function ProjectCard({ project }: { project: Project }) {
+  const { isAuthenticated, logout, user } = useAuth0();
+  const username = user?.sub || ""
   return (
     <Card>
-      <CardActionArea LinkComponent={Link} href={`username/${project.id}/home`}>
+      <CardActionArea LinkComponent={Link} href={`${username}/${project.id}/home`}>
         <CardContent
           sx={{
             px: 3,
