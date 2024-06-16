@@ -8,10 +8,12 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
+	"pulsar/internal/core/domain/billing"
 	"pulsar/internal/core/domain/project"
 	"time"
 
 	"github.com/docker/docker/pkg/archive"
+	"github.com/go-pdf/fpdf"
 	"github.com/mholt/archiver/v4"
 	"github.com/otiai10/copy"
 )
@@ -20,15 +22,16 @@ type ProjectFileRepository struct {
 	rootPath           string
 	dockerfileTemplate *template.Template
 	starterCodePath    string
+	invoicePath        string
 }
 
-func NewProjectFileRepository(projectStoragePath, dockerfileTemplatePath, starterCodePath string) *ProjectFileRepository {
+func NewProjectFileRepository(projectStoragePath, dockerfileTemplatePath, starterCodePath, invoiceStoragePath string) *ProjectFileRepository {
 	template, err := template.ParseFiles(dockerfileTemplatePath)
 	if err != nil {
 		panic(fmt.Sprintf("Invalid docker config template. %v", err))
 	}
 
-	return &ProjectFileRepository{projectStoragePath, template, starterCodePath}
+	return &ProjectFileRepository{projectStoragePath, template, starterCodePath, invoiceStoragePath}
 }
 
 func (fileRepo *ProjectFileRepository) setupSourceFolder(project *project.Project) (string, error) {
@@ -115,4 +118,15 @@ func (fileRepo *ProjectFileRepository) ZipSourceCode(sourceDir string) (*os.File
 
 func (fileRepo *ProjectFileRepository) RemoveSourceCode(sourceDir string) error {
 	return os.RemoveAll(sourceDir)
+}
+
+func (fileRepo *ProjectFileRepository) SaveInvoicePDF(invoice *billing.Invoice, pdf *fpdf.Fpdf) (string, error) {
+	filePath := path.Join(fileRepo.invoicePath, "invoice-"+invoice.UsageMonth+invoice.ProjectID+".pdf")
+
+	err := pdf.OutputFileAndClose(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	return filePath, nil
 }

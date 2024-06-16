@@ -40,6 +40,7 @@ func main() {
 		os.Getenv("PROJECT_STORAGE_PATH"),
 		os.Getenv("DOCKERFILE_TEMPLATE_PATH"),
 		os.Getenv("STARTER_CODE_PATH"),
+		os.Getenv("INVOICE_STORAGE_PATH"),
 	)
 
 	if err != nil {

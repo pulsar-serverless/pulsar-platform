@@ -11,4 +11,7 @@ type IBillingRepository interface {
 	GetPricingPlans(ctx context.Context, pageNumber int, pageSize int) (*common.Pagination[billing.PricingPlan], error)
 	SetProjectPlan(ctx context.Context, projectId string, planId string) error
 	GetDefaultProjectPlan(ctx context.Context) (*billing.PricingPlan, error)
+	GetResourcePricing(ctx context.Context) (*billing.ResourcePricing, error)
+	GetInvoice(ctx context.Context, projectId, month string) (*billing.Invoice, error)
+	SaveInvoice(ctx context.Context, invoice *billing.Invoice) error
 }
