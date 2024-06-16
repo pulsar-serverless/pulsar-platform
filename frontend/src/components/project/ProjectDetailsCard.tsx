@@ -184,6 +184,7 @@ export const ProjectDetailsCard = ({
 				variant="outlined"
 				size="small"
 				color="secondary"
+				disabled={project?.deploymentStatus == "building"}
 				onClick={() => handleDownloadInvoice(project?.id as string)}
 				>
 				Download Invoice
