@@ -20,6 +20,10 @@ import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded";
 import dayjs from "dayjs";
 import { Project } from "@/models/project";
 import SetPricingPlanModal from "./SetPricingPlanModal";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import { ProjectApi } from "@/api/projects";
+import { useMutation } from "@tanstack/react-query";
+
 export const ProjectDetailsCard = ({
 	project,
 	isLoading,
@@ -40,6 +44,10 @@ export const ProjectDetailsCard = ({
 	const handleCloseModal = () => {
 		setModalOpen(false);
 	};
+
+	const { mutate: handleDownloadInvoice, isPending } = useMutation({
+		mutationFn: ProjectApi.downloadInvoice,
+	});
 
 	return (
 		<>
@@ -169,6 +177,19 @@ export const ProjectDetailsCard = ({
 					projectId={project?.id!!}
 				/>
 			</Modal>
+
+			<Box marginTop={3}>
+				<Button
+				startIcon={<DownloadRoundedIcon />}
+				variant="outlined"
+				size="small"
+				color="secondary"
+				disabled={project?.deploymentStatus == "building"}
+				onClick={() => handleDownloadInvoice(project?.id as string)}
+				>
+				Download Invoice
+				</Button>
+			</Box>
 		</>
 	);
 };

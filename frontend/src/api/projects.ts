@@ -85,4 +85,20 @@ export const ProjectApi = {
     });
     return data;
   },
+  
+  async downloadInvoice(projectId: string) {
+    const currentDate = new Date();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+    const currentMonth = month.toString() + year.toString();
+
+    const {data} = await axiosInstance.get(
+      `/projects/${projectId}/invoice?month=${currentMonth}`,
+      {
+        responseType: "blob",
+      }
+    )
+    const blobUrl = URL.createObjectURL(data);
+    window.open(blobUrl);
+  },
 };
