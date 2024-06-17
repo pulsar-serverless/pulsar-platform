@@ -72,6 +72,7 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 	}
 
 	server.echo.POST("/app/status", apps.Status(server.containerService))
+	server.echo.GET("/static", apps.ServeSite(server.projectService), auth.IsAuthorized(server.projectService, jwtSecrete))
 	server.echo.Any("*",
 		apps.ExecuteFunction(server.containerService, server.projectService, server.analyticsService, server.billingService),
 		auth.IsAuthorized(server.projectService, jwtSecrete),

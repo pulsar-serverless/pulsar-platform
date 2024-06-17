@@ -47,14 +47,14 @@ func (repo *Database) UpdateProjectFields(ctx context.Context, projectId string,
 
 func (repo *Database) GetProject(ctx context.Context, projectId string) (*project.Project, error) {
 	project := project.Project{ID: projectId}
-	result := repo.conn.Preload("PricingPlan").Preload("SourceCode").Preload("EnvVariables").First(&project)
+	result := repo.conn.Preload("StaticSite").Preload("PricingPlan").Preload("SourceCode").Preload("EnvVariables").First(&project)
 
 	return &project, result.Error
 }
 
 func (repo *Database) GetProjectByDomain(ctx context.Context, subdomain string) (*project.Project, error) {
 	var project project.Project
-	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
+	result := repo.conn.Preload("StaticSite").Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
 
 	return &project, result.Error
 }
