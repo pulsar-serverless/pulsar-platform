@@ -1,10 +1,91 @@
-# Serverless deployment
+import { Callout } from "nextra/components";
 
-Deploying your web application on Pulsar is a straightforward process designed to minimize complexity and maximize efficiency. Here’s a brief overview of the steps involved:
+# More Detailed Steps For Deployment
 
-    **_1. Upload Your Application:_** Start by uploading your web application files through our intuitive dashboard or use our command-line interface (CLI) for advanced deployment options.<br/>
-    **_2. Configure Deployment Settings:_** Customize your deployment settings, including environment variables, build configurations, and runtime options, to ensure your application runs smoothly.<br/>
-    **_3. Initiate Deployment:_** With a single click or command, deploy your application to our serverless infrastructure. Our system handles the rest, from code build to deployment on a highly scalable and reliable environment.<br/>
-    **_4. Monitor Deployment Status:_** Track the progress of your deployment in real-time and receive notifications once your application is live.
+## Introduction
 
-### More Detailed Steps For Deployment :
+Deploying your web application on our platform is a straightforward process designed to be efficient and user-friendly. Follow these detailed steps to ensure a successful deployment.
+
+## Step 1: Upload Your Application
+
+Start by uploading your web application files through our intuitive dashboard or use our command-line interface (CLI) for advanced deployment options.
+
+### Using the Dashboard
+
+Navigate to the "Projects" section and select your project.
+Click on the "Upload Files" button.
+Drag and drop your application files or browse to select them from your computer.
+Click "Upload" to start the process.
+
+### Using the CLI
+
+Install the CLI tool by following the instructions in our documentation.
+Open your terminal and navigate to your project directory.
+Run the command `pulsar deploy` to upload your files.
+Follow the prompts to complete the upload process.
+
+## Step 2: Configure Deployment Settings
+
+Customize your deployment settings, including environment variables, build configurations, and runtime options, to ensure your application runs smoothly.
+
+### Environment Variables
+
+Go to the "Environment Variables" section under your project settings.
+Click "Add Variable" and enter the key and value for each variable.
+Save the changes.
+
+### Build Configurations
+
+Access the "Build Configurations" section.
+Define the necessary build commands and scripts.
+Save the configuration.
+
+### Runtime Options
+
+Navigate to the "Runtime Options" section.
+Choose the runtime environment suitable for your application (e.g., Node.js, Python).
+Adjust any additional settings as required.
+Save the changes.
+
+## Step 3: Initiate Deployment
+
+With a single click or command, deploy your application to our serverless infrastructure. Our system handles the rest, from code build to deployment on a highly scalable and reliable environment.
+
+### Using the Dashboard
+
+After uploading your files and configuring the settings, click on the "Deploy" button.
+Confirm the deployment details and initiate the process.
+
+### Using the CLI
+
+In your terminal, run the command `pulsar deploy` if not already done.
+Follow the prompts to confirm and start the deployment.
+
+<Callout>
+	Initiating deployment is as simple as clicking a button or running a single
+	command. Our platform takes care of building and deploying your application on
+	a highly scalable infrastructure.
+</Callout>
+
+## Step 4: Monitor Deployment Status
+
+Track the progress of your deployment in real-time and receive notifications once your application is live.
+
+### Real-Time Monitoring
+
+Go to the "Deployment Status" section in your project dashboard.
+View the real-time logs and progress indicators.
+
+### Notifications
+
+Ensure your notification settings are configured under your account settings.
+Receive alerts via email or SMS once the deployment is complete.
+
+<Callout>
+	Monitoring the deployment status in real-time allows you to stay informed
+	about the progress and quickly address any issues that may arise.
+</Callout>
+
+## Conclusion
+
+Deploying your web application on our platform is designed to be seamless and efficient. By following these detailed steps, you can ensure a smooth and successful deployment, taking advantage of our robust serverless infrastructure.

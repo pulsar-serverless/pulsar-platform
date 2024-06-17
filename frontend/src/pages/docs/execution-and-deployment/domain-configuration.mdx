@@ -1,10 +1,66 @@
-# Configure domain
+import { Steps } from "nextra/components";
+import Image from "next/image";
+import { Callout } from "nextra/components";
 
-Setting up a custom domain for your web application enhances your brand and makes your site more accessible to users. Follow these steps to configure your domain:
+# Configure Custom Subdomain
 
-    **_1. Add Your Domain:_** Navigate to the domain settings in our dashboard and add your custom domain name.<br/>
-    **_2. Verify Domain Ownership:_** Follow the provided instructions to verify domain ownership, typically by adding a DNS record or uploading a verification file to your domain’s web root.<br/>
-    **_3. Configure DNS Settings:_** Update your DNS settings to point to our platform’s nameservers or configure the necessary DNS records (A, CNAME) to direct traffic to your application.<br/>
-    **_4. Enable SSL/TLS:_** Secure your domain with an SSL/TLS certificate, which we provide automatically, ensuring your application is accessed securely via HTTPS.
+## Introduction
 
-### More Steps :
+Setting up a custom subdomain for your project enhances its branding and accessibility. Follow these steps to configure a custom subdomain:
+
+## Step 1: Create a New Project
+
+Start by creating a new project in your dashboard.
+
+- Click on "New Project" to initiate the project creation process.
+- Enter a **Project Name**: Ensure it is alphanumeric and does not contain spaces.
+- Optionally, enter a **Project Subdomain**: This will be part of your project's URL (e.g., `subdomain.example.com`).
+
+## Step 2: Navigate to Project Settings
+
+Once your project is created, navigate to the project settings page.
+
+<Steps>
+### Step 1
+
+Click on the "Settings" or "Project Settings" option for your specific project.
+
+</Steps>
+
+## Step 3: Add Subdomain
+
+In the project settings, find the option to add or configure subdomains for your project.
+
+<Steps>
+### Step 1
+
+Enter your desired subdomain name (e.g., `subdomain.example.com`) in the provided input field.
+
+<Image src="/images/subdomain.png" alt="Subdomain Setup" width={500} height={500} />
+</Steps>
+
+Click on the confirm button. You will recive a green snackbar on success.
+
+## Step 4: Verify and Save
+
+Follow any verification steps prompted by the platform to confirm ownership of the subdomain.
+
+<Steps>
+### Step 3
+
+Verify domain ownership by adding necessary DNS records or following platform-specific instructions.
+
+</Steps>
+
+## Step 5: Confirm Setup
+
+Once verified, save the changes to apply the subdomain configuration to your project.
+
+<Callout>
+	Setting up a custom subdomain allows you to personalize your project's URL and
+	enhance its visibility.
+</Callout>
+
+## Conclusion
+
+By following these steps, you can successfully configure a custom subdomain for your project, ensuring easier access and better branding for your users.
