@@ -1,8 +1,6 @@
 FROM node:18.17.0-alpine
-ENV APP_ID {{.ID}}
-{{range .EnvVariables}}
-ENV {{.Key}} "{{.Value}}"
-{{end}}
+ENV APP_ID dummy-cpnsusqoabf6522viehg
+
 WORKDIR /app
 COPY ./package.json ./package-lock.json  ./
 RUN npm install
