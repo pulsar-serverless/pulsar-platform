@@ -23,6 +23,7 @@ func SetupDB(dsn string) *gorm.DB {
 	err = db.AutoMigrate(
 		&project.Project{},
 		&project.SourceCode{},
+		&project.StaticSite{},
 		&project.EnvVariable{},
 		&log.AppLog{},
 		&analytics.Invocation{},

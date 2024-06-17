@@ -103,6 +103,26 @@ func (projectService *ProjectService) CreateProject(ctx context.Context, req Cre
 			return
 		}
 
+		siteDir, err := projectService.fileRepo.SetupDefaultProjectSite(newProject)
+		if err != nil {
+			zeroLog.Error().
+				Str("AppID", newProject.ID).
+				Err(err).
+				Msg("Unable to setup default site for prpject.")
+			return
+		}
+
+		newProject.StaticSite = &project.StaticSite{URI: siteDir, ID: uuid.New()}
+
+		_, err = projectService.projectRepo.UpdateProject(ctx, newProject.ID, newProject)
+		if err != nil {
+			zeroLog.Error().
+				Str("AppID", newProject.ID).
+				Err(err).
+				Msg("Unable to setup update project.")
+			return
+		}
+
 		err = projectService.InstallProject(context.TODO(), newProject)
 		if err != nil {
 			zeroLog.Error().

@@ -38,8 +38,10 @@ func main() {
 
 	fileRepository := fs.NewProjectFileRepository(
 		os.Getenv("PROJECT_STORAGE_PATH"),
+		os.Getenv("PROJECT_SITE_PATH"),
 		os.Getenv("DOCKERFILE_TEMPLATE_PATH"),
 		os.Getenv("STARTER_CODE_PATH"),
+		os.Getenv("STARTER_SITE_PATH"),
 		os.Getenv("INVOICE_STORAGE_PATH"),
 	)
 

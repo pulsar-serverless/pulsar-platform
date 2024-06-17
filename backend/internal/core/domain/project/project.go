@@ -32,6 +32,8 @@ type Project struct {
 	UpdatedAt        time.Time            `gorm:"autoUpdateTime"`
 	SourceCodeId     *uuid.UUID           ``
 	SourceCode       *SourceCode          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	StaticSiteId     *uuid.UUID           ``
+	StaticSite       *StaticSite          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	EnvVariables     []*EnvVariable       `gorm:"foreignKey:ProjectID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Logs             []*log.AppLog        `gorm:"foreignKey:ProjectID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	PlanId           *uuid.UUID           ``

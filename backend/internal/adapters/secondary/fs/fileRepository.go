@@ -20,23 +20,32 @@ import (
 
 type ProjectFileRepository struct {
 	rootPath           string
+	sitePath           string
 	dockerfileTemplate *template.Template
 	starterCodePath    string
+	templateSitePath   string
 	invoicePath        string
 }
 
-func NewProjectFileRepository(projectStoragePath, dockerfileTemplatePath, starterCodePath, invoiceStoragePath string) *ProjectFileRepository {
+func NewProjectFileRepository(projectStoragePath, projectSitePath, dockerfileTemplatePath, starterCodePath, templateSitePath, invoiceStoragePath string) *ProjectFileRepository {
 	template, err := template.ParseFiles(dockerfileTemplatePath)
 	if err != nil {
 		panic(fmt.Sprintf("Invalid docker config template. %v", err))
 	}
 
-	return &ProjectFileRepository{projectStoragePath, template, starterCodePath, invoiceStoragePath}
+	return &ProjectFileRepository{projectStoragePath, projectSitePath, template, starterCodePath, templateSitePath, invoiceStoragePath}
 }
 
 func (fileRepo *ProjectFileRepository) setupSourceFolder(project *project.Project) (string, error) {
 	currentTimestamp := time.Now()
 	sourcePath := path.Join(fileRepo.rootPath, currentTimestamp.Format(time.RFC3339)+project.Name)
+
+	return sourcePath, os.Mkdir(sourcePath, os.ModePerm)
+}
+
+func (fileRepo *ProjectFileRepository) setupSiteFolder(project *project.Project) (string, error) {
+	currentTimestamp := time.Now()
+	sourcePath := path.Join(fileRepo.sitePath, currentTimestamp.Format(time.RFC3339)+project.Name)
 
 	return sourcePath, os.Mkdir(sourcePath, os.ModePerm)
 }
@@ -71,6 +80,16 @@ func (fileRepo *ProjectFileRepository) SetupDefaultProject(project *project.Proj
 	return projectDir, copy.Copy(fileRepo.starterCodePath, projectDir)
 }
 
+func (fileRepo *ProjectFileRepository) SetupDefaultProjectSite(project *project.Project) (string, error) {
+	siteDir, err := fileRepo.setupSiteFolder(project)
+	if err != nil {
+		return "", err
+	}
+
+	// TODO: exclude dot files
+	return siteDir, copy.Copy(fileRepo.templateSitePath, siteDir)
+}
+
 func (fileRepo *ProjectFileRepository) SetupCustomProjectCode(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error) {
 	projectDir, err := fileRepo.setupSourceFolder(project)
 	if err != nil {
@@ -84,6 +103,21 @@ func (fileRepo *ProjectFileRepository) SetupCustomProjectCode(ctx context.Contex
 	defer src.Close()
 
 	return projectDir, unzipSourceCode(ctx, projectDir, src)
+}
+
+func (fileRepo *ProjectFileRepository) SetupCustomSiteAssets(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error) {
+	siteDir, err := fileRepo.setupSiteFolder(project)
+	if err != nil {
+		return "", err
+	}
+
+	assets, err := zipFile.Open()
+	if err != nil {
+		return "", err
+	}
+	defer assets.Close()
+
+	return siteDir, unzipSourceCode(ctx, siteDir, assets)
 }
 
 func (fileRepo *ProjectFileRepository) CreateBuildContext(project *project.Project) (io.Reader, error) {

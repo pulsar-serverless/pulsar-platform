@@ -13,7 +13,9 @@ import (
 
 type IFileRepository interface {
 	SetupDefaultProject(project *project.Project) (string, error)
+	SetupDefaultProjectSite(project *project.Project) (string, error)
 	SetupCustomProjectCode(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error)
+	SetupCustomSiteAssets(ctx context.Context, project *project.Project, zipFile *multipart.FileHeader) (string, error)
 	CreateBuildContext(project *project.Project) (io.Reader, error)
 	ZipSourceCode(sourceDir string) (*os.File, error)
 	RemoveSourceCode(sourceDir string) error
