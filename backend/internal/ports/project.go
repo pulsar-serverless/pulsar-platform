@@ -17,6 +17,7 @@ type IProjectRepo interface {
 	GetAllProjects(ctx context.Context, userId string) ([]*project.Project, error)
 	DeleteProject(ctx context.Context, projectId string) error
 	UpdateSourceCode(ctx context.Context, id uuid.UUID, code *project.SourceCode) error
+	UpdateStaticAssets(ctx context.Context, id uuid.UUID, assets *project.StaticSite) error
 	UpdateProjectFields(ctx context.Context, projectId string, updatedProject map[string]interface{}) (*project.Project, error)
 	CheckSubdomain(ctx context.Context, subdomain string) (bool, error)
 }

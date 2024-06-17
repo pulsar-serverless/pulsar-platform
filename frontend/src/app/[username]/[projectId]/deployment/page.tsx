@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { ProjectApi } from "@/api/projects";
 import { useMutation } from "@tanstack/react-query";
 import { UploadCode } from "@/components/deployment/UploadCode";
+import { UploadAssets } from "@/components/deployment/UploadAssets";
 
 export default function Page() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -52,6 +53,7 @@ export default function Page() {
         </Card>
 
         <UploadCode projectId={projectId} />
+        <UploadAssets projectId={projectId} />
       </Stack>
     </Container>
   );

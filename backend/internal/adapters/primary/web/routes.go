@@ -42,6 +42,9 @@ func (server *Server) DefineRoutes(jwtSecrete string) {
 			projectController.GET("/code/:projectId", projects.DownloadSourceCode(server.projectService))
 			projectController.PUT("/code/:projectId", projects.UploadProjectCode(server.projectService))
 		}
+		{
+			projectController.PUT("/site/:projectId", projects.UploadAssets(server.projectService))
+		}
 
 		{
 			projectController.POST("/envs/:projectId", envs.OverwriteEnvVariables(server.envService))

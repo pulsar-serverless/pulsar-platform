@@ -86,7 +86,6 @@ func (fileRepo *ProjectFileRepository) SetupDefaultProjectSite(project *project.
 		return "", err
 	}
 
-	// TODO: exclude dot files
 	return siteDir, copy.Copy(fileRepo.templateSitePath, siteDir)
 }
 
@@ -151,6 +150,10 @@ func (fileRepo *ProjectFileRepository) ZipSourceCode(sourceDir string) (*os.File
 }
 
 func (fileRepo *ProjectFileRepository) RemoveSourceCode(sourceDir string) error {
+	return os.RemoveAll(sourceDir)
+}
+
+func (fileRepo *ProjectFileRepository) RemoveAssets(sourceDir string) error {
 	return os.RemoveAll(sourceDir)
 }
 

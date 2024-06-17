@@ -60,6 +60,14 @@ export const ProjectApi = {
     return data;
   },
 
+  async uploadProjectStaticSite(body: FormData) {
+    const { data } = await axiosInstance.put(
+      `/projects/site/${body.get("projectId")}`,
+      body
+    );
+    return data;
+  },
+
   async generateApiKey(projectId: string) {
     const { data } = await axiosInstance.put<{ token: string }>(
       `/projects/${projectId}/api-token`

@@ -102,6 +102,11 @@ func (repo *Database) UpdateSourceCode(ctx context.Context, id uuid.UUID, code *
 	return result.Error
 }
 
+func (repo *Database) UpdateStaticAssets(ctx context.Context, id uuid.UUID, assets *project.StaticSite) error {
+	result := repo.conn.Where("id = ?", id).Updates(assets)
+	return result.Error
+}
+
 func (repo *Database) CheckSubdomain(ctx context.Context, subdomain string) (bool, error) {
 	result := repo.conn.Where("subdomain = ?", subdomain).Find(&project.Project{})
 
