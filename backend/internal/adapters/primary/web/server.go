@@ -37,7 +37,7 @@ func StartServer(db *postgres.Database, mq ports.IMessageQueue, containerMan por
 	projectService := project.NewProjectService(db, containerService, fileRepo, jwtSecrete, db)
 	envService := envs.NewEnvService(db, *projectService)
 	analyticsService := analytics.NewAnalyticsService(db, mq)
-	billingService := billing.NewBillingService(db)
+	billingService := billing.NewBillingService(db, fileRepo, projectService, analyticsService, resourceService)
 	userService := user.NewUserService(db)
 
 	server := &Server{

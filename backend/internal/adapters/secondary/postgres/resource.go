@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"math"
 	"pulsar/internal/core/domain/analytics"
 	"pulsar/internal/core/domain/common"
+	"pulsar/internal/core/services"
 )
 
 func (db *Database) CreateResourceUtil(ctx context.Context, res *analytics.RuntimeResource) error {
@@ -45,6 +47,10 @@ func (db *Database) GetTotalProjectResourceUtil(ctx context.Context, projectId s
 	GROUP BY project_id;
 	`, projectId).Scan(&result)
 
+	if data.RowsAffected <= 0 {
+		return nil, services.NewAppError(services.ErrNotFound, errors.New("no resource utilization"))
+	}
+
 	return result, data.Error
 }
 
@@ -68,6 +74,10 @@ func (db *Database) GetMonthlyProjectResourceUtil(ctx context.Context, projectId
 	WHERE usage_month = ?
 	GROUP BY project_id, usage_month;
 	`, projectId, month).Scan(&result)
+
+	if data.RowsAffected <= 0 {
+		return nil, services.NewAppError(services.ErrNotFound, errors.New("no monthly resource utilization"))
+	}
 
 	return result, data.Error
 }

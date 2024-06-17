@@ -50,8 +50,21 @@ func main() {
 			},
 		},
 	}
+
+	pricing := &billing.ResourcePricing{
+		ID:       uuid.New().String(),
+		MemPrice: 0.0001,
+		NetPrice: 0.0001,
+		ReqPrice: 0.001,
+	}
+
 	result := dbConn.Create(plans)
 	if result.Error != nil {
 		log.Fatal("Unable to seed pricing plan")
+	}
+
+	result = dbConn.Create(pricing)
+	if result.Error != nil {
+		log.Fatal("Unable to seed resource pricing")
 	}
 }
