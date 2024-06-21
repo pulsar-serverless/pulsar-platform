@@ -2,6 +2,7 @@ package apps
 
 import (
 	"context"
+	"fmt"
 	"pulsar/internal/adapters/primary/web/apierrors"
 	"pulsar/internal/adapters/primary/web/utils"
 	"pulsar/internal/core/domain/analytics"
@@ -35,6 +36,8 @@ func ExecuteFunction(
 			resp := apierrors.FromError(err)
 			return ctx.JSON(resp.Status, resp)
 		}
+
+		fmt.Println(project.PricingPlan)
 
 		if project.PricingPlan != nil {
 			if err := billingService.CheckPlanLimit(context.TODO(), project.ID, project.PlanId.String()); err != nil {

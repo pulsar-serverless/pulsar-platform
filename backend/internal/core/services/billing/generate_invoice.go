@@ -46,7 +46,7 @@ func (billingService *BillingService) checkMonthBeforeCurrent(usageMonth string)
 		return false
 	}
 
-	if month >= int(currentDate.Month()) {
+	if month > int(currentDate.Month()) {
 		return false
 	}
 

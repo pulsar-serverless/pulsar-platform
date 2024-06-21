@@ -46,7 +46,7 @@ export const ProjectDetailsCard = ({
 	};
 
 	const { mutate: handleDownloadInvoice, isPending } = useMutation({
-		mutationFn: ProjectApi.downloadInvoice,
+		mutationFn: ProjectApi.DownloadInvoice,
 	});
 
 	return (
@@ -180,14 +180,13 @@ export const ProjectDetailsCard = ({
 
 			<Box marginTop={3}>
 				<Button
-				startIcon={<DownloadRoundedIcon />}
-				variant="outlined"
-				size="small"
-				color="secondary"
-				disabled={project?.deploymentStatus == "building"}
-				onClick={() => handleDownloadInvoice(project?.id as string)}
-				>
-				Download Invoice
+					startIcon={<DownloadRoundedIcon />}
+					variant="outlined"
+					size="small"
+					color="secondary"
+					disabled={project?.deploymentStatus == "building"}
+					onClick={() => handleDownloadInvoice(project?.id as string)}>
+					Download Invoice
 				</Button>
 			</Box>
 		</>

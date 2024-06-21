@@ -54,7 +54,7 @@ func (repo *Database) GetProject(ctx context.Context, projectId string) (*projec
 
 func (repo *Database) GetProjectByDomain(ctx context.Context, subdomain string) (*project.Project, error) {
 	var project project.Project
-	result := repo.conn.Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
+	result := repo.conn.Preload("PricingPlan").Preload("SourceCode").Preload("EnvVariables").Where("subdomain = ?", subdomain).Find(&project)
 
 	return &project, result.Error
 }

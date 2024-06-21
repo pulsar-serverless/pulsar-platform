@@ -6,6 +6,8 @@ import (
 	"pulsar/internal/core/services"
 )
 
+const MBinBytes = 1024 * 1024
+
 func (billingService *BillingService) CheckPlanLimit(ctx context.Context, projId, planId string) error {
 	resUsage, _ := billingService.resourceService.GetTotalProjectResourceUtil(ctx, projId)
 
@@ -15,11 +17,11 @@ func (billingService *BillingService) CheckPlanLimit(ctx context.Context, projId
 			return err
 		}
 
-		if resUsage.MemoryUtil >= projectPlan.Memory {
+		if (resUsage.MemoryUtil / MBinBytes) >= projectPlan.Memory {
 			return services.NewAppError(services.ErrBadRequest, errors.New("memory usage limit reached"))
 		}
 
-		if resUsage.NetworkUtil >= projectPlan.Bandwidth {
+		if (resUsage.NetworkUtil / MBinBytes) >= projectPlan.Bandwidth {
 			return services.NewAppError(services.ErrBadRequest, errors.New("network bandwidth limit reached"))
 		}
 	}
